@@ -23,6 +23,5 @@ class PhotoAlbumRepositoryTest {
 		// when
 		var photoAlbum2 = new PhotoAlbum(photoAlbumName);
 		assertThrows(DataIntegrityViolationException.class, () -> photoAlbumRepository.saveAndFlush(photoAlbum2));
-
 	}
 }

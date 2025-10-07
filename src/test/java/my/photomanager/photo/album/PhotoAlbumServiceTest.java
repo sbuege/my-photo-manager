@@ -52,5 +52,4 @@ class PhotoAlbumServiceTest {
 		// then
 		verify(photoAlbumRepository, never()).saveAndFlush(photoAlbum);
 	}
-
 }
