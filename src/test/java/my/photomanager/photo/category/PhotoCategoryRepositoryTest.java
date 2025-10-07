@@ -24,5 +24,4 @@ class PhotoCategoryRepositoryTest {
 		var photoCategory2 = new PhotoCategory(photoCategoryName);
 		assertThrows(DataIntegrityViolationException.class, () -> photoCategoryRepository.saveAndFlush(photoCategory2));
 	}
-
 }
