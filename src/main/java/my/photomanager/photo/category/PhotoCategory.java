@@ -1,4 +1,4 @@
-package my.photomanager.photo.album;
+package my.photomanager.photo.category;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -16,7 +16,7 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @Entity
 @Table(name = "photoalbum")
-public class PhotoAlbum {
+public class PhotoCategory {
 
 	@Id
 	@GeneratedValue

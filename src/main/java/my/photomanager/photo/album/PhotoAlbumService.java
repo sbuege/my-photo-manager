@@ -18,7 +18,7 @@ public class PhotoAlbumService {
 	 * Saves the given {@link PhotoAlbum} if no album with the same name exists,
 	 * or returns the existing one.
 	 *
-	 * @param photoAlbum the {@link PhotoAlbum} to save or retrieve; must not be {@code null}
+	 * @param photoAlbum the {@link PhotoAlbum} to save or retrieve
 	 * @return the existing or newly saved {@link PhotoAlbum}
 	 */
 	public PhotoAlbum saveOrGetPhotoAlbum(@NonNull PhotoAlbum photoAlbum) {
@@ -30,5 +30,4 @@ public class PhotoAlbumService {
 					return savedPhotoAlum;
 				});
 	}
-
 }
