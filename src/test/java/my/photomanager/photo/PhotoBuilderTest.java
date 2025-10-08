@@ -32,7 +32,7 @@ class PhotoBuilderTest {
 	private CameraSettingsService cameraSettingsService;
 
 	@BeforeEach
-	public void setUp() throws InterruptedException {
+	public void setUp() {
 		photoBuilder = new PhotoBuilder(photoLocationService, cameraSettingsService);
 	}
 
