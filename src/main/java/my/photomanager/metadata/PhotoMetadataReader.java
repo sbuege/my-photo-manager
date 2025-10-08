@@ -18,18 +18,16 @@ import lombok.NonNull;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.lang3.time.DateUtils;
 import org.apache.logging.log4j.util.Strings;
-import org.springframework.stereotype.Component;
 
-@Component
 @Log4j2
 public class PhotoMetadataReader {
 
-	private final int DEFAULT_WIDTH = 0;
-	private final int DEFAULT_HEIGHT = 0;
-	private final String DEFAULT_CAMERA_MODEL = Strings.EMPTY;
-	private final LocalDate DEFAULT_CREATION_DATE = LocalDate.of(0, 1, 1);
-	private final double DEFAULT_LONGITUDE = 0.0;
-	private final double DEFAULT_LATITUDE = 0.0;
+	private final static int DEFAULT_WIDTH = 0;
+	private final static int DEFAULT_HEIGHT = 0;
+	private final static String DEFAULT_CAMERA_MODEL = Strings.EMPTY;
+	private final static LocalDate DEFAULT_CREATION_DATE = LocalDate.of(0, 1, 1);
+	private final static double DEFAULT_LONGITUDE = 0.0;
+	private final static double DEFAULT_LATITUDE = 0.0;
 
 	/**
 	 * Extracts and parses the metadata from the specified photo file.
@@ -40,7 +38,7 @@ public class PhotoMetadataReader {
 	 * @param photoPath the path to the photo file
 	 * @return a {@code PhotoMetadata} instance with the extracted metadata
 	 */
-	public PhotoMetadata readPhotoMetadata(@NonNull Path photoPath) throws PhotoMetadataException {
+	public static PhotoMetadata readPhotoMetadata(@NonNull Path photoPath) throws PhotoMetadataReaderException {
 		log.info("reading photo meta data of {} ", photoPath.toAbsolutePath());
 
 		var photoMetaData = new PhotoMetadata(DEFAULT_WIDTH, DEFAULT_HEIGHT, DEFAULT_CAMERA_MODEL, DEFAULT_CREATION_DATE, DEFAULT_LONGITUDE, DEFAULT_LATITUDE);
@@ -58,13 +56,13 @@ public class PhotoMetadataReader {
 
 		} catch (ImageProcessingException | IOException e) {
 			log.error("an exception occurred while reading photo meta data of {}", photoPath, e);
-			throw new PhotoMetadataException(e);
+			throw new PhotoMetadataReaderException(e);
 		}
 
 		return photoMetaData;
 	}
 
-	private int getPhotoHeightFromMetaData(@NonNull Metadata metadata) {
+	private static int getPhotoHeightFromMetaData(@NonNull Metadata metadata) {
 		log.debug("get photo height from meta data");
 
 		var photoHeight = DEFAULT_HEIGHT;
@@ -79,7 +77,7 @@ public class PhotoMetadataReader {
 		return photoHeight;
 	}
 
-	private int getPhotoWidthFromMetaData(@NonNull Metadata metadata) {
+	private static int getPhotoWidthFromMetaData(@NonNull Metadata metadata) {
 		log.debug("get photo width from meta data");
 
 		var photoWidth = DEFAULT_WIDTH;
@@ -94,7 +92,7 @@ public class PhotoMetadataReader {
 		return photoWidth;
 	}
 
-	private String getCameraModelFromMetaData(@NonNull Metadata metadata) {
+	private static String getCameraModelFromMetaData(@NonNull Metadata metadata) {
 		log.debug("get camera model from meta data");
 
 		var cameraModel = DEFAULT_CAMERA_MODEL;
@@ -107,7 +105,7 @@ public class PhotoMetadataReader {
 		return cameraModel;
 	}
 
-	private LocalDate getCreationDateFromMetaData(@NonNull Metadata metadata) {
+	private static LocalDate getCreationDateFromMetaData(@NonNull Metadata metadata) {
 		log.debug("get creation date from meta data");
 
 		var creationDate = DEFAULT_CREATION_DATE;
@@ -128,7 +126,7 @@ public class PhotoMetadataReader {
 		return creationDate;
 	}
 
-	private double getGpsLongitude(@NonNull Metadata metadata) {
+	private static double getGpsLongitude(@NonNull Metadata metadata) {
 		log.debug("get gps longitude from meta data");
 
 		var gpsDirectory = metadata.getFirstDirectoryOfType(GpsDirectory.class);
@@ -139,7 +137,7 @@ public class PhotoMetadataReader {
 		return gpsLongitude;
 	}
 
-	private double getGpsLatitude(@NonNull Metadata metadata) {
+	private static double getGpsLatitude(@NonNull Metadata metadata) {
 		log.debug("get gps latitude from meta data");
 
 		var gpsDirectory = metadata.getFirstDirectoryOfType(GpsDirectory.class);
