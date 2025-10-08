@@ -16,8 +16,6 @@ import org.junit.jupiter.params.provider.MethodSource;
 @Log4j2
 class PhotoMetadataReaderTest {
 
-	private final PhotoMetadataReader photoMetadataReader = new PhotoMetadataReader();
-
 	public static Stream<Path> photosWithExifDataFileProvider() {
 		return Stream.of(TestConstants.jpegWithExifDataFileProvider(),
 						TestConstants.webWithExifDataFileProvider())
@@ -28,8 +26,8 @@ class PhotoMetadataReaderTest {
 	@MethodSource("photosWithExifDataFileProvider")
 	void shouldReturnExistingPhotoMetadata(Path photoPath) throws Exception {
 		// given
-		var photoMetadata = photoMetadataReader.readPhotoMetadata(photoPath);
-		log.info("metaData : {}", photoMetadata);
+		var photoMetadata = PhotoMetadataReader.readPhotoMetadata(photoPath);
+		log.info("photoMetadata : {}", photoMetadata);
 
 		// then
 		assertThat(photoMetadata).isNotNull();
@@ -51,8 +49,8 @@ class PhotoMetadataReaderTest {
 	@MethodSource("photosWithoutExifDataFileProvider")
 	void shouldReturnEmptyPhotoMetadata(Path photoPath) throws Exception {
 		// given / when
-		var photoMetadata = photoMetadataReader.readPhotoMetadata(photoPath);
-		log.info("metaData : {}", photoMetadata);
+		var photoMetadata = PhotoMetadataReader.readPhotoMetadata(photoPath);
+		log.info("photoMetadata : {}", photoMetadata);
 
 		// then
 		assertThat(photoMetadata).isNotNull();
@@ -67,9 +65,7 @@ class PhotoMetadataReaderTest {
 
 	@Test
 	void shouldThrowExceptionWhenPhotoMetadataCannotBeRead() {
-		assertThrows(PhotoMetadataException.class, () -> photoMetadataReader.readPhotoMetadata(TestConstants.TestFilePath.resolve("Textfile.txt")));
+		assertThrows(PhotoMetadataReaderException.class, () -> PhotoMetadataReader.readPhotoMetadata(TestConstants.TestFilePath.resolve("Textfile.txt")));
 
 	}
-
-
 }
