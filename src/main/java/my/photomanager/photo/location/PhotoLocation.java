@@ -11,12 +11,14 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import lombok.ToString;
 
 @RequiredArgsConstructor(access = AccessLevel.PUBLIC)
 @NoArgsConstructor(access = AccessLevel.PUBLIC)
 @Getter
 @Entity
 @Table(name = "photolocation", uniqueConstraints = @UniqueConstraint(columnNames = {"country", "city"}))
+@ToString
 public class PhotoLocation {
 
 	@Id
