@@ -25,7 +25,7 @@ public class PhotoMetadataReader {
 	private final static int DEFAULT_WIDTH = 0;
 	private final static int DEFAULT_HEIGHT = 0;
 	private final static String DEFAULT_CAMERA_MODEL = Strings.EMPTY;
-	private final static LocalDate DEFAULT_CREATION_DATE = LocalDate.of(0, 1, 1);
+	private final static LocalDate DEFAULT_CREATION_DATE = LocalDate.of(1800, 1, 1);
 	private final static double DEFAULT_LONGITUDE = 0.0;
 	private final static double DEFAULT_LATITUDE = 0.0;
 
