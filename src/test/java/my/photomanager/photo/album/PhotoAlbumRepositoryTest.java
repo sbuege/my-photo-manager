@@ -18,10 +18,10 @@ class PhotoAlbumRepositoryTest {
 		// given
 		final var photoAlbumName = "TestPhotoAlbum";
 		var photoAlbum1 = new PhotoAlbum(photoAlbumName);
+		var photoAlbum2 = new PhotoAlbum(photoAlbumName);
 		photoAlbumRepository.saveAndFlush(photoAlbum1);
 
-		// when
-		var photoAlbum2 = new PhotoAlbum(photoAlbumName);
+		// when / then
 		assertThrows(DataIntegrityViolationException.class, () -> photoAlbumRepository.saveAndFlush(photoAlbum2));
 	}
 }

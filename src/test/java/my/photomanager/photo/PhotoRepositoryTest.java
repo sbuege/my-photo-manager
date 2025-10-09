@@ -25,14 +25,14 @@ class PhotoRepositoryTest {
 				.withHashValue(photoHashValue)
 				.withCreationDate(photoCreationDate)
 				.build();
-		photoRepository.saveAndFlush(photo1);
-
-		// when / then
 		var photo2 = Photo.builder()
 				.withFileName(photoFileName)
 				.withHashValue(photoHashValue)
 				.withCreationDate(photoCreationDate)
 				.build();
+		photoRepository.saveAndFlush(photo1);
+
+		// when / then
 		assertThrows(DataIntegrityViolationException.class, () -> photoRepository.saveAndFlush(photo2));
 	}
 }

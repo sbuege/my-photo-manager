@@ -19,10 +19,10 @@ class PhotoLocationRepositoryTest {
 		final var photoLocationCountry = "TestPhotoCountry";
 		final var photoLocationCity = "TestPhotoCity";
 		var photoLocation1 = new PhotoLocation(photoLocationCountry, photoLocationCity);
+		var photoLocation2 = new PhotoLocation(photoLocationCountry, photoLocationCity);
 		photoLocationRepository.saveAndFlush(photoLocation1);
 
-		// when
-		var photoLocation2 = new PhotoLocation(photoLocationCountry, photoLocationCity);
+		// when / then
 		assertThrows(DataIntegrityViolationException.class, () -> photoLocationRepository.saveAndFlush(photoLocation2));
 	}
 }
