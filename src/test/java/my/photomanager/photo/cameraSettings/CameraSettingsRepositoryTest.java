@@ -18,10 +18,10 @@ class CameraSettingsRepositoryTest {
 		// given
 		final var cameraModelName = "TestCameraModel";
 		var cameraSettings1 = new CameraSettings(cameraModelName);
+		var cameraSettings2 = new CameraSettings(cameraModelName);
 		cameraSettingsRepository.saveAndFlush(cameraSettings1);
 
-		// when
-		var cameraSettings2 = new CameraSettings(cameraModelName);
+		// when / then
 		assertThrows(DataIntegrityViolationException.class, () -> cameraSettingsRepository.saveAndFlush(cameraSettings2));
 	}
 }

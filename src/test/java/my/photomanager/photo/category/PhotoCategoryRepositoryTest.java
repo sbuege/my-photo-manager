@@ -18,10 +18,10 @@ class PhotoCategoryRepositoryTest {
 		// given
 		final var photoCategoryName = "TestPhotoCategory";
 		var photoCategory1 = new PhotoCategory(photoCategoryName);
+		var photoCategory2 = new PhotoCategory(photoCategoryName);
 		photoCategoryRepository.saveAndFlush(photoCategory1);
 
-		// when
-		var photoCategory2 = new PhotoCategory(photoCategoryName);
+		// when / then
 		assertThrows(DataIntegrityViolationException.class, () -> photoCategoryRepository.saveAndFlush(photoCategory2));
 	}
 }

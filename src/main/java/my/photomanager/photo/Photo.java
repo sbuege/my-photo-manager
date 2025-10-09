@@ -14,6 +14,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
+import lombok.ToString;
 import my.photomanager.photo.cameraSettings.CameraSettings;
 import my.photomanager.photo.location.PhotoLocation;
 
@@ -23,6 +24,7 @@ import my.photomanager.photo.location.PhotoLocation;
 @Getter
 @Entity
 @Table(name = "photo")
+@ToString
 public class Photo {
 
 	@Id
@@ -43,6 +45,7 @@ public class Photo {
 	private int width;
 
 	@NonNull
+	@Column(name = "creationDate", columnDefinition = "DATE")
 	private LocalDate creationDate;
 
 	@ManyToOne(fetch = FetchType.EAGER)

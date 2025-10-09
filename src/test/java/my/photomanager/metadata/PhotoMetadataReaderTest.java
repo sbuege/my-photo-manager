@@ -25,7 +25,7 @@ class PhotoMetadataReaderTest {
 	@ParameterizedTest
 	@MethodSource("photosWithExifDataFileProvider")
 	void shouldReturnExistingPhotoMetadata(Path photoPath) throws Exception {
-		// given
+		// when
 		var photoMetadata = PhotoMetadataReader.readPhotoMetadata(photoPath);
 		log.info("photoMetadata : {}", photoMetadata);
 
@@ -48,7 +48,7 @@ class PhotoMetadataReaderTest {
 	@ParameterizedTest
 	@MethodSource("photosWithoutExifDataFileProvider")
 	void shouldReturnEmptyPhotoMetadata(Path photoPath) throws Exception {
-		// given / when
+		// when
 		var photoMetadata = PhotoMetadataReader.readPhotoMetadata(photoPath);
 		log.info("photoMetadata : {}", photoMetadata);
 
@@ -56,7 +56,7 @@ class PhotoMetadataReaderTest {
 		assertThat(photoMetadata).isNotNull();
 		assertThat(photoMetadata.photoHeight()).isEqualTo(768);
 		assertThat(photoMetadata.photoWidth()).isEqualTo(1024);
-		assertThat(photoMetadata.creationDate()).isEqualTo(LocalDate.of(0, 1, 1));
+		assertThat(photoMetadata.creationDate()).isEqualTo(LocalDate.of(1800, 1, 1));
 		assertThat(photoMetadata.gpsLongitude()).isEqualTo(0.0d);
 		assertThat(photoMetadata.gpsLatitude()).isEqualTo(0.0d);
 		assertThat(photoMetadata.cameraModel()).isEqualTo(Strings.EMPTY);
@@ -65,7 +65,7 @@ class PhotoMetadataReaderTest {
 
 	@Test
 	void shouldThrowExceptionWhenPhotoMetadataCannotBeRead() {
+		// when / then
 		assertThrows(PhotoMetadataReaderException.class, () -> PhotoMetadataReader.readPhotoMetadata(TestConstants.TestFilePath.resolve("Textfile.txt")));
-
 	}
 }

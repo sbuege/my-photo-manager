@@ -10,7 +10,7 @@ class GeoLocationResolverTest {
 
 	@Test
 	void shouldResolveLongitudeAndLatitude() throws GeoLocationResolverException {
-		// given / when
+		// when
 		var locationInfo = GeoLocationResolver.resolveLongitudeLatitude(13.376194444444446, 52.518680555555555);
 		log.info("location info: {}", locationInfo);
 
