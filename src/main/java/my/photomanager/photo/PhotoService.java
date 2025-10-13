@@ -3,11 +3,11 @@ package my.photomanager.photo;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.time.LocalDate;
 import java.util.Collection;
 import java.util.List;
 import lombok.NonNull;
 import lombok.extern.log4j.Log4j2;
+import my.photomanager.filter.FilterProperties;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
@@ -43,27 +43,12 @@ public class PhotoService {
 				});
 	}
 
-	public Collection<Photo> filterPhotos(LocalDate start, LocalDate end, List<Long> locationIds) {
-		return photoRepository.findAll(Specification.where(containsCreationDateBetween(start, end))
-				.and(containsLocation(locationIds)));
+	public Collection<Photo> filterPhotos(@NonNull FilterProperties filterProperties) {
+		return photoRepository.findAll(Specification.where(containsLocation(filterProperties.locationIds())));
+
 	}
 
-	private static Specification<Photo> containsCreationDateBetween(LocalDate start, LocalDate end) {
-		return (root, query, cb) -> {
-			if (start == null && end == null) {
-				return null;
-			}
-			if (start != null && end != null) {
-				return cb.between(root.get("creationDate"), start, end);
-			}
-			if (start != null) {
-				return cb.greaterThanOrEqualTo(root.get("creationDate"), start);
-			}
-			return cb.lessThanOrEqualTo(root.get("creationDate"), end);
-		};
-	}
-
-	private static Specification<Photo> containsLocation(List<Long> locationIds) {
+	private Specification<Photo> containsLocation(List<Long> locationIds) {
 		return (root, query, cb) -> {
 			if (locationIds == null || locationIds.isEmpty()) {
 				return null;
@@ -73,7 +58,7 @@ public class PhotoService {
 					.in(locationIds);
 
 		};
-
 	}
+
 
 }
