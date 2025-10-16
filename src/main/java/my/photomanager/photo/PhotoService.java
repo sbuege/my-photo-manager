@@ -3,6 +3,7 @@ package my.photomanager.photo;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.time.LocalDate;
 import java.util.Collection;
 import java.util.List;
 import lombok.NonNull;
@@ -44,21 +45,54 @@ public class PhotoService {
 	}
 
 	public Collection<Photo> filterPhotos(@NonNull FilterProperties filterProperties) {
-		return photoRepository.findAll(Specification.where(containsLocation(filterProperties.locationIds())));
+		return photoRepository.findAll(Specification.where(containsLocation(filterProperties.locationCountries(), filterProperties.locationCities()))
+				.and(createdBetween(filterProperties.startDate(), filterProperties.endDate()).and(containsCameraModel(filterProperties.cameraModels()))));
 
 	}
 
-	private Specification<Photo> containsLocation(List<Long> locationIds) {
+	private Specification<Photo> containsLocation(List<String> locationCountries, List<String> locationCities) {
 		return (root, query, cb) -> {
-			if (locationIds == null || locationIds.isEmpty()) {
+			if (locationCountries == null || locationCountries.isEmpty()) {
 				return null;
 			}
-			return root.get("location")
-					.get("id")
-					.in(locationIds);
 
+			if (locationCities == null || locationCities.isEmpty()) {
+				return null;
+			}
+
+			return cb.and(root.get("location")
+					.get("country")
+					.in(locationCountries), root.get("location")
+					.get("city")
+					.in(locationCities));
 		};
 	}
 
+	private Specification<Photo> containsCameraModel(List<String> cameraModels) {
+		return (root, query, cb) -> {
+			if (cameraModels == null || cameraModels.isEmpty()) {
+				return null;
+			}
 
+			return root
+					.get("cameraSettings")
+					.get("cameraModelName")
+					.in(cameraModels);
+		};
+	}
+
+	private Specification<Photo> createdBetween(LocalDate startDate, LocalDate endDate) {
+		return (root, query, cb) -> {
+			if (startDate == null && endDate == null) {
+				return null;
+			}
+			if (startDate != null && endDate != null) {
+				return cb.between(root.get("creationDate"), startDate, endDate);
+			}
+			if (startDate != null) {
+				return cb.equal(root.get("creationDate"), startDate);
+			}
+			return cb.lessThanOrEqualTo(root.get("creationDate"), endDate);
+		};
+	}
 }

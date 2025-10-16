@@ -2,8 +2,9 @@ package my.photomanager.filter;
 
 import java.time.LocalDate;
 import java.util.List;
+import lombok.Builder;
 
-
-public record FilterProperties(List<Long> locationIds, LocalDate startDate, LocalDate endDate) {
+@Builder
+public record FilterProperties(List<String> locationCountries, List<String> locationCities, LocalDate startDate, LocalDate endDate, List<String> cameraModels) {
 
 }
