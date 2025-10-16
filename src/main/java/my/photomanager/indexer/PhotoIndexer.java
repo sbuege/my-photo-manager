@@ -22,7 +22,7 @@ public class PhotoIndexer {
 	private final PhotoBuilder photoBuilder;
 	private final PhotoService photoService;
 
-	private final List<String> PHOTO_EXTENSIONS = List.of("jpg", "jpeg");
+	private final List<String> PHOTO_EXTENSIONS = List.of("jpg", "jpeg", "webp");
 
 	protected PhotoIndexer(PhotoManagerConfiguration configuration, PhotoBuilder photoBuilder, PhotoService photoService) {
 		this.configuration = configuration;
