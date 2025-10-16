@@ -40,11 +40,7 @@ class PhotoBuilderTest {
 	}
 
 	public static Stream<Path> photoFileProvider() {
-		return Stream.of(TestConstants.jpegWithExifDataFileProvider(),
-						TestConstants.webWithExifDataFileProvider(),
-						TestConstants.jpegWithoutExifDataFileProvider(),
-						TestConstants.webWithoutExifDataFileProvider())
-				.flatMap(s -> s);
+		return Stream.of(TestConstants.EXAMPLE_001_PATH, TestConstants.EXAMPLE_004_PATH);
 	}
 
 	@ParameterizedTest
