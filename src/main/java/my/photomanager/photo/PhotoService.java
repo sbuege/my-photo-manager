@@ -1,12 +1,15 @@
 package my.photomanager.photo;
 
+import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.Base64;
 import java.util.Collection;
 import lombok.NonNull;
 import lombok.extern.log4j.Log4j2;
 import my.photomanager.filter.FilterProperties;
+import net.coobird.thumbnailator.Thumbnails;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
@@ -42,6 +45,30 @@ public class PhotoService {
 				});
 	}
 
+	public PhotoDTO getThumbnailDTO(@NonNull Long id) throws IOException, PhotoServiceException {
+		var photo = photoRepository.findById(id)
+				.orElseThrow(() -> new PhotoServiceException("no photo found with id " + id));
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
+
+		Thumbnails.of(Path.of(photo.getFileName())
+						.toFile())
+				.scale(0.25)
+				.toOutputStream(out);
+
+		var base64String = Base64.getEncoder()
+				.encodeToString(out.toByteArray());
+
+		return new PhotoDTO(id, base64String);
+	}
+
+	/**
+	 * Filters photos from the repository based on the provided {@link FilterProperties}.
+	 * It returns a collection of photo IDs that match all specified filters.
+	 *
+	 * @param filterProperties an object containing filtering parameters such as location,
+	 *                         date range, and camera model
+	 * @return a collection of photo IDs matching the applied filters;
+	 */
 	public Collection<Long> filterPhotos(@NonNull FilterProperties filterProperties) {
 		var photos = photoRepository.findAll(Specification.where(containsLocation(filterProperties))
 				.and(createdBetween(filterProperties).and(containsCameraModel(filterProperties))));
