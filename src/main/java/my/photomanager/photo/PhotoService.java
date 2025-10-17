@@ -3,9 +3,7 @@ package my.photomanager.photo;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.time.LocalDate;
 import java.util.Collection;
-import java.util.List;
 import lombok.NonNull;
 import lombok.extern.log4j.Log4j2;
 import my.photomanager.filter.FilterProperties;
@@ -44,13 +42,19 @@ public class PhotoService {
 				});
 	}
 
-	public Collection<Photo> filterPhotos(@NonNull FilterProperties filterProperties) {
-		return photoRepository.findAll(Specification.where(containsLocation(filterProperties.locationCountries(), filterProperties.locationCities()))
-				.and(createdBetween(filterProperties.startDate(), filterProperties.endDate()).and(containsCameraModel(filterProperties.cameraModels()))));
+	public Collection<Long> filterPhotos(@NonNull FilterProperties filterProperties) {
+		var photos = photoRepository.findAll(Specification.where(containsLocation(filterProperties))
+				.and(createdBetween(filterProperties).and(containsCameraModel(filterProperties))));
 
+		return photos.stream()
+				.map(Photo::getId)
+				.toList();
 	}
 
-	private Specification<Photo> containsLocation(List<String> locationCountries, List<String> locationCities) {
+	private Specification<Photo> containsLocation(@NonNull FilterProperties filterProperties) {
+		var locationCountries = filterProperties.locationCountries();
+		var locationCities = filterProperties.locationCities();
+
 		return (root, query, cb) -> {
 			if (locationCountries == null || locationCountries.isEmpty()) {
 				return null;
@@ -68,7 +72,9 @@ public class PhotoService {
 		};
 	}
 
-	private Specification<Photo> containsCameraModel(List<String> cameraModels) {
+	private Specification<Photo> containsCameraModel(@NonNull FilterProperties filterProperties) {
+		var cameraModels = filterProperties.cameraModels();
+
 		return (root, query, cb) -> {
 			if (cameraModels == null || cameraModels.isEmpty()) {
 				return null;
@@ -81,7 +87,10 @@ public class PhotoService {
 		};
 	}
 
-	private Specification<Photo> createdBetween(LocalDate startDate, LocalDate endDate) {
+	private Specification<Photo> createdBetween(@NonNull FilterProperties filterProperties) {
+		var startDate = filterProperties.startDate();
+		var endDate = filterProperties.endDate();
+
 		return (root, query, cb) -> {
 			if (startDate == null && endDate == null) {
 				return null;

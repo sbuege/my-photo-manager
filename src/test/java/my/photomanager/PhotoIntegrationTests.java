@@ -36,10 +36,6 @@ import my.photomanager.indexer.PhotoIndexer;
 import my.photomanager.photo.Photo;
 import my.photomanager.photo.PhotoRepository;
 import my.photomanager.photo.PhotoService;
-import my.photomanager.photo.album.PhotoAlbumRepository;
-import my.photomanager.photo.cameraSettings.CameraSettingsService;
-import my.photomanager.photo.location.PhotoLocationRepository;
-import my.photomanager.photo.location.PhotoLocationService;
 import org.assertj.core.groups.Tuple;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.BeforeEach;
@@ -67,18 +63,6 @@ class PhotoIntegrationTests {
 
 	@Autowired
 	private PhotoRepository photoRepository;
-
-	@Autowired
-	private PhotoLocationService locationService;
-
-	@Autowired
-	private PhotoLocationRepository photoLocationRepository;
-
-	@Autowired
-	private CameraSettingsService cameraSettingsService;
-
-	@Autowired
-	private PhotoAlbumRepository photoAlbumRepository;
 
 	@BeforeEach
 	void setUp() {
@@ -191,17 +175,21 @@ class PhotoIntegrationTests {
 	@MethodSource("testDataProvider")
 	void shouldFilterPhotos(FilterProperties filterProperties, List<Tuple> expected) {
 		// when
-		var photos = photoService.filterPhotos(filterProperties);
+		var photoIDs = photoService.filterPhotos(filterProperties);
+		var photos = photoRepository.findAll()
+				.stream()
+				.filter(photo -> photoIDs.contains(photo.getId()))
+				.toList();
 
 		// then
-		assertThat(photos).extracting(
-						Photo::getCreationDate,
+		assertThat(photos).extracting(Photo::getCreationDate,
 						p -> p.getLocation()
 								.getCountry(),
 						p -> p.getLocation()
 								.getCity(),
 						p -> p.getCameraSettings()
-								.getCameraModelName())
+								.getCameraModelName()
+				)
 				.containsExactlyInAnyOrderElementsOf(expected);
 
 	}
