@@ -38,7 +38,7 @@ public class PhotoController {
 	}
 
 	@GetMapping("/{id}/thumbnail")
-	protected ResponseEntity<byte[]> getPhotoById(@PathVariable long id) throws PhotoServiceException, IOException {
+	protected ResponseEntity<byte[]> getPhotoThumbnail(@PathVariable long id) throws PhotoServiceException, IOException {
 		log.info("get photo thumbnail by id {}", id);
 
 		return ResponseEntity.ok()
