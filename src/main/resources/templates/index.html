@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>My Photo Album</title>
+	<script src="https://cdn.tailwindcss.com"></script>
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/lipis/flag-icons@7.3.2/css/flag-icons.min.css"/>
+	<script>
+		tailwind.config = {
+			darkMode: 'class',
+		}
+
+		function toggleDarkMode() {
+			const icon = document.getElementById("theme-icon");
+			const html = document.documentElement;
+
+			html.classList.toggle("dark");
+
+			if (html.classList.contains("dark")) {
+				icon.classList.remove("fa-moon");
+				icon.classList.add("fa-sun");
+			} else {
+				icon.classList.remove("fa-sun");
+				icon.classList.add("fa-moon");
+			}
+
+		}
+	</script>
+
+</head>
+
+<body class="bg-neutral-100 dark:bg-slate-700">
+
+<header class="p-2 flex flex-row justify-end">
+	<button onclick="toggleDarkMode()"
+			class="flex items-center gap-2 px-4 py-2 rounded-full text-blue-400  dark:text-orange-300 shadow hover:scale-105 transition-all duration-300">
+		<i id="theme-icon" class="fas fa-moon"></i>
+	</button>
+</header>
+
+<div class="flex flex-row">
+
+	<main class="pl-2 mr-2 flex-1">
+		<div class="columns-1 sm:columns-2 md:columns-3 lg:columns-6  gap-2 space-y-2">
+			<th:block th:each="id : ${photoIDs}">
+
+
+				<img class="rounded-xl border border-gray-400" th:src="@{'/photos/' + ${id} + '/thumbnail'}" loading="lazy" alt="">
+
+
+			</th:block>
+		</div>
+	</main>
+
+</div>
+
+</body>
+</html>
