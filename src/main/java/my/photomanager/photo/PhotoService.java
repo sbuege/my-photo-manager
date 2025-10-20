@@ -45,7 +45,7 @@ public class PhotoService {
 				});
 	}
 
-	public PhotoDTO getThumbnailDTO(@NonNull Long id) throws IOException, PhotoServiceException {
+	public byte[] getThumbnail(@NonNull Long id) throws IOException, PhotoServiceException {
 		var photo = photoRepository.findById(id)
 				.orElseThrow(() -> new PhotoServiceException("no photo found with id " + id));
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -58,7 +58,7 @@ public class PhotoService {
 		var base64String = Base64.getEncoder()
 				.encodeToString(out.toByteArray());
 
-		return new PhotoDTO(id, base64String);
+		return out.toByteArray();
 	}
 
 	/**
