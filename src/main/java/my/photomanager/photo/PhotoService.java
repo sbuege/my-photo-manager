@@ -1,14 +1,15 @@
 package my.photomanager.photo;
 
+import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.time.LocalDate;
+import java.util.Base64;
 import java.util.Collection;
-import java.util.List;
 import lombok.NonNull;
 import lombok.extern.log4j.Log4j2;
 import my.photomanager.filter.FilterProperties;
+import net.coobird.thumbnailator.Thumbnails;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
@@ -44,13 +45,43 @@ public class PhotoService {
 				});
 	}
 
-	public Collection<Photo> filterPhotos(@NonNull FilterProperties filterProperties) {
-		return photoRepository.findAll(Specification.where(containsLocation(filterProperties.locationCountries(), filterProperties.locationCities()))
-				.and(createdBetween(filterProperties.startDate(), filterProperties.endDate()).and(containsCameraModel(filterProperties.cameraModels()))));
+	public byte[] getThumbnail(@NonNull Long id) throws IOException, PhotoServiceException {
+		var photo = photoRepository.findById(id)
+				.orElseThrow(() -> new PhotoServiceException("no photo found with id " + id));
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
 
+		Thumbnails.of(Path.of(photo.getFileName())
+						.toFile())
+				.scale(0.25)
+				.toOutputStream(out);
+
+		var base64String = Base64.getEncoder()
+				.encodeToString(out.toByteArray());
+
+		return out.toByteArray();
 	}
 
-	private Specification<Photo> containsLocation(List<String> locationCountries, List<String> locationCities) {
+	/**
+	 * Filters photos from the repository based on the provided {@link FilterProperties}.
+	 * It returns a collection of photo IDs that match all specified filters.
+	 *
+	 * @param filterProperties an object containing filtering parameters such as location,
+	 *                         date range, and camera model
+	 * @return a collection of photo IDs matching the applied filters;
+	 */
+	public Collection<Long> filterPhotos(@NonNull FilterProperties filterProperties) {
+		var photos = photoRepository.findAll(Specification.where(containsLocation(filterProperties))
+				.and(createdBetween(filterProperties).and(containsCameraModel(filterProperties))));
+
+		return photos.stream()
+				.map(Photo::getId)
+				.toList();
+	}
+
+	private Specification<Photo> containsLocation(@NonNull FilterProperties filterProperties) {
+		var locationCountries = filterProperties.locationCountries();
+		var locationCities = filterProperties.locationCities();
+
 		return (root, query, cb) -> {
 			if (locationCountries == null || locationCountries.isEmpty()) {
 				return null;
@@ -68,7 +99,9 @@ public class PhotoService {
 		};
 	}
 
-	private Specification<Photo> containsCameraModel(List<String> cameraModels) {
+	private Specification<Photo> containsCameraModel(@NonNull FilterProperties filterProperties) {
+		var cameraModels = filterProperties.cameraModels();
+
 		return (root, query, cb) -> {
 			if (cameraModels == null || cameraModels.isEmpty()) {
 				return null;
@@ -81,7 +114,10 @@ public class PhotoService {
 		};
 	}
 
-	private Specification<Photo> createdBetween(LocalDate startDate, LocalDate endDate) {
+	private Specification<Photo> createdBetween(@NonNull FilterProperties filterProperties) {
+		var startDate = filterProperties.startDate();
+		var endDate = filterProperties.endDate();
+
 		return (root, query, cb) -> {
 			if (startDate == null && endDate == null) {
 				return null;
