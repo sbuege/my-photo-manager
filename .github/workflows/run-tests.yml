@@ -1,4 +1,4 @@
-name: run tests and coverage verification
+name: run tests and check coverage verification
 
 on:
   push:
