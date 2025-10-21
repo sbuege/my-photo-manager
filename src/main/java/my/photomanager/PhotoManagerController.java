@@ -16,11 +16,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Controller
 @RequestMapping({"/photos",})
 @Log4j2
-public class PhotoController {
+public class PhotoManagerController {
 
 	private final PhotoService photoService;
 
-	protected PhotoController(PhotoService photoService) {
+	protected PhotoManagerController(PhotoService photoService) {
 		this.photoService = photoService;
 	}
 
