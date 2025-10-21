@@ -1,0 +1,35 @@
+name: run tests and coverage verification
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: checkout code
+        uses: actions/checkout@v3
+
+      - name: set up JDK 21
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'zulu'
+          java-version: '21'
+
+      - name: make gradle executable
+        run: chmod +x ./gradlew
+
+      - name: run tests
+        run: ./gradlew check
+
+      - name: upload test reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results
+          path: | 
+            build/test-results/
+            build/reports/jacoco/test/html
+
