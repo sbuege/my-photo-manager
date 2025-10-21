@@ -29,14 +29,12 @@ public class PhotoService {
 	}
 
 	/**
-	 * Saves the given {@link Photo} if no photo with the same hash value exists,
-	 * or returns the existing one.
+	 * Saves the given {@link Photo} if no photo with the same hash value exists
 	 *
 	 * @param photo the {@link Photo} to save or retrieve
-	 * @return the existing or newly saved {@link Photo}
 	 */
-	public Photo saveOrGetPhoto(@NonNull Photo photo) {
-		return photoRepository.findByHashValue(photo.getHashValue())
+	public void saveIfPhotoNotExists(@NonNull Photo photo) {
+		photoRepository.findByHashValue(photo.getHashValue())
 				.orElseGet(() -> {
 					var savedPhoto = photoRepository.saveAndFlush(photo);
 					log.info("saved photo with filename successfully", photo.getFileName());

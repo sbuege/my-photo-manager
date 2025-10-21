@@ -43,7 +43,7 @@ public class PhotoIndexer {
 						try {
 							if (!photoService.existsPhotoByHashValue(path)) {
 								var photo = photoBuilder.buildPhoto(path);
-								photoService.saveOrGetPhoto(photo);
+								photoService.saveIfPhotoNotExists(photo);
 							}
 						} catch (PhotoMetadataReaderException | GeoLocationResolverException | IOException e) {
 							throw new RuntimeException(e);

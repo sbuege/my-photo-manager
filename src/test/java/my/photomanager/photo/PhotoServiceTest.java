@@ -39,14 +39,14 @@ class PhotoServiceTest {
 		when(photoRepository.findByHashValue(photoHashValue)).thenReturn(Optional.empty());
 
 		// when
-		photoService.saveOrGetPhoto(photo);
+		photoService.saveIfPhotoNotExists(photo);
 
 		// then
 		verify(photoRepository).saveAndFlush(photo);
 	}
 
 	@Test
-	void shouldReturnExistingPhotoWhenAlreadyExists() {
+	void shouldNotSavePhotoWhenExistingAlready() {
 		// given
 		final var photoHashValue = "TestPhotoHashValue";
 		final var photoFileName = "TestPhotoFileName";
@@ -59,7 +59,7 @@ class PhotoServiceTest {
 		when(photoRepository.findByHashValue(photoHashValue)).thenReturn(Optional.of(photo));
 
 		// when
-		photoService.saveOrGetPhoto(photo);
+		photoService.saveIfPhotoNotExists(photo);
 
 		// then
 		verify(photoRepository, never()).saveAndFlush(photo);
