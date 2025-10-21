@@ -21,6 +21,11 @@ jobs:
       - name: make gradle executable
         run: chmod +x ./gradlew
 
+      - name: Get project version from Gradle
+        id: get_version
+        run: |
+          VERSION=$(./gradlew properties -q | grep "version:" | awk '{print $2}')
+
       - name: build JAR with gradle
         run: ./gradlew check bootJar --no-daemon
         
@@ -39,4 +44,6 @@ jobs:
         with:
           context: .
           push: true
-          tags: 8u363/my-photo-manager:latest
+          tags: |
+            8u363/my-photo-manager:${{ steps.get_version.outputs.version }}
+            8u363/my-photo-manager:latest
