@@ -1,10 +1,11 @@
 services:
 
-  photo-manager:
+  my-photo-manager:
     image: 8u363/my-photo-manager:latest
     environment:
-      - photo.sourceFolder=/test-photos
+      - photo.sourceFolder=${CONTAINER_PHOTO_FOLDER}
     volumes:
-      - ./test-photos:/test-photos
+      - ${HOST_PHOTO_FOLDER}:${CONTAINER_PHOTO_FOLDER}
     ports:
       - "8080:8080"
+
