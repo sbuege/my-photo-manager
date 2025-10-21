@@ -26,9 +26,12 @@ jobs:
         run: |
           VERSION=$(./gradlew properties -q | grep "version:" | awk '{print $2}')
 
+      - name: Log version
+        run: echo "Building Docker image with version: ${{ steps.get_version.outputs.version }}"
+
       - name: build JAR with gradle
         run: ./gradlew check bootJar --no-daemon
-        
+
       - name: build docker image
         run: |
             docker build -t my-photo-manager:latest .
