@@ -1,5 +1,6 @@
 package my.photomanager.photo.category;
 
+import java.util.Collection;
 import lombok.NonNull;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
@@ -29,5 +30,17 @@ public class PhotoCategoryService {
 
 					return savedPhotoCategory;
 				});
+	}
+
+	/**
+	 * Retrieves all photo categories from the repository and converts them into {@link PhotoCategoryDTO} objects.
+	 *
+	 * @return a collection of {@link PhotoCategoryDTO} representing all stored photo categories.
+	 */
+	public Collection<PhotoCategoryDTO> getPhotoCategoryDTOs() {
+		return photoCategoryRepository.findAll()
+				.stream()
+				.map(category -> new PhotoCategoryDTO(category.getId(), category.getName()))
+				.toList();
 	}
 }
