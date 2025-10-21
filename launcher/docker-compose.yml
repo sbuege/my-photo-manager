@@ -1,0 +1,10 @@
+services:
+
+  photo-manager:
+    image: 8u363/my-photo-manager:latest
+    environment:
+      - photo.sourceFolder=/test-photos
+    volumes:
+      - ./test-photos:/test-photos
+    ports:
+      - "8080:8080"
