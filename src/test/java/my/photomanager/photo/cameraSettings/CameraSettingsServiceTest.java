@@ -51,4 +51,13 @@ class CameraSettingsServiceTest {
 		// then
 		verify(cameraSettingsRepository, never()).saveAndFlush(cameraSettings);
 	}
+
+	@Test
+	void shouldReturnPhotoCameraSettingDTOs() {
+		// when
+		cameraSettingsService.getCameraSettingsDTOs();
+
+		// then
+		verify(cameraSettingsRepository).findAll();
+	}
 }

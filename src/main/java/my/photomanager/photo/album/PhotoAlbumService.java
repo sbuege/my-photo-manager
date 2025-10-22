@@ -1,5 +1,6 @@
 package my.photomanager.photo.album;
 
+import java.util.Collection;
 import lombok.NonNull;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
@@ -29,5 +30,17 @@ public class PhotoAlbumService {
 
 					return savedPhotoAlum;
 				});
+	}
+
+	/**
+	 * Retrieves all photo albums from the repository and converts them into {@link PhotoAlbumDTO} objects.
+	 *
+	 * @return a collection of {@link PhotoAlbumDTO} representing all stored photo albums.
+	 */
+	public Collection<PhotoAlbumDTO> getPhotoAlbumDTOs() {
+		return photoAlbumRepository.findAll()
+				.stream()
+				.map(album -> new PhotoAlbumDTO(album.getId(), album.getName()))
+				.toList();
 	}
 }
