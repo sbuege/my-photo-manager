@@ -53,4 +53,13 @@ class PhotoLocationServiceTest {
 		// then
 		verify(photoLocationRepository, never()).saveAndFlush(photoLocation);
 	}
+
+	@Test
+	void shouldReturnPhotoLocationDTOs() {
+		// when
+		photoLocationService.getPhotoLocationDTOs();
+
+		// then
+		verify(photoLocationRepository).findAll();
+	}
 }

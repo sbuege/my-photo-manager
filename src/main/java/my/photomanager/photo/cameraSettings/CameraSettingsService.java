@@ -1,5 +1,6 @@
 package my.photomanager.photo.cameraSettings;
 
+import java.util.Collection;
 import lombok.NonNull;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
@@ -30,4 +31,13 @@ public class CameraSettingsService {
 					return savedCameraSettings;
 				});
 	}
+
+	public Collection<CameraSettingsDTO> getCameraSettingsDTOs() {
+		return cameraSettingsRepository.findAll()
+				.stream()
+				.map(cameraSettings -> new CameraSettingsDTO(cameraSettings.getId(), cameraSettings.getCameraModelName()))
+				.toList();
+	}
+
+
 }
