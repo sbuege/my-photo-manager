@@ -51,13 +51,4 @@ class PhotoCategoryServiceTest {
 		// then
 		verify(photoCategoryRepository, never()).saveAndFlush(photoCategory);
 	}
-
-	@Test
-	void shouldReturnPhotoCategorySettingDTOs() {
-		// when
-		photoCategoryService.getPhotoCategoryDTOs();
-
-		// then
-		verify(photoCategoryRepository).findAll();
-	}
 }

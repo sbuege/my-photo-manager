@@ -52,13 +52,4 @@ class PhotoAlbumServiceTest {
 		// then
 		verify(photoAlbumRepository, never()).saveAndFlush(photoAlbum);
 	}
-
-	@Test
-	void shouldReturnPhotoAlbumDTOs() {
-		// when
-		photoAlbumService.getPhotoAlbumDTOs();
-
-		// then
-		verify(photoAlbumRepository).findAll();
-	}
 }

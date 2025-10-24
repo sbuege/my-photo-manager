@@ -1,6 +1,5 @@
 package my.photomanager.photo.location;
 
-import java.util.Collection;
 import lombok.NonNull;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
@@ -30,17 +29,5 @@ public class PhotoLocationService {
 
 					return savedPhotoLocation;
 				});
-	}
-
-	/**
-	 * Retrieves all photo locations from the repository and converts them into {@link PhotoLocationDTO} objects.
-	 *
-	 * @return a collection of {@link PhotoLocationDTO} representing all stored photo locations.
-	 */
-	public Collection<PhotoLocationDTO> getPhotoLocationDTOs() {
-		return photoLocationRepository.findAll()
-				.stream()
-				.map(location -> new PhotoLocationDTO(location.getId(), location.getCountry(), location.getCity()))
-				.toList();
 	}
 }
