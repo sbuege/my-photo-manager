@@ -33,6 +33,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.nio.file.Path;
 import java.time.LocalDate;
+import java.util.Optional;
 import java.util.stream.Stream;
 import lombok.extern.log4j.Log4j2;
 import my.photomanager.TestConstants;
@@ -46,27 +47,34 @@ class PhotoMetadataReaderTest {
 
 	static Stream<Arguments> testDataProvider() {
 		return Stream.of(
-				Arguments.of(EXAMPLE_001_PATH, EXAMPLE_001_HEIGHT, EXAMPLE_001_WIDTH, EXAMPLE_001_CREATION_DATE, EXAMPLE_001_LONGITUDE, EXAMPLE_001_LATITUDE,
-						EXAMPLE_001_CAMERA_MODEL),
-				Arguments.of(EXAMPLE_002_PATH, EXAMPLE_002_HEIGHT, EXAMPLE_002_WIDTH, EXAMPLE_002_CREATION_DATE, EXAMPLE_002_LONGITUDE, EXAMPLE_002_LATITUDE,
-						EXAMPLE_002_CAMERA_MODEL),
-				Arguments.of(EXAMPLE_003_PATH, EXAMPLE_003_HEIGHT, EXAMPLE_003_WIDTH, EXAMPLE_003_CREATION_DATE, EXAMPLE_003_LONGITUDE, EXAMPLE_003_LATITUDE,
-						EXAMPLE_003_CAMERA_MODEL),
-				Arguments.of(EXAMPLE_004_PATH, EXAMPLE_004_HEIGHT, EXAMPLE_004_WIDTH, EXAMPLE_004_CREATION_DATE, EXAMPLE_004_LONGITUDE, EXAMPLE_004_LATITUDE,
-						EXAMPLE_004_CAMERA_MODEL)
+				Arguments.of(EXAMPLE_001_PATH, Optional.ofNullable(EXAMPLE_001_HEIGHT), Optional.ofNullable(EXAMPLE_001_WIDTH),
+						Optional.ofNullable(EXAMPLE_001_CREATION_DATE), Optional.ofNullable(EXAMPLE_001_LONGITUDE), Optional.ofNullable(EXAMPLE_001_LATITUDE),
+						Optional.ofNullable(EXAMPLE_001_CAMERA_MODEL)),
+				Arguments.of(EXAMPLE_002_PATH, Optional.ofNullable(EXAMPLE_002_HEIGHT), Optional.ofNullable(EXAMPLE_002_WIDTH),
+						Optional.ofNullable(EXAMPLE_002_CREATION_DATE), Optional.ofNullable(EXAMPLE_002_LONGITUDE), Optional.ofNullable(EXAMPLE_002_LATITUDE),
+						Optional.ofNullable(EXAMPLE_002_CAMERA_MODEL)),
+				Arguments.of(EXAMPLE_003_PATH, Optional.ofNullable(EXAMPLE_003_HEIGHT), Optional.ofNullable(EXAMPLE_003_WIDTH),
+						Optional.ofNullable(EXAMPLE_003_CREATION_DATE), Optional.ofNullable(EXAMPLE_003_LONGITUDE), Optional.ofNullable(EXAMPLE_003_LATITUDE),
+						Optional.ofNullable(EXAMPLE_003_CAMERA_MODEL)),
+				Arguments.of(EXAMPLE_004_PATH, Optional.ofNullable(EXAMPLE_004_HEIGHT), Optional.ofNullable(EXAMPLE_004_WIDTH),
+						Optional.ofNullable(EXAMPLE_004_CREATION_DATE),
+						Optional.ofNullable(EXAMPLE_004_LONGITUDE), Optional.ofNullable(EXAMPLE_004_LATITUDE),
+						Optional.ofNullable(EXAMPLE_004_CAMERA_MODEL))
 		);
 	}
 
 	@ParameterizedTest
 	@MethodSource("testDataProvider")
-	void shouldReturnExistingPhotoMetadata(Path photoPath, int photoHeight, int photoWidth, LocalDate creationDate, double longitude, double latitude,
-			String cameraModel) throws Exception {
+	void shouldReturnExistingPhotoMetadata(Path photoPath, Optional<Integer> photoHeight, Optional<Integer> photoWidth, Optional<LocalDate> creationDate,
+			Optional<Double> longitude, Optional<Double> latitude,
+			Optional<String> cameraModel) throws Exception {
 		// when
 		var photoMetadata = PhotoMetadataReader.readPhotoMetadata(photoPath);
 		log.info("photoMetadata : {}", photoMetadata);
 
 		// then
 		assertThat(photoMetadata).isNotNull();
+
 		assertThat(photoMetadata.photoHeight()).isEqualTo(photoHeight);
 		assertThat(photoMetadata.photoWidth()).isEqualTo(photoWidth);
 		assertThat(photoMetadata.creationDate()).isEqualTo(creationDate);
