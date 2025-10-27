@@ -18,7 +18,7 @@ import lombok.ToString;
 import my.photomanager.photo.cameraSettings.CameraSettings;
 import my.photomanager.photo.location.PhotoLocation;
 
-@Builder(setterPrefix = "with")
+@Builder(setterPrefix = "with", toBuilder = true)
 @AllArgsConstructor(access = AccessLevel.PUBLIC)
 @NoArgsConstructor(access = AccessLevel.PUBLIC)
 @Getter
@@ -44,7 +44,6 @@ public class Photo {
 
 	private int width;
 
-	@NonNull
 	@Column(name = "creationDate", columnDefinition = "DATE")
 	private LocalDate creationDate;
 
