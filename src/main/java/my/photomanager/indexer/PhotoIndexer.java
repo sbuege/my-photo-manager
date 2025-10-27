@@ -1,6 +1,5 @@
 package my.photomanager.indexer;
 
-import jakarta.annotation.PostConstruct;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -12,6 +11,7 @@ import my.photomanager.geoLocationResolver.GeoLocationResolverException;
 import my.photomanager.metadata.PhotoMetadataReaderException;
 import my.photomanager.photo.PhotoBuilder;
 import my.photomanager.photo.PhotoService;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -30,7 +30,7 @@ public class PhotoIndexer {
 		this.photoService = photoService;
 	}
 
-	@PostConstruct
+	@Async
 	public void indexPhotos() {
 		var photoSourceFolder = Path.of(configuration.getPhotoSourceFolder());
 		log.info("indexing photos from {}", photoSourceFolder);
