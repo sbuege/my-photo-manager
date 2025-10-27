@@ -70,9 +70,6 @@ class PhotoIntegrationTests {
 		Awaitility.await()
 				.atMost(5, TimeUnit.SECONDS)
 				.until(() -> photoRepository.count() == 4);
-
-		photoRepository.findAll()
-				.forEach(System.out::println);
 	}
 
 	@Test
@@ -84,12 +81,13 @@ class PhotoIntegrationTests {
 		assertThat(photos).extracting(Photo::getHeight,
 						Photo::getWidth,
 						Photo::getCreationDate,
-						p -> p.getLocation()
-								.getCountry(),
-						p -> p.getLocation()
-								.getCity(),
-						p -> p.getCameraSettings()
-								.getCameraModelName()
+						p -> p.getLocation() != null ? p.getLocation()
+								.getCountry() : null,
+						p -> p.getLocation() != null ? p.getLocation()
+								.getCity() : null,
+						p -> p.getCameraSettings() != null ? p.getCameraSettings()
+								.getCameraModelName() : null
+
 				)
 				.containsExactlyInAnyOrder(
 						tuple(EXAMPLE_001_HEIGHT, EXAMPLE_001_WIDTH, EXAMPLE_001_CREATION_DATE, EXAMPLE_001_COUNTRY, EXAMPLE_001_CITY,
@@ -100,6 +98,8 @@ class PhotoIntegrationTests {
 								EXAMPLE_003_CAMERA_MODEL),
 						tuple(EXAMPLE_004_HEIGHT, EXAMPLE_004_WIDTH, EXAMPLE_004_CREATION_DATE, EXAMPLE_004_COUNTRY, EXAMPLE_004_CITY,
 								EXAMPLE_004_CAMERA_MODEL));
+
+
 	}
 
 	static Stream<Arguments> testDataProvider() {
@@ -183,12 +183,12 @@ class PhotoIntegrationTests {
 
 		// then
 		assertThat(photos).extracting(Photo::getCreationDate,
-						p -> p.getLocation()
-								.getCountry(),
-						p -> p.getLocation()
-								.getCity(),
-						p -> p.getCameraSettings()
-								.getCameraModelName()
+						p -> p.getLocation() != null ? p.getLocation()
+								.getCountry() : null,
+						p -> p.getLocation() != null ? p.getLocation()
+								.getCity() : null,
+						p -> p.getCameraSettings() != null ? p.getCameraSettings()
+								.getCameraModelName() : null
 				)
 				.containsExactlyInAnyOrderElementsOf(expected);
 

@@ -41,24 +41,56 @@ public class PhotoBuilder {
 
 		var photoMetadata = PhotoMetadataReader.readPhotoMetadata(photoPath);
 
-		var locationInfo = GeoLocationResolver.resolveLongitudeLatitude(photoMetadata.gpsLongitude(), photoMetadata.gpsLatitude());
-		var photoLocation = new PhotoLocation(locationInfo.country(), locationInfo.city());
-		photoLocation = photoLocationService.saveOrGetPhotoLocation(photoLocation);
-
-		var cameraSettings = new CameraSettings(photoMetadata.cameraModel());
-		cameraSettings = cameraSettingsService.saveOrGetCameraSettings(cameraSettings);
-
 		var hashValue = DigestUtils.md5DigestAsHex(new FileInputStream(photoPath.toFile()));
 		var photo = Photo.builder()
+				// TODO throw exception if hasValue  == null or empty
 				.withHashValue(hashValue)
+				// TODO throw exception if filename  == null or empty
 				.withFileName(photoPath.toAbsolutePath()
 						.toString())
-				.withHeight(photoMetadata.photoHeight())
-				.withWidth(photoMetadata.photoWidth())
-				.withCreationDate(photoMetadata.creationDate())
-				.withLocation(photoLocation)
-				.withCameraSettings(cameraSettings)
+				// TODO throw exception if height == 0
+				.withHeight(photoMetadata.photoHeight()
+						.orElse(0))
+				// TODO throw exception if width == 0
+				.withWidth(photoMetadata.photoWidth()
+						.orElse(0))
 				.build();
+
+		if (photoMetadata.creationDate()
+				.isPresent()) {
+			var creationDate = photoMetadata.creationDate()
+					.get();
+
+			photo = photo.toBuilder()
+					.withCreationDate(creationDate)
+					.build();
+		}
+
+		if (photoMetadata.gpsLatitude()
+				.isPresent() && photoMetadata.gpsLongitude()
+				.isPresent()) {
+			var locationInfo = GeoLocationResolver.resolveLongitudeLatitude(photoMetadata.gpsLongitude()
+					.get(), photoMetadata.gpsLatitude()
+					.get());
+			var photoLocation = new PhotoLocation(locationInfo.country(), locationInfo.city());
+			photoLocation = photoLocationService.saveOrGetPhotoLocation(photoLocation);
+
+			photo = photo.toBuilder()
+					.withLocation(photoLocation)
+					.build();
+		}
+
+
+		if (photoMetadata.cameraModel()
+				.isPresent()) {
+			var cameraSettings = new CameraSettings(photoMetadata.cameraModel()
+					.get());
+			cameraSettings = cameraSettingsService.saveOrGetCameraSettings(cameraSettings);
+
+			photo = photo.toBuilder()
+					.withCameraSettings(cameraSettings)
+					.build();
+		}
 
 		log.info("photo : {}", photo);
 		return photo;

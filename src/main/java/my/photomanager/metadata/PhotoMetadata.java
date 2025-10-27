@@ -1,8 +1,9 @@
 package my.photomanager.metadata;
 
 import java.time.LocalDate;
-import lombok.NonNull;
+import java.util.Optional;
 
-public record PhotoMetadata(int photoWidth, int photoHeight, @NonNull String cameraModel, @NonNull LocalDate creationDate, double gpsLongitude, double gpsLatitude) {
+public record PhotoMetadata(Optional<Integer> photoWidth, Optional<Integer> photoHeight, Optional<String> cameraModel, Optional<LocalDate> creationDate,
+							Optional<Double> gpsLongitude, Optional<Double> gpsLatitude) {
 
 }
