@@ -55,10 +55,6 @@ public class PhotoBuilder {
 			throw new PhotoBuilderException("photo width cannot be zero");
 		}
 
-		System.out.println("=================");
-		System.out.println(photoWidth);
-		System.out.println("=================");
-
 		var photo = Photo.builder()
 				.withHashValue(hashValue)
 				.withFileName(photoPath.toAbsolutePath()
