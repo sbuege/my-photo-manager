@@ -36,24 +36,35 @@ public class PhotoBuilder {
 	 * @param photoPath the path to the photo file to be processed; must not be {@code null}
 	 * @return a fully initialized {@link Photo} object containing all extracted and linked information
 	 */
-	public Photo buildPhoto(@NonNull Path photoPath) throws PhotoMetadataReaderException, GeoLocationResolverException, IOException {
+	public Photo buildPhoto(@NonNull Path photoPath) throws PhotoMetadataReaderException, GeoLocationResolverException, IOException, PhotoBuilderException {
 		log.info("building photo of {}", photoPath.toAbsolutePath());
 
 		var photoMetadata = PhotoMetadataReader.readPhotoMetadata(photoPath);
 
 		var hashValue = DigestUtils.md5DigestAsHex(new FileInputStream(photoPath.toFile()));
+
+		var photoHeight = photoMetadata.photoHeight()
+				.orElseThrow(() -> new PhotoBuilderException("photo height cannot be empty"));
+		if (photoHeight <= 0) {
+			throw new PhotoBuilderException("photo height cannot be zero");
+		}
+
+		var photoWidth = photoMetadata.photoWidth()
+				.orElseThrow(() -> new PhotoBuilderException("photo width cannot be empty"));
+		if (photoWidth <= 0) {
+			throw new PhotoBuilderException("photo width cannot be zero");
+		}
+
+		System.out.println("=================");
+		System.out.println(photoWidth);
+		System.out.println("=================");
+
 		var photo = Photo.builder()
-				// TODO throw exception if hasValue  == null or empty
 				.withHashValue(hashValue)
-				// TODO throw exception if filename  == null or empty
 				.withFileName(photoPath.toAbsolutePath()
 						.toString())
-				// TODO throw exception if height == 0
-				.withHeight(photoMetadata.photoHeight()
-						.orElse(0))
-				// TODO throw exception if width == 0
-				.withWidth(photoMetadata.photoWidth()
-						.orElse(0))
+				.withHeight(photoHeight)
+				.withWidth(photoWidth)
 				.build();
 
 		if (photoMetadata.creationDate()
@@ -79,7 +90,6 @@ public class PhotoBuilder {
 					.withLocation(photoLocation)
 					.build();
 		}
-
 
 		if (photoMetadata.cameraModel()
 				.isPresent()) {

@@ -34,6 +34,8 @@ class PhotoServiceTest {
 		var photo = Photo.builder()
 				.withFileName(photoFileName)
 				.withHashValue(photoHashValue)
+				.withHeight(1000)
+				.withWidth(1000)
 				.withCreationDate(photoCreationDate)
 				.build();
 		when(photoRepository.findByHashValue(photoHashValue)).thenReturn(Optional.empty());
@@ -55,6 +57,8 @@ class PhotoServiceTest {
 				.withFileName(photoFileName)
 				.withHashValue(photoHashValue)
 				.withCreationDate(photoCreationDate)
+				.withHeight(1000)
+				.withWidth(1000)
 				.build();
 		when(photoRepository.findByHashValue(photoHashValue)).thenReturn(Optional.of(photo));
 
