@@ -38,11 +38,16 @@ public class Photo {
 	private String hashValue;
 
 	@NonNull
+	@Column(updatable = false)
 	private String fileName;
 
-	private int height;
+	@NonNull
+	@Column(updatable = false)
+	private Integer height;
 
-	private int width;
+	@NonNull
+	@Column(updatable = false)
+	private Integer width;
 
 	@Column(name = "creationDate", columnDefinition = "DATE")
 	private LocalDate creationDate;

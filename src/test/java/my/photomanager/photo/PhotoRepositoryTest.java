@@ -26,11 +26,15 @@ class PhotoRepositoryTest {
 		var photo1 = Photo.builder()
 				.withFileName(photoFileName)
 				.withHashValue(photoHashValue)
+				.withHeight(1000)
+				.withWidth(1000)
 				.withCreationDate(photoCreationDate)
 				.build();
 		var photo2 = Photo.builder()
 				.withFileName(photoFileName)
 				.withHashValue(photoHashValue)
+				.withHeight(1000)
+				.withWidth(1000)
 				.withCreationDate(photoCreationDate)
 				.build();
 		photoRepository.saveAndFlush(photo1);

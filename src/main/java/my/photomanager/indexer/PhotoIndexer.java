@@ -10,6 +10,7 @@ import my.photomanager.PhotoManagerConfiguration;
 import my.photomanager.geoLocationResolver.GeoLocationResolverException;
 import my.photomanager.metadata.PhotoMetadataReaderException;
 import my.photomanager.photo.PhotoBuilder;
+import my.photomanager.photo.PhotoBuilderException;
 import my.photomanager.photo.PhotoService;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
@@ -45,7 +46,7 @@ public class PhotoIndexer {
 								var photo = photoBuilder.buildPhoto(path);
 								photoService.saveIfPhotoNotExists(photo);
 							}
-						} catch (PhotoMetadataReaderException | GeoLocationResolverException | IOException e) {
+						} catch (PhotoMetadataReaderException | GeoLocationResolverException | IOException | PhotoBuilderException e) {
 							throw new RuntimeException(e);
 						}
 					});
