@@ -14,18 +14,30 @@ public class FilterService {
 	}
 
 	public Collection<CameraSettingsFilter> getCameraSettingsFilters() {
-		return photoRepository.countPhotosGroupByCameraSettings();
+		return photoRepository.countPhotosGroupByCameraSettings()
+				.stream()
+				.filter(filter -> filter.getModelName() != null)
+				.toList();
 	}
 
 	public Collection<LocationFilter> getLocationFilters() {
-		return photoRepository.countPhotosGroupedByLocation();
+		return photoRepository.countPhotosGroupedByLocation()
+				.stream()
+				.filter(filter -> filter.getCountry() != null)
+				.toList();
 	}
 
 	public Collection<CreationDateFilter> getCreationDateFilters() {
-		return photoRepository.countPhotosGroupedByCreationYear();
+		return photoRepository.countPhotosGroupedByCreationYear()
+				.stream()
+				.filter(filter -> filter.getYear() != null)
+				.toList();
 	}
 
 	public Collection<OrientationFilter> getOrientationFilters() {
-		return photoRepository.countPhotosGroupByOrientation();
+		return photoRepository.countPhotosGroupByOrientation()
+				.stream()
+				.filter(filter -> filter.getOrientation() != null)
+				.toList();
 	}
 }
