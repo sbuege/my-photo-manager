@@ -40,7 +40,6 @@ public class PhotoManagerController {
 		model.addAttribute("orientationFilters", filterService.getOrientationFilters());
 		model.addAttribute("photoIDs", photoIDs);
 
-
 		return "index";
 	}
 

@@ -2,7 +2,7 @@ package my.photomanager.filter;
 
 public interface CreationDateFilter {
 
-	int getYear();
+	Integer getYear();
 
 	int getNumberOfPhotos();
 

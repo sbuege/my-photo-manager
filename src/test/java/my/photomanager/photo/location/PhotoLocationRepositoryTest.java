@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.dao.DataIntegrityViolationException;
 
 @DataJpaTest
-@Import(TestUtils.PhotoIndexerTestConfig.class)
+@Import(TestUtils.PhotoIndexerMock.class)
 class PhotoLocationRepositoryTest {
 
 	@Autowired
