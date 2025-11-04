@@ -1,113 +1,125 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+	<title>My Photo Manager</title>
 	<meta charset="UTF-8">
-	<title>My Photo Album</title>
 	<script src="https://cdn.tailwindcss.com"></script>
-	<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/lipis/flag-icons@7.3.2/css/flag-icons.min.css"/>
-	<script>
-		tailwind.config = {
-			darkMode: 'class',
-		}
-
-		function toggleDarkMode() {
-			const icon = document.getElementById("theme-icon");
-			const html = document.documentElement;
-
-			html.classList.toggle("dark");
-
-			if (html.classList.contains("dark")) {
-				icon.classList.remove("fa-moon");
-				icon.classList.add("fa-sun");
-			} else {
-				icon.classList.remove("fa-sun");
-				icon.classList.add("fa-moon");
-			}
-
-		}
-	</script>
-
 </head>
 
 <body class="bg-neutral-100 dark:bg-slate-700">
 
-<header class="p-2 flex flex-row justify-end">
-	<button onclick="toggleDarkMode()"
-			class="flex items-center gap-2 px-4 py-2 rounded-full text-blue-400  dark:text-orange-300 shadow hover:scale-105 transition-all duration-300">
-		<i id="theme-icon" class="fas fa-moon"></i>
+<div>
+	<button id="buttonLocations">
+		Orte
 	</button>
-</header>
 
-<div class="flex flex-row">
-
-
-	<div>
-		Filter
-		<table border="1">
-
-			<tbody>
-			<!-- Schleife durch die Liste -->
-			<tr th:each="cameraFilter : ${cameraFilters}">
-				<td th:text="${cameraFilter.modelName}">Name</td>
-				<td th:text="${cameraFilter.numberOfPhotos}">Name</td>
-			</tr>
-			</tbody>
-		</table>
-
-		<table border="1">
-
-			<tbody>
-			<!-- Schleife durch die Liste -->
-			<tr th:each="locationFilter : ${locationFilters}">
-				<td th:text="${locationFilter.country}">Name</td>
-				<td th:text="${locationFilter.city}">Name</td>
-				<td th:text="${locationFilter.numberOfPhotos}">Name</td>
-			</tr>
-			</tbody>
-		</table>
-
-
-		<table border="1">
-
-			<tbody>
-			<!-- Schleife durch die Liste -->
-			<tr th:each="creationDateFilter : ${creationDateFilters}">
-				<td th:text="${creationDateFilter.year}">Name</td>
-				<td th:text="${creationDateFilter.numberOfPhotos}">Name</td>
-
-			</tr>
-			</tbody>
-		</table>
-
-
-
-		<table border="1">
-
-			<tbody>
-			<!-- Schleife durch die Liste -->
-			<tr th:each="orientationFilter : ${orientationFilters}">
-				<td th:text="${orientationFilter.orientation}">Name</td>
-				<td th:text="${orientationFilter.numberOfPhotos}">Name</td>
-
-			</tr>
-			</tbody>
-		</table>
-
+	<div id="locationDropdownMenu" class="hidden">
+		<ul>
+			<li th:each="locationFilter : ${locationFilters}">
+				<p th:text="${locationFilter.country}"></p>
+			</li>
+		</ul>
 	</div>
 
-	<main class="pl-2 mr-2 flex-1">
-		<div class="columns-1 sm:columns-2 md:columns-3 lg:columns-6  gap-2 space-y-2">
-			<th:block th:each="id : ${photoIDs}">
+	<button id="buttonFormats">
+		Formate
+	</button>
 
-
-				<img class="rounded-xl border border-gray-400" th:src="@{'/photos/' + ${id} + '/thumbnail'}" loading="lazy" alt="">
-
-
-			</th:block>
-		</div>
-	</main>
+	<div id="formatsDropdownMenu" class="hidden">
+		<ul>
+			<li th:each="orientationFilter : ${orientationFilters}">
+				<p th:text="${orientationFilter.orientation}"></p>
+			</li>
+		</ul>
+	</div>
 
 </div>
+
+
+<div class="flex space-x-4 bg-gray-100 p-4 rounded-xl shadow-md">
+	<!-- location fiter-->
+	<details class="relative inline-block text-left">
+		<summary class="list-none px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition cursor-pointer">
+			Orte
+		</summary>
+		<div class="absolute left-0 mt-2 w-40 bg-white border border-gray-200 rounded-lg shadow-lg p-2">
+			<label class="flex items-center space-x-2" th:each="locationFilter : ${locationFilters}">
+				<input type="checkbox" class="form-checkbox text-blue-600 h-4 w-4" />
+				<span  th:text="${locationFilter.country}"></span>
+			</label>
+		</div>
+	</details>
+
+	<!-- orientation filter -->
+	<details class="relative inline-block text-left">
+		<summary class="list-none px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition cursor-pointer">
+			Format
+		</summary>
+		<div class="absolute left-0 mt-2 w-40 bg-white border border-gray-200 rounded-lg shadow-lg p-2">
+			<label class="flex items-center space-x-2" th:each="orientationFilter : ${orientationFilters}">
+				<input type="checkbox" class="form-checkbox text-blue-600 h-4 w-4" />
+				<span  th:text="${orientationFilter.orientation}"></span>
+			</label>
+		</div>
+	</details>
+
+	<!-- date filter -->
+	<details class="relative inline-block text-left">
+		<summary class="list-none px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition cursor-pointer">
+			Datum
+		</summary>
+		<div class="absolute left-0 mt-2 w-40 bg-white border border-gray-200 rounded-lg shadow-lg p-2">
+			<label class="flex items-center space-x-2" th:each="creationDateFilter : ${creationDateFilters}">
+				<input type="checkbox" class="form-checkbox text-blue-600 h-4 w-4" />
+				<span  th:text="${creationDateFilter.year}"></span>
+			</label>
+		</div>
+	</details>
+
+
+	<!-- camera filters -->
+	<details class="relative inline-block text-left">
+		<summary class="list-none px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition cursor-pointer">
+			Kamera
+		</summary>
+		<div class="absolute left-0 mt-2 w-40 bg-white border border-gray-200 rounded-lg shadow-lg p-2">
+			<label class="flex items-center space-x-2" th:each="cameraFilter : ${cameraFilters}">
+				<input type="checkbox" class="form-checkbox text-blue-600 h-4 w-4" />
+				<span  th:text="${cameraFilter.modelName}"></span>
+			</label>
+		</div>
+	</details>
+</div>
+
+
+<main class="pl-2 mr-2 flex-1">
+	<div class="columns-1 sm:columns-2 md:columns-3 lg:columns-6  gap-2 space-y-2">
+		<th:block th:each="id : ${photoIDs}">
+
+
+			<img class="rounded-xl border border-gray-400" th:src="@{'/photos/' + ${id} + '/thumbnail'}" loading="lazy" alt="">
+
+
+		</th:block>
+	</div>
+</main>
+
+<script>
+	const button = document.getElementById('buttonLocations');
+	const menu = document.getElementById('locationDropdownMenu');
+
+	button.addEventListener('click', () => {
+		menu.classList.toggle('hidden');
+	});
+
+	// Optional: Klick außerhalb schließt das Menü
+	document.addEventListener('click', (e) => {
+		if (!button.contains(e.target) && !menu.contains(e.target)) {
+			menu.classList.add('hidden');
+		}
+	});
+</script>
+
 
 </body>
 </html>
