@@ -98,17 +98,17 @@ public class PhotoService {
 	}
 
 	private Specification<Photo> containsCameraModel(@NonNull FilterProperties filterProperties) {
-		var cameraModels = filterProperties.cameraModels();
+		var cameraModelIds = filterProperties.cameraModelIds();
 
 		return (root, query, cb) -> {
-			if (cameraModels == null || cameraModels.isEmpty()) {
+			if (cameraModelIds == null || cameraModelIds.isEmpty()) {
 				return null;
 			}
 
 			return root
 					.get("cameraSettings")
-					.get("cameraModelName")
-					.in(cameraModels);
+					.get("id")
+					.in(cameraModelIds);
 		};
 	}
 

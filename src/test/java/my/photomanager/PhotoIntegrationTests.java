@@ -106,8 +106,8 @@ class PhotoIntegrationTests {
 		return Stream.of(
 				// location
 				Arguments.of(FilterProperties.builder()
-								.locationCountries(List.of(EXAMPLE_001_COUNTRY))
-								.locationCities(List.of(EXAMPLE_001_CITY))
+								.withLocationCountries(List.of(EXAMPLE_001_COUNTRY))
+								.withLocationCities(List.of(EXAMPLE_001_CITY))
 								.build(),
 						List.of(
 								tuple(EXAMPLE_001_CREATION_DATE, EXAMPLE_001_COUNTRY, EXAMPLE_001_CITY,
@@ -117,7 +117,7 @@ class PhotoIntegrationTests {
 						)),
 				// creation date
 				Arguments.of(FilterProperties.builder()
-								.startDate(EXAMPLE_001_CREATION_DATE)
+								.withStartDate(EXAMPLE_001_CREATION_DATE)
 								.build(),
 						List.of(tuple(EXAMPLE_001_CREATION_DATE, EXAMPLE_001_COUNTRY, EXAMPLE_001_CITY,
 										EXAMPLE_001_CAMERA_MODEL),
@@ -127,7 +127,7 @@ class PhotoIntegrationTests {
 				),
 
 				Arguments.of(FilterProperties.builder()
-								.endDate(EXAMPLE_004_CREATION_DATE)
+								.withEndDate(EXAMPLE_004_CREATION_DATE)
 								.build(),
 						List.of(tuple(EXAMPLE_001_CREATION_DATE, EXAMPLE_001_COUNTRY, EXAMPLE_001_CITY,
 										EXAMPLE_001_CAMERA_MODEL),
@@ -142,8 +142,8 @@ class PhotoIntegrationTests {
 				),
 
 				Arguments.of(FilterProperties.builder()
-								.startDate(EXAMPLE_001_CREATION_DATE)
-								.endDate(EXAMPLE_004_CREATION_DATE)
+								.withStartDate(EXAMPLE_001_CREATION_DATE)
+								.withEndDate(EXAMPLE_004_CREATION_DATE)
 								.build(),
 						List.of(
 								tuple(EXAMPLE_001_CREATION_DATE, EXAMPLE_001_COUNTRY, EXAMPLE_001_CITY,
@@ -159,7 +159,7 @@ class PhotoIntegrationTests {
 
 				// camera model
 				Arguments.of(FilterProperties.builder()
-								.cameraModels(List.of(EXAMPLE_001_CAMERA_MODEL))
+								.withCameraModelIds(List.of(1L))
 								.build(),
 						List.of(
 								tuple(EXAMPLE_001_CREATION_DATE, EXAMPLE_001_COUNTRY, EXAMPLE_001_CITY,
