@@ -106,8 +106,8 @@ class PhotoIntegrationTests {
 		return Stream.of(
 				// location
 				Arguments.of(FilterProperties.builder()
-								.withLocationCountries(List.of(EXAMPLE_001_COUNTRY))
-								.withLocationCities(List.of(EXAMPLE_001_CITY))
+								.withLocationIDs(List.of(1L))
+
 								.build(),
 						List.of(
 								tuple(EXAMPLE_001_CREATION_DATE, EXAMPLE_001_COUNTRY, EXAMPLE_001_CITY,
