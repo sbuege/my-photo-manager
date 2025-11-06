@@ -1,6 +1,7 @@
 package my.photomanager;
 
 import java.io.IOException;
+import java.util.List;
 import lombok.extern.log4j.Log4j2;
 import my.photomanager.filter.FilterProperties;
 import my.photomanager.filter.FilterService;
@@ -12,7 +13,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 @RequestMapping({"/photos",})
@@ -50,5 +53,25 @@ public class PhotoManagerController {
 		return ResponseEntity.ok()
 				.contentType(MediaType.IMAGE_JPEG)
 				.body(photoService.getThumbnail(id));
+	}
+
+	@PostMapping("/filter")
+	protected String filterPhotos(Model model, @RequestParam(required = false) List<Long> cameraIds, @RequestParam(required = false) List<Long> locationIds) {
+		log.info("filter photos");
+		log.debug("camera ids: {}", cameraIds);
+		log.debug("location ids: {}", locationIds);
+
+		var photoIDs = photoService.filterPhotos(FilterProperties.builder()
+				.withCameraModelIds(cameraIds)
+				.withLocationIDs(locationIds)
+				.build());
+
+		model.addAttribute("cameraFilters", filterService.getCameraSettingsFilters());
+		model.addAttribute("locationFilters", filterService.getLocationFilters());
+		model.addAttribute("creationDateFilters", filterService.getCreationDateFilters());
+		model.addAttribute("orientationFilters", filterService.getOrientationFilters());
+		model.addAttribute("photoIDs", photoIDs);
+
+		return "index";
 	}
 }

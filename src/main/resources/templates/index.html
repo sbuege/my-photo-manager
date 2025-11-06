@@ -8,118 +8,53 @@
 
 <body class="bg-neutral-100 dark:bg-slate-700">
 
-<div>
-	<button id="buttonLocations">
-		Orte
-	</button>
-
-	<div id="locationDropdownMenu" class="hidden">
-		<ul>
-			<li th:each="locationFilter : ${locationFilters}">
-				<p th:text="${locationFilter.country}"></p>
-			</li>
-		</ul>
-	</div>
-
-	<button id="buttonFormats">
-		Formate
-	</button>
-
-	<div id="formatsDropdownMenu" class="hidden">
-		<ul>
-			<li th:each="orientationFilter : ${orientationFilters}">
-				<p th:text="${orientationFilter.orientation}"></p>
-			</li>
-		</ul>
-	</div>
-
-</div>
-
-
 <div class="flex space-x-4 bg-gray-100 p-4 rounded-xl shadow-md">
-	<!-- location fiter-->
 	<details class="relative inline-block text-left">
 		<summary class="list-none px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition cursor-pointer">
-			Orte
+			Filter
 		</summary>
-		<div class="absolute left-0 mt-2 w-40 bg-white border border-gray-200 rounded-lg shadow-lg p-2">
-			<label class="flex items-center space-x-2" th:each="locationFilter : ${locationFilters}">
-				<input type="checkbox" class="form-checkbox text-blue-600 h-4 w-4" />
-				<span  th:text="${locationFilter.country}"></span>
-			</label>
-		</div>
-	</details>
-
-	<!-- orientation filter -->
-	<details class="relative inline-block text-left">
-		<summary class="list-none px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition cursor-pointer">
-			Format
-		</summary>
-		<div class="absolute left-0 mt-2 w-40 bg-white border border-gray-200 rounded-lg shadow-lg p-2">
-			<label class="flex items-center space-x-2" th:each="orientationFilter : ${orientationFilters}">
-				<input type="checkbox" class="form-checkbox text-blue-600 h-4 w-4" />
-				<span  th:text="${orientationFilter.orientation}"></span>
-			</label>
-		</div>
-	</details>
-
-	<!-- date filter -->
-	<details class="relative inline-block text-left">
-		<summary class="list-none px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition cursor-pointer">
-			Datum
-		</summary>
-		<div class="absolute left-0 mt-2 w-40 bg-white border border-gray-200 rounded-lg shadow-lg p-2">
-			<label class="flex items-center space-x-2" th:each="creationDateFilter : ${creationDateFilters}">
-				<input type="checkbox" class="form-checkbox text-blue-600 h-4 w-4" />
-				<span  th:text="${creationDateFilter.year}"></span>
-			</label>
-		</div>
-	</details>
 
 
-	<!-- camera filters -->
-	<details class="relative inline-block text-left">
-		<summary class="list-none px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition cursor-pointer">
-			Kamera
-		</summary>
-		<div class="absolute left-0 mt-2 w-40 bg-white border border-gray-200 rounded-lg shadow-lg p-2">
-			<label class="flex items-center space-x-2" th:each="cameraFilter : ${cameraFilters}">
-				<input type="checkbox" class="form-checkbox text-blue-600 h-4 w-4" />
-				<span  th:text="${cameraFilter.modelName}"></span>
-			</label>
-		</div>
+		<form action="/photos/filter" method="POST">
+			<fieldset>
+				<legend>Kamera</legend>
+
+				<!-- camera filter -->
+				<label class="flex items-center space-x-2" th:each="cameraFilter : ${cameraFilters}">
+					<input type="checkbox" name="cameraIds" th:value="${cameraFilter.getID()}"/>
+					<span th:text="${cameraFilter.getModelName()}"></span>
+				</label>
+			</fieldset>
+
+			<fieldset>
+				<legend>Orte</legend>
+
+				<!-- location filter -->
+				<label class="flex items-center space-x-2" th:each="locationFilter : ${locationFilters}">
+					<input type="checkbox" name="locationIds" th:value="${locationFilter.getID()}"/>
+					<span th:text="${locationFilter.getCountry()}"></span>
+				</label>
+			</fieldset>
+
+			<div>
+				<button type="reset">
+					Reset
+				</button>
+				<button type="submit">
+					Anwenden
+				</button>
+			</div>
+		</form>
 	</details>
 </div>
 
-
-<main class="pl-2 mr-2 flex-1">
-	<div class="columns-1 sm:columns-2 md:columns-3 lg:columns-6  gap-2 space-y-2">
+<main>
+	<div>
 		<th:block th:each="id : ${photoIDs}">
-
-
-			<img class="rounded-xl border border-gray-400" th:src="@{'/photos/' + ${id} + '/thumbnail'}" loading="lazy" alt="">
-
-
+			<img th:src="@{'/photos/' + ${id} + '/thumbnail'}" loading="lazy" alt="">
 		</th:block>
 	</div>
 </main>
-
-<script>
-	const button = document.getElementById('buttonLocations');
-	const menu = document.getElementById('locationDropdownMenu');
-
-	button.addEventListener('click', () => {
-		menu.classList.toggle('hidden');
-	});
-
-	// Optional: Klick außerhalb schließt das Menü
-	document.addEventListener('click', (e) => {
-		if (!button.contains(e.target) && !menu.contains(e.target)) {
-			menu.classList.add('hidden');
-		}
-	});
-</script>
-
 
 </body>
 </html>

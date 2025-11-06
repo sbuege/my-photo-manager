@@ -1,2 +1,5 @@
+server:
+  port: 9090
+
 photo:
     sourceFolder: test-photos

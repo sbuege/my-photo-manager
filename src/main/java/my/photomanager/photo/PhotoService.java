@@ -77,38 +77,32 @@ public class PhotoService {
 	}
 
 	private Specification<Photo> containsLocation(@NonNull FilterProperties filterProperties) {
-		var locationCountries = filterProperties.locationCountries();
-		var locationCities = filterProperties.locationCities();
+		var locationIds = filterProperties.locationIDs();
 
 		return (root, query, cb) -> {
-			if (locationCountries == null || locationCountries.isEmpty()) {
+			if (locationIds == null || locationIds.isEmpty()) {
 				return null;
 			}
 
-			if (locationCities == null || locationCities.isEmpty()) {
-				return null;
-			}
 
 			return cb.and(root.get("location")
-					.get("country")
-					.in(locationCountries), root.get("location")
-					.get("city")
-					.in(locationCities));
+					.get("id")
+					.in(locationIds));
 		};
 	}
 
 	private Specification<Photo> containsCameraModel(@NonNull FilterProperties filterProperties) {
-		var cameraModels = filterProperties.cameraModels();
+		var cameraModelIds = filterProperties.cameraModelIds();
 
 		return (root, query, cb) -> {
-			if (cameraModels == null || cameraModels.isEmpty()) {
+			if (cameraModelIds == null || cameraModelIds.isEmpty()) {
 				return null;
 			}
 
 			return root
 					.get("cameraSettings")
-					.get("cameraModelName")
-					.in(cameraModels);
+					.get("id")
+					.in(cameraModelIds);
 		};
 	}
 
