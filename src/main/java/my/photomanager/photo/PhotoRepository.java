@@ -19,6 +19,7 @@ public interface PhotoRepository extends JpaRepository<Photo, Long>, JpaSpecific
 
 	@Query("""
 			SELECT 
+				p.cameraSettings.id AS ID,
 				p.cameraSettings.cameraModelName AS modelName,
 				COUNT(p) AS numberOfPhotos 
 				FROM Photo p

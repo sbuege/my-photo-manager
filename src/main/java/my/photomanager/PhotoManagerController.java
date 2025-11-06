@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 @RequestMapping({"/photos",})
@@ -55,11 +56,14 @@ public class PhotoManagerController {
 	}
 
 	@PostMapping("/filter")
-	protected String filterPhotos(Model model, List<Long> cameraIds) {
+	protected String filterPhotos(Model model, @RequestParam(required = false) List<Long> cameraIds, @RequestParam(required = false) List<Long> locationIds) {
 		log.info("filter photos");
+		log.debug("camera ids: {}", cameraIds);
+		log.debug("location ids: {}", locationIds);
 
 		var photoIDs = photoService.filterPhotos(FilterProperties.builder()
 				.withCameraModelIds(cameraIds)
+				.withLocationIDs(locationIds)
 				.build());
 
 		model.addAttribute("cameraFilters", filterService.getCameraSettingsFilters());

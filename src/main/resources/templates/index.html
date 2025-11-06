@@ -1,113 +1,60 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+	<title>My Photo Manager</title>
 	<meta charset="UTF-8">
-	<title>My Photo Album</title>
 	<script src="https://cdn.tailwindcss.com"></script>
-	<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/lipis/flag-icons@7.3.2/css/flag-icons.min.css"/>
-	<script>
-		tailwind.config = {
-			darkMode: 'class',
-		}
-
-		function toggleDarkMode() {
-			const icon = document.getElementById("theme-icon");
-			const html = document.documentElement;
-
-			html.classList.toggle("dark");
-
-			if (html.classList.contains("dark")) {
-				icon.classList.remove("fa-moon");
-				icon.classList.add("fa-sun");
-			} else {
-				icon.classList.remove("fa-sun");
-				icon.classList.add("fa-moon");
-			}
-
-		}
-	</script>
-
 </head>
 
 <body class="bg-neutral-100 dark:bg-slate-700">
 
-<header class="p-2 flex flex-row justify-end">
-	<button onclick="toggleDarkMode()"
-			class="flex items-center gap-2 px-4 py-2 rounded-full text-blue-400  dark:text-orange-300 shadow hover:scale-105 transition-all duration-300">
-		<i id="theme-icon" class="fas fa-moon"></i>
-	</button>
-</header>
-
-<div class="flex flex-row">
+<div class="flex space-x-4 bg-gray-100 p-4 rounded-xl shadow-md">
+	<details class="relative inline-block text-left">
+		<summary class="list-none px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition cursor-pointer">
+			Filter
+		</summary>
 
 
-	<div>
-		Filter
-		<table border="1">
+		<form action="/photos/filter" method="POST">
+			<fieldset>
+				<legend>Kamera</legend>
 
-			<tbody>
-			<!-- Schleife durch die Liste -->
-			<tr th:each="cameraFilter : ${cameraFilters}">
-				<td th:text="${cameraFilter.modelName}">Name</td>
-				<td th:text="${cameraFilter.numberOfPhotos}">Name</td>
-			</tr>
-			</tbody>
-		</table>
+				<!-- camera filter -->
+				<label class="flex items-center space-x-2" th:each="cameraFilter : ${cameraFilters}">
+					<input type="checkbox" name="cameraIds" th:value="${cameraFilter.getID()}"/>
+					<span th:text="${cameraFilter.getModelName()}"></span>
+				</label>
+			</fieldset>
 
-		<table border="1">
+			<fieldset>
+				<legend>Orte</legend>
 
-			<tbody>
-			<!-- Schleife durch die Liste -->
-			<tr th:each="locationFilter : ${locationFilters}">
-				<td th:text="${locationFilter.country}">Name</td>
-				<td th:text="${locationFilter.city}">Name</td>
-				<td th:text="${locationFilter.numberOfPhotos}">Name</td>
-			</tr>
-			</tbody>
-		</table>
+				<!-- location filter -->
+				<label class="flex items-center space-x-2" th:each="locationFilter : ${locationFilters}">
+					<input type="checkbox" name="locationIds" th:value="${locationFilter.getID()}"/>
+					<span th:text="${locationFilter.getCountry()}"></span>
+				</label>
+			</fieldset>
 
-
-		<table border="1">
-
-			<tbody>
-			<!-- Schleife durch die Liste -->
-			<tr th:each="creationDateFilter : ${creationDateFilters}">
-				<td th:text="${creationDateFilter.year}">Name</td>
-				<td th:text="${creationDateFilter.numberOfPhotos}">Name</td>
-
-			</tr>
-			</tbody>
-		</table>
-
-
-
-		<table border="1">
-
-			<tbody>
-			<!-- Schleife durch die Liste -->
-			<tr th:each="orientationFilter : ${orientationFilters}">
-				<td th:text="${orientationFilter.orientation}">Name</td>
-				<td th:text="${orientationFilter.numberOfPhotos}">Name</td>
-
-			</tr>
-			</tbody>
-		</table>
-
-	</div>
-
-	<main class="pl-2 mr-2 flex-1">
-		<div class="columns-1 sm:columns-2 md:columns-3 lg:columns-6  gap-2 space-y-2">
-			<th:block th:each="id : ${photoIDs}">
-
-
-				<img class="rounded-xl border border-gray-400" th:src="@{'/photos/' + ${id} + '/thumbnail'}" loading="lazy" alt="">
-
-
-			</th:block>
-		</div>
-	</main>
-
+			<div>
+				<button type="reset">
+					Reset
+				</button>
+				<button type="submit">
+					Anwenden
+				</button>
+			</div>
+		</form>
+	</details>
 </div>
+
+<main>
+	<div>
+		<th:block th:each="id : ${photoIDs}">
+			<img th:src="@{'/photos/' + ${id} + '/thumbnail'}" loading="lazy" alt="">
+		</th:block>
+	</div>
+</main>
 
 </body>
 </html>
