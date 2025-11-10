@@ -5,50 +5,49 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.Optional;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
 class CameraSettingsServiceTest {
 
-	private CameraSettingsService cameraSettingsService;
+	// TEST DATA
+	final String TEST_CAMERA_MODEL_NAME = "TestCameraModel";
+	final CameraSettings TEST_CAMERA_SETTINGS = new CameraSettings(TEST_CAMERA_MODEL_NAME);
 
 	@Mock
 	private CameraSettingsRepository cameraSettingsRepository;
 
-	@BeforeEach
-	void setUp() {
-		cameraSettingsService = new CameraSettingsService(cameraSettingsRepository);
+	@InjectMocks
+	private CameraSettingsService cameraSettingsService;
+
+	@Test
+	@DisplayName("should call saveAndFlush when camera settings does not exist")
+	void shouldCallSaveAndFlush() {
+		// given
+		when(cameraSettingsRepository.findByCameraModelName(TEST_CAMERA_MODEL_NAME)).thenReturn(Optional.empty());
+
+		// when
+		cameraSettingsService.saveOrGetCameraSettings(TEST_CAMERA_SETTINGS);
+
+		// then
+		verify(cameraSettingsRepository).saveAndFlush(TEST_CAMERA_SETTINGS);
 	}
 
 	@Test
-	void shouldSaveCameraSettingsWhenNotExisting() {
+	@DisplayName("should never all saveAndFlush when camera settings exists already")
+	void shouldNeveCallSaveAndFlush() {
 		// given
-		final var cameraModelName = "TestCameraModel";
-		var cameraSettings = new CameraSettings(cameraModelName);
-		when(cameraSettingsRepository.findByCameraModelName(cameraModelName)).thenReturn(Optional.empty());
+		when(cameraSettingsRepository.findByCameraModelName(TEST_CAMERA_MODEL_NAME)).thenReturn(Optional.of(TEST_CAMERA_SETTINGS));
 
 		// when
-		cameraSettingsService.saveOrGetCameraSettings(cameraSettings);
+		cameraSettingsService.saveOrGetCameraSettings(TEST_CAMERA_SETTINGS);
 
 		// then
-		verify(cameraSettingsRepository).saveAndFlush(cameraSettings);
-	}
-
-	@Test
-	void shouldReturnExistingCameraSettingsWhenAlreadyExists() {
-		// given
-		final var cameraModelName = "TestCameraModel";
-		var cameraSettings = new CameraSettings(cameraModelName);
-		when(cameraSettingsRepository.findByCameraModelName(cameraModelName)).thenReturn(Optional.of(cameraSettings));
-
-		// when
-		cameraSettingsService.saveOrGetCameraSettings(cameraSettings);
-
-		// then
-		verify(cameraSettingsRepository, never()).saveAndFlush(cameraSettings);
+		verify(cameraSettingsRepository, never()).saveAndFlush(TEST_CAMERA_SETTINGS);
 	}
 }

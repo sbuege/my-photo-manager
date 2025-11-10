@@ -5,50 +5,50 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.Optional;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
 class PhotoCategoryServiceTest {
 
-	private PhotoCategoryService photoCategoryService;
+	// TEST DATA
+	final String TEST_PHOTO_CATEGORY_NAME = "TestPhotoCategory";
+	final PhotoCategory TEST_PHOTO_CATEGORY = new PhotoCategory(TEST_PHOTO_CATEGORY_NAME);
 
 	@Mock
 	private PhotoCategoryRepository photoCategoryRepository;
 
-	@BeforeEach
-	void setUp() {
-		photoCategoryService = new PhotoCategoryService(photoCategoryRepository);
+	@InjectMocks
+	private PhotoCategoryService photoCategoryService;
+
+	@Test
+	@DisplayName("should call saveAndFlush when photo category does not exist")
+	void shouldCallSaveAndFlush() {
+		// given
+		when(photoCategoryRepository.findByName(TEST_PHOTO_CATEGORY_NAME)).thenReturn(Optional.empty());
+
+		// when
+		photoCategoryService.saveOrGetPhotoCategory(TEST_PHOTO_CATEGORY);
+
+		// then
+		verify(photoCategoryRepository).saveAndFlush(TEST_PHOTO_CATEGORY);
 	}
 
 	@Test
-	void shouldSavePhotoCategoryWhenNotExisting() {
+	@DisplayName("should never all saveAndFlush when camera settings exists already")
+	void shouldNeveCallSaveAndFlush() {
 		// given
-		final var photoCategoryName = "TestPhotoCategory";
-		var photoCategory = new PhotoCategory(photoCategoryName);
-		when(photoCategoryRepository.findByName(photoCategoryName)).thenReturn(Optional.empty());
+
+		when(photoCategoryRepository.findByName(TEST_PHOTO_CATEGORY_NAME)).thenReturn(Optional.of(TEST_PHOTO_CATEGORY));
 
 		// when
-		photoCategoryService.saveOrGetPhotoCategory(photoCategory);
+		photoCategoryService.saveOrGetPhotoCategory(TEST_PHOTO_CATEGORY);
 
 		// then
-		verify(photoCategoryRepository).saveAndFlush(photoCategory);
-	}
-
-	@Test
-	void shouldReturnExistingPhotoCategoryWhenAlreadyExists() {
-		// given
-		final var photoCategoryName = "TestPhotoCategory";
-		var photoCategory = new PhotoCategory(photoCategoryName);
-		when(photoCategoryRepository.findByName(photoCategoryName)).thenReturn(Optional.of(photoCategory));
-
-		// when
-		photoCategoryService.saveOrGetPhotoCategory(photoCategory);
-
-		// then
-		verify(photoCategoryRepository, never()).saveAndFlush(photoCategory);
+		verify(photoCategoryRepository, never()).saveAndFlush(TEST_PHOTO_CATEGORY);
 	}
 }

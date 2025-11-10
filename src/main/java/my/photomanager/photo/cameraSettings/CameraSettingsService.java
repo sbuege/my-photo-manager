@@ -1,18 +1,17 @@
 package my.photomanager.photo.cameraSettings;
 
+import lombok.AccessLevel;
 import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 
 @Service
+@RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 @Log4j2
 public class CameraSettingsService {
 
 	private final CameraSettingsRepository cameraSettingsRepository;
-
-	protected CameraSettingsService(@NonNull CameraSettingsRepository cameraSettingsRepository) {
-		this.cameraSettingsRepository = cameraSettingsRepository;
-	}
 
 	/**
 	 * Saves the given {@link CameraSettings} if no camera settings with the same model name exists,

@@ -6,6 +6,7 @@ import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.verify;
 
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.Optional;
 import lombok.extern.log4j.Log4j2;
 import my.photomanager.TestConstants;
@@ -17,11 +18,11 @@ import my.photomanager.photo.cameraSettings.CameraSettings;
 import my.photomanager.photo.cameraSettings.CameraSettingsService;
 import my.photomanager.photo.location.PhotoLocation;
 import my.photomanager.photo.location.PhotoLocationService;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -30,18 +31,28 @@ import org.mockito.junit.jupiter.MockitoExtension;
 @Log4j2
 class PhotoBuilderTest {
 
-	private PhotoBuilder photoBuilder;
-
 	@Mock
 	private PhotoLocationService photoLocationService;
 
 	@Mock
 	private CameraSettingsService cameraSettingsService;
 
-	@BeforeEach
-	public void setUp() {
-		photoBuilder = new PhotoBuilder(photoLocationService, cameraSettingsService);
+	@InjectMocks
+	private PhotoBuilder photoBuilder;
+
+	@Test
+	void shouldCall() throws PhotoBuilderException, GeoLocationResolverException, PhotoMetadataReaderException, IOException {
+		// given
+		MockedStatic<PhotoMetadataReader> mockedStatic = mockStatic(PhotoMetadataReader.class);
+		mockedStatic.when(() -> PhotoMetadataReader.readPhotoMetadata(any(Path.class)))
+				.thenReturn(PhotoMetadata.builder()
+						.build());
+		// when
+
+		photoBuilder.buildPhoto(TestConstants.EXAMPLE_001_PATH);
+		// then
 	}
+
 
 	@Test
 	void shouldBuildPhotoFromJPEGPhotoFile() throws GeoLocationResolverException, PhotoMetadataReaderException, IOException, PhotoBuilderException {

@@ -1,18 +1,17 @@
 package my.photomanager.photo.album;
 
+import lombok.AccessLevel;
 import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 
 @Service
+@RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 @Log4j2
 public class PhotoAlbumService {
 
 	private final PhotoAlbumRepository photoAlbumRepository;
-
-	protected PhotoAlbumService(@NonNull PhotoAlbumRepository photoAlbumRepository) {
-		this.photoAlbumRepository = photoAlbumRepository;
-	}
 
 	/**
 	 * Saves the given {@link PhotoAlbum} if no album with the same name exists,

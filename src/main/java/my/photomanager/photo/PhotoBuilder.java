@@ -3,7 +3,9 @@ package my.photomanager.photo;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Path;
+import lombok.AccessLevel;
 import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import my.photomanager.geoLocationResolver.GeoLocationResolver;
 import my.photomanager.geoLocationResolver.GeoLocationResolverException;
@@ -17,16 +19,13 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.DigestUtils;
 
 @Component
+@RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 @Log4j2
 public class PhotoBuilder {
 
 	private final PhotoLocationService photoLocationService;
 	private final CameraSettingsService cameraSettingsService;
 
-	protected PhotoBuilder(PhotoLocationService photoLocationService, CameraSettingsService cameraSettingsService) {
-		this.cameraSettingsService = cameraSettingsService;
-		this.photoLocationService = photoLocationService;
-	}
 
 	/**
 	 * Builds a {@link Photo} object from the given photo file path by reading metadata,

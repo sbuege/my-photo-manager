@@ -1,18 +1,17 @@
 package my.photomanager.photo.category;
 
+import lombok.AccessLevel;
 import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 
 @Service
+@RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 @Log4j2
 public class PhotoCategoryService {
 
 	private final PhotoCategoryRepository photoCategoryRepository;
-
-	protected PhotoCategoryService(@NonNull PhotoCategoryRepository photoCategoryRepository) {
-		this.photoCategoryRepository = photoCategoryRepository;
-	}
 
 	/**
 	 * Saves the given {@link PhotoCategory} if no category with the same name exists,
