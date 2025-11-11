@@ -2,7 +2,9 @@ package my.photomanager.photo.location;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import my.photomanager.TestDataBuilder;
 import my.photomanager.TestUtils;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -17,15 +19,14 @@ class PhotoLocationRepositoryTest {
 	private PhotoLocationRepository photoLocationRepository;
 
 	@Test
-	void shouldThrowExceptionWhenSavingPhotoLocationWithDuplicateCountryAndCity() {
-		// given
-		final var photoLocationCountry = "TestPhotoCountry";
-		final var photoLocationCity = "TestPhotoCity";
-		var photoLocation1 = new PhotoLocation(photoLocationCountry, photoLocationCity);
-		var photoLocation2 = new PhotoLocation(photoLocationCountry, photoLocationCity);
+	@DisplayName("should enforce unique country and city constraint")
+	void shouldEnforceUniqueConstraint() {
+		// --- GIVEN ---
+		var photoLocation1 = TestDataBuilder.TestPhotoLocationBuilder.build();
+		var photoLocation2 = TestDataBuilder.TestPhotoLocationBuilder.build();
 		photoLocationRepository.saveAndFlush(photoLocation1);
 
-		// when / then
+		// --- WHEN / THEN ---
 		assertThrows(DataIntegrityViolationException.class, () -> photoLocationRepository.saveAndFlush(photoLocation2));
 	}
 }
