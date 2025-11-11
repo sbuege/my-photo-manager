@@ -1,10 +1,12 @@
 package my.photomanager.photo.category;
 
+import static my.photomanager.TestDataBuilder.TEST_PHOTO_CATEGORY_NAME;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.Optional;
+import my.photomanager.TestDataBuilder;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -16,8 +18,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 class PhotoCategoryServiceTest {
 
 	// TEST DATA
-	final String TEST_PHOTO_CATEGORY_NAME = "TestPhotoCategory";
-	final PhotoCategory TEST_PHOTO_CATEGORY = new PhotoCategory(TEST_PHOTO_CATEGORY_NAME);
+	final PhotoCategory TEST_PHOTO_CATEGORY = TestDataBuilder.TestPhotoCategoryBuilder.build();
 
 	@Mock
 	private PhotoCategoryRepository photoCategoryRepository;
@@ -28,27 +29,26 @@ class PhotoCategoryServiceTest {
 	@Test
 	@DisplayName("should call saveAndFlush when photo category does not exist")
 	void shouldCallSaveAndFlush() {
-		// given
+		// --- GIVEN ---
 		when(photoCategoryRepository.findByName(TEST_PHOTO_CATEGORY_NAME)).thenReturn(Optional.empty());
 
-		// when
+		// --- WHEN ---
 		photoCategoryService.saveOrGetPhotoCategory(TEST_PHOTO_CATEGORY);
 
-		// then
+		// --- THEN ---
 		verify(photoCategoryRepository).saveAndFlush(TEST_PHOTO_CATEGORY);
 	}
 
 	@Test
-	@DisplayName("should never all saveAndFlush when camera settings exists already")
-	void shouldNeveCallSaveAndFlush() {
-		// given
-
+	@DisplayName("should not call saveAndFlush when photo category already exists")
+	void shouldNotCallSaveAndFlush() {
+		// --- GIVEN ---
 		when(photoCategoryRepository.findByName(TEST_PHOTO_CATEGORY_NAME)).thenReturn(Optional.of(TEST_PHOTO_CATEGORY));
 
-		// when
+		// --- WHEN ---
 		photoCategoryService.saveOrGetPhotoCategory(TEST_PHOTO_CATEGORY);
 
-		// then
+		// --- THEN ---
 		verify(photoCategoryRepository, never()).saveAndFlush(TEST_PHOTO_CATEGORY);
 	}
 }

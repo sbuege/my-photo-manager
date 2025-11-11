@@ -1,10 +1,12 @@
 package my.photomanager.photo.cameraSettings;
 
+import static my.photomanager.TestDataBuilder.TEST_CAMERA_MODEL_NAME;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.Optional;
+import my.photomanager.TestDataBuilder;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -16,8 +18,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 class CameraSettingsServiceTest {
 
 	// TEST DATA
-	final String TEST_CAMERA_MODEL_NAME = "TestCameraModel";
-	final CameraSettings TEST_CAMERA_SETTINGS = new CameraSettings(TEST_CAMERA_MODEL_NAME);
+	final CameraSettings TEST_CAMERA_SETTINGS = TestDataBuilder.TestCameraSettingsBuilder.build();
 
 	@Mock
 	private CameraSettingsRepository cameraSettingsRepository;
@@ -39,8 +40,8 @@ class CameraSettingsServiceTest {
 	}
 
 	@Test
-	@DisplayName("should never all saveAndFlush when camera settings exists already")
-	void shouldNeveCallSaveAndFlush() {
+	@DisplayName("should not call saveAndFlush when camera settings already exists")
+	void shouldNotCallSaveAndFlush() {
 		// given
 		when(cameraSettingsRepository.findByCameraModelName(TEST_CAMERA_MODEL_NAME)).thenReturn(Optional.of(TEST_CAMERA_SETTINGS));
 
