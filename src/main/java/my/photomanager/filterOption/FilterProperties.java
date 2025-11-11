@@ -1,4 +1,4 @@
-package my.photomanager.filter;
+package my.photomanager.filterOption;
 
 import java.time.LocalDate;
 import java.util.List;
