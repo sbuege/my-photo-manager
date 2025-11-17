@@ -1,6 +1,6 @@
 package my.photomanager;
 
-import my.photomanager.filter.FilterService;
+import my.photomanager.filterOption.FilterOptionService;
 import my.photomanager.indexer.PhotoIndexer;
 import my.photomanager.photo.PhotoService;
 import org.mockito.Mockito;
@@ -31,8 +31,8 @@ public class TestUtils {
 	public static class FilterServiceMock {
 
 		@Bean
-		FilterService filterService() {
-			return Mockito.mock(FilterService.class);
+		FilterOptionService filterService() {
+			return Mockito.mock(FilterOptionService.class);
 		}
 	}
 }

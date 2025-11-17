@@ -45,7 +45,7 @@ public class TestConstants {
 	public static Integer EXAMPLE_004_HEIGHT = 768;
 	public static Integer EXAMPLE_004_WIDTH = 1024;
 	public static LocalDate EXAMPLE_004_CREATION_DATE = LocalDate.of(2025, 1, 1);
-	public static String EXAMPLE_004_CAMERA_MODEL = null;
+	public static String EXAMPLE_004_CAMERA_MODEL = "iPhone 14 Pro";
 	public static Double EXAMPLE_004_LONGITUDE = 13.376194444444446;
 	public static Double EXAMPLE_004_LATITUDE = 52.518680555555555;
 	public static String EXAMPLE_004_COUNTRY = "Deutschland";

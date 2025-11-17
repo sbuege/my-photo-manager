@@ -33,10 +33,10 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.nio.file.Path;
 import java.time.LocalDate;
-import java.util.Optional;
 import java.util.stream.Stream;
 import lombok.extern.log4j.Log4j2;
 import my.photomanager.TestConstants;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -45,47 +45,62 @@ import org.junit.jupiter.params.provider.MethodSource;
 @Log4j2
 class PhotoMetadataReaderTest {
 
-	static Stream<Arguments> testDataProvider() {
+	static Stream<Arguments> provideMetaData() {
 		return Stream.of(
-				Arguments.of(EXAMPLE_001_PATH, Optional.ofNullable(EXAMPLE_001_HEIGHT), Optional.ofNullable(EXAMPLE_001_WIDTH),
-						Optional.ofNullable(EXAMPLE_001_CREATION_DATE), Optional.ofNullable(EXAMPLE_001_LONGITUDE), Optional.ofNullable(EXAMPLE_001_LATITUDE),
-						Optional.ofNullable(EXAMPLE_001_CAMERA_MODEL)),
-				Arguments.of(EXAMPLE_002_PATH, Optional.ofNullable(EXAMPLE_002_HEIGHT), Optional.ofNullable(EXAMPLE_002_WIDTH),
-						Optional.ofNullable(EXAMPLE_002_CREATION_DATE), Optional.ofNullable(EXAMPLE_002_LONGITUDE), Optional.ofNullable(EXAMPLE_002_LATITUDE),
-						Optional.ofNullable(EXAMPLE_002_CAMERA_MODEL)),
-				Arguments.of(EXAMPLE_003_PATH, Optional.ofNullable(EXAMPLE_003_HEIGHT), Optional.ofNullable(EXAMPLE_003_WIDTH),
-						Optional.ofNullable(EXAMPLE_003_CREATION_DATE), Optional.ofNullable(EXAMPLE_003_LONGITUDE), Optional.ofNullable(EXAMPLE_003_LATITUDE),
-						Optional.ofNullable(EXAMPLE_003_CAMERA_MODEL)),
-				Arguments.of(EXAMPLE_004_PATH, Optional.ofNullable(EXAMPLE_004_HEIGHT), Optional.ofNullable(EXAMPLE_004_WIDTH),
-						Optional.ofNullable(EXAMPLE_004_CREATION_DATE),
-						Optional.ofNullable(EXAMPLE_004_LONGITUDE), Optional.ofNullable(EXAMPLE_004_LATITUDE),
-						Optional.ofNullable(EXAMPLE_004_CAMERA_MODEL))
-		);
+				Arguments.of(EXAMPLE_001_PATH, EXAMPLE_001_HEIGHT, EXAMPLE_001_WIDTH, EXAMPLE_001_CREATION_DATE, EXAMPLE_001_LONGITUDE, EXAMPLE_001_LATITUDE,
+						EXAMPLE_001_CAMERA_MODEL),
+				Arguments.of(EXAMPLE_002_PATH, EXAMPLE_002_HEIGHT, EXAMPLE_002_WIDTH,
+						EXAMPLE_002_CREATION_DATE, EXAMPLE_002_LONGITUDE, EXAMPLE_002_LATITUDE,
+						EXAMPLE_002_CAMERA_MODEL),
+				Arguments.of(EXAMPLE_003_PATH, EXAMPLE_003_HEIGHT, EXAMPLE_003_WIDTH,
+						EXAMPLE_003_CREATION_DATE, EXAMPLE_003_LONGITUDE, EXAMPLE_003_LATITUDE,
+						EXAMPLE_003_CAMERA_MODEL),
+				Arguments.of(EXAMPLE_004_PATH, EXAMPLE_004_HEIGHT, EXAMPLE_004_WIDTH,
+						EXAMPLE_004_CREATION_DATE, EXAMPLE_004_LONGITUDE, EXAMPLE_004_LATITUDE,
+						EXAMPLE_004_CAMERA_MODEL));
 	}
 
 	@ParameterizedTest
-	@MethodSource("testDataProvider")
-	void shouldReturnExistingPhotoMetadata(Path photoPath, Optional<Integer> photoHeight, Optional<Integer> photoWidth, Optional<LocalDate> creationDate,
-			Optional<Double> longitude, Optional<Double> latitude,
-			Optional<String> cameraModel) throws Exception {
-		// when
+	@MethodSource("provideMetaData")
+	@DisplayName("should read photo metadata correctly")
+	void shouldReadPhotoMetadata(Path photoPath, Integer expectedPhotoHeight, Integer expectedPhotoWidth, LocalDate expectedCreationDate,
+			Double expectedLongitude, Double expectedLatitude, String expectedCameraModel) throws Exception {
+		// --- WHEN ---
 		var photoMetadata = PhotoMetadataReader.readPhotoMetadata(photoPath);
-		log.info("photoMetadata : {}", photoMetadata);
 
-		// then
+		// --- THEN ---
 		assertThat(photoMetadata).isNotNull();
 
-		assertThat(photoMetadata.photoHeight()).isEqualTo(photoHeight);
-		assertThat(photoMetadata.photoWidth()).isEqualTo(photoWidth);
-		assertThat(photoMetadata.creationDate()).isEqualTo(creationDate);
-		assertThat(photoMetadata.gpsLongitude()).isEqualTo(longitude);
-		assertThat(photoMetadata.gpsLatitude()).isEqualTo(latitude);
-		assertThat(photoMetadata.cameraModel()).isEqualTo(cameraModel);
+		assertThat(photoMetadata.photoHeight()).isPresent();
+		assertThat(photoMetadata.photoHeight()
+				.get()).isEqualTo(expectedPhotoHeight);
+
+		assertThat(photoMetadata.photoWidth()).isPresent();
+		assertThat(photoMetadata.photoWidth()
+				.get()).isEqualTo(expectedPhotoWidth);
+
+		assertThat(photoMetadata.creationDate()).isPresent();
+		assertThat(photoMetadata.creationDate()
+				.get()).isEqualTo(expectedCreationDate);
+
+		assertThat(photoMetadata.gpsLongitude()).isPresent();
+		assertThat(photoMetadata.gpsLongitude()
+				.get()).isEqualTo(expectedLongitude);
+
+		assertThat(photoMetadata.gpsLatitude()).isPresent();
+		assertThat(photoMetadata.gpsLatitude()
+				.get()).isEqualTo(expectedLatitude);
+
+		assertThat(photoMetadata.cameraModel()).isPresent();
+		assertThat(photoMetadata.cameraModel()
+				.get()).isEqualTo(expectedCameraModel);
 	}
 
 	@Test
-	void shouldThrowExceptionWhenPhotoMetadataCannotBeRead() {
-		// when / then
+	@DisplayName("should throw exception when reading non-image file")
+	void shouldThrowException() {
+		// --- WHEN / THEN ---
 		assertThrows(PhotoMetadataReaderException.class, () -> PhotoMetadataReader.readPhotoMetadata(TestConstants.TestFilePath.resolve("Textfile.txt")));
 	}
+
 }
