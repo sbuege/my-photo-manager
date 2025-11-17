@@ -8,7 +8,7 @@ import java.util.Base64;
 import java.util.Collection;
 import lombok.NonNull;
 import lombok.extern.log4j.Log4j2;
-import my.photomanager.filter.FilterProperties;
+import my.photomanager.filterOption.FilterProperties;
 import net.coobird.thumbnailator.Thumbnails;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;

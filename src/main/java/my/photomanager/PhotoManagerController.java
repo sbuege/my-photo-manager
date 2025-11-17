@@ -3,8 +3,8 @@ package my.photomanager;
 import java.io.IOException;
 import java.util.List;
 import lombok.extern.log4j.Log4j2;
-import my.photomanager.filter.FilterProperties;
-import my.photomanager.filter.FilterService;
+import my.photomanager.filterOption.FilterProperties;
+import my.photomanager.filterOption.FilterOptionService;
 import my.photomanager.photo.PhotoService;
 import my.photomanager.photo.PhotoServiceException;
 import org.springframework.http.MediaType;
@@ -23,9 +23,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 public class PhotoManagerController {
 
 	private final PhotoService photoService;
-	private final FilterService filterService;
+	private final FilterOptionService filterService;
 
-	protected PhotoManagerController(PhotoService photoService, FilterService filterService) {
+	protected PhotoManagerController(PhotoService photoService, FilterOptionService filterService) {
 		this.photoService = photoService;
 		this.filterService = filterService;
 	}

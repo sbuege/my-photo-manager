@@ -1,15 +1,15 @@
-package my.photomanager.filter;
+package my.photomanager.filterOption;
 
 import java.util.Collection;
 import my.photomanager.photo.PhotoRepository;
 import org.springframework.stereotype.Service;
 
 @Service
-public class FilterService {
+public class FilterOptionService {
 
 	private final PhotoRepository photoRepository;
 
-	protected FilterService(PhotoRepository photoRepository) {
+	protected FilterOptionService(PhotoRepository photoRepository) {
 		this.photoRepository = photoRepository;
 	}
 
