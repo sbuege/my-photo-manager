@@ -3,6 +3,7 @@ plugins {
 	id("org.springframework.boot") version "3.4.5"
 	id("io.spring.dependency-management") version "1.1.7"
 	id("jacoco")
+	id("info.solidsoft.pitest") version "1.15.0"
 }
 
 group = "my"
@@ -60,6 +61,7 @@ dependencies {
 }
 
 tasks.withType<Test> {
+	jvmArgs("-XX:+EnableDynamicAgentLoading")
 	useJUnitPlatform()
 }
 
@@ -111,4 +113,17 @@ tasks.jacocoTestCoverageVerification {
 	)
 }
 
+
+pitest {
+	pitestVersion.set("1.15.0")
+	junit5PluginVersion.set("1.2.0")   // ← WICHTIG!
+	// Welche Klassen mutiert werden sollen (Package anpassen)
+	targetClasses.set(listOf("my.photomanager.*"))
+
+	// Welche Testklassen ausgeführt werden sollen
+	targetTests.set(listOf("my.photomanager.*Test"))
+
+	// Optional: Mutations-Score Mindestgrenze
+	mutationThreshold.set(80)
+}
 
