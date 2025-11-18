@@ -20,42 +20,42 @@ class FilterOptionServiceTest {
 	private FilterOptionService filterOptionService;
 
 	@Test
-	@DisplayName("should call group and count photos by camera settings")
+	@DisplayName("should call group photos by camera settings")
 	void shouldCallGroupAndCountPhotosByCameraSettings() {
 		// --- WHEN  ---
 		filterOptionService.getCameraSettingsFilters();
 
 		// --- THEN ---
-		verify(photoRepository).countPhotosGroupByCameraSettings();
+		verify(photoRepository).groupPhotosByCameraSettings();
 	}
 
 	@Test
-	@DisplayName("should call group and count photos by location")
-	void shouldCallGroupAndCountPhotosByLocation() {
+	@DisplayName("should call group photos by location")
+	void shouldCallGroupPhotosByLocation() {
 		// --- WHEN  ---
 		filterOptionService.getLocationFilters();
 
 		// --- THEN ---
-		verify(photoRepository).countPhotosGroupedByLocation();
+		verify(photoRepository).groupPhotosByLocation();
 	}
 
 	@Test
-	@DisplayName("should call group and count photos by creation year")
-	void shouldCallGroupAndCountPhotosByCreationYear() {
+	@DisplayName("should call group photos by creation year")
+	void shouldCallGroupPhotosByCreationYear() {
 		// --- WHEN  ---
 		filterOptionService.getCreationDateFilters();
 
 		// --- THEN ---
-		verify(photoRepository).countPhotosGroupedByCreationYear();
+		verify(photoRepository).groupPhotosByCreationYear();
 	}
 
 	@Test
-	@DisplayName("should call group and count by orientation")
-	void shouldCallGroupAndCountByOrientation() {
+	@DisplayName("should call group by orientation")
+	void shouldCallGroupPhotosByOrientation() {
 		// --- WHEN  ---
 		filterOptionService.getOrientationFilters();
 
 		// --- THEN ---
-		verify(photoRepository).countPhotosGroupByOrientation();
+		verify(photoRepository).groupPhotosByOrientation();
 	}
 }

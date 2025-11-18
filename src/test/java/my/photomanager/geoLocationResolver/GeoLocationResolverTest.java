@@ -1,9 +1,9 @@
 package my.photomanager.geoLocationResolver;
 
-import static my.photomanager.TestConstants.EXAMPLE_001_CITY;
-import static my.photomanager.TestConstants.EXAMPLE_001_COUNTRY;
-import static my.photomanager.TestConstants.EXAMPLE_001_LATITUDE;
-import static my.photomanager.TestConstants.EXAMPLE_001_LONGITUDE;
+import static my.photomanager.TestDataBuilder.EXAMPLE_001_CITY;
+import static my.photomanager.TestDataBuilder.EXAMPLE_001_COUNTRY;
+import static my.photomanager.TestDataBuilder.EXAMPLE_001_LATITUDE;
+import static my.photomanager.TestDataBuilder.EXAMPLE_001_LONGITUDE;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import lombok.extern.log4j.Log4j2;

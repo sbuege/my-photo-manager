@@ -25,7 +25,7 @@ public interface PhotoRepository extends JpaRepository<Photo, Long>, JpaSpecific
 				FROM Photo p
 				GROUP BY p.cameraSettings
 			""")
-	Collection<CameraSettingsFilter> countPhotosGroupByCameraSettings();
+	Collection<CameraSettingsFilter> groupPhotosByCameraSettings();
 
 
 	@Query("""
@@ -37,7 +37,7 @@ public interface PhotoRepository extends JpaRepository<Photo, Long>, JpaSpecific
 			FROM Photo p
 			GROUP BY p.location
 			""")
-	Collection<LocationFilter> countPhotosGroupedByLocation();
+	Collection<LocationFilter> groupPhotosByLocation();
 
 	@Query("""
 					SELECT YEAR(p.creationDate) AS year, COUNT(p) AS numberOfPhotos
@@ -45,7 +45,7 @@ public interface PhotoRepository extends JpaRepository<Photo, Long>, JpaSpecific
 					GROUP BY YEAR(p.creationDate)
 					ORDER BY YEAR(p.creationDate) DESC
 			""")
-	Collection<CreationDateFilter> countPhotosGroupedByCreationYear();
+	Collection<CreationDateFilter> groupPhotosByCreationYear();
 
 	@Query("""
 			SELECT         
@@ -58,5 +58,5 @@ public interface PhotoRepository extends JpaRepository<Photo, Long>, JpaSpecific
 			FROM Photo p
 			GROUP BY orientation
 			""")
-	Collection<OrientationFilter> countPhotosGroupByOrientation();
+	Collection<OrientationFilter> groupPhotosByOrientation();
 }

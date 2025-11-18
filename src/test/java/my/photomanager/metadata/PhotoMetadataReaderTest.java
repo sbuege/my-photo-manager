@@ -1,33 +1,33 @@
 package my.photomanager.metadata;
 
-import static my.photomanager.TestConstants.EXAMPLE_001_CAMERA_MODEL;
-import static my.photomanager.TestConstants.EXAMPLE_001_CREATION_DATE;
-import static my.photomanager.TestConstants.EXAMPLE_001_HEIGHT;
-import static my.photomanager.TestConstants.EXAMPLE_001_LATITUDE;
-import static my.photomanager.TestConstants.EXAMPLE_001_LONGITUDE;
-import static my.photomanager.TestConstants.EXAMPLE_001_PATH;
-import static my.photomanager.TestConstants.EXAMPLE_001_WIDTH;
-import static my.photomanager.TestConstants.EXAMPLE_002_CAMERA_MODEL;
-import static my.photomanager.TestConstants.EXAMPLE_002_CREATION_DATE;
-import static my.photomanager.TestConstants.EXAMPLE_002_HEIGHT;
-import static my.photomanager.TestConstants.EXAMPLE_002_LATITUDE;
-import static my.photomanager.TestConstants.EXAMPLE_002_LONGITUDE;
-import static my.photomanager.TestConstants.EXAMPLE_002_PATH;
-import static my.photomanager.TestConstants.EXAMPLE_002_WIDTH;
-import static my.photomanager.TestConstants.EXAMPLE_003_CAMERA_MODEL;
-import static my.photomanager.TestConstants.EXAMPLE_003_CREATION_DATE;
-import static my.photomanager.TestConstants.EXAMPLE_003_HEIGHT;
-import static my.photomanager.TestConstants.EXAMPLE_003_LATITUDE;
-import static my.photomanager.TestConstants.EXAMPLE_003_LONGITUDE;
-import static my.photomanager.TestConstants.EXAMPLE_003_PATH;
-import static my.photomanager.TestConstants.EXAMPLE_003_WIDTH;
-import static my.photomanager.TestConstants.EXAMPLE_004_CAMERA_MODEL;
-import static my.photomanager.TestConstants.EXAMPLE_004_CREATION_DATE;
-import static my.photomanager.TestConstants.EXAMPLE_004_HEIGHT;
-import static my.photomanager.TestConstants.EXAMPLE_004_LATITUDE;
-import static my.photomanager.TestConstants.EXAMPLE_004_LONGITUDE;
-import static my.photomanager.TestConstants.EXAMPLE_004_PATH;
-import static my.photomanager.TestConstants.EXAMPLE_004_WIDTH;
+import static my.photomanager.TestDataBuilder.EXAMPLE_001_CAMERA_MODEL;
+import static my.photomanager.TestDataBuilder.EXAMPLE_001_CREATION_DATE;
+import static my.photomanager.TestDataBuilder.EXAMPLE_001_HEIGHT;
+import static my.photomanager.TestDataBuilder.EXAMPLE_001_LATITUDE;
+import static my.photomanager.TestDataBuilder.EXAMPLE_001_LONGITUDE;
+import static my.photomanager.TestDataBuilder.EXAMPLE_001_PATH;
+import static my.photomanager.TestDataBuilder.EXAMPLE_001_WIDTH;
+import static my.photomanager.TestDataBuilder.EXAMPLE_002_CAMERA_MODEL;
+import static my.photomanager.TestDataBuilder.EXAMPLE_002_CREATION_DATE;
+import static my.photomanager.TestDataBuilder.EXAMPLE_002_HEIGHT;
+import static my.photomanager.TestDataBuilder.EXAMPLE_002_LATITUDE;
+import static my.photomanager.TestDataBuilder.EXAMPLE_002_LONGITUDE;
+import static my.photomanager.TestDataBuilder.EXAMPLE_002_PATH;
+import static my.photomanager.TestDataBuilder.EXAMPLE_002_WIDTH;
+import static my.photomanager.TestDataBuilder.EXAMPLE_003_CAMERA_MODEL;
+import static my.photomanager.TestDataBuilder.EXAMPLE_003_CREATION_DATE;
+import static my.photomanager.TestDataBuilder.EXAMPLE_003_HEIGHT;
+import static my.photomanager.TestDataBuilder.EXAMPLE_003_LATITUDE;
+import static my.photomanager.TestDataBuilder.EXAMPLE_003_LONGITUDE;
+import static my.photomanager.TestDataBuilder.EXAMPLE_003_PATH;
+import static my.photomanager.TestDataBuilder.EXAMPLE_003_WIDTH;
+import static my.photomanager.TestDataBuilder.EXAMPLE_004_CAMERA_MODEL;
+import static my.photomanager.TestDataBuilder.EXAMPLE_004_CREATION_DATE;
+import static my.photomanager.TestDataBuilder.EXAMPLE_004_HEIGHT;
+import static my.photomanager.TestDataBuilder.EXAMPLE_004_LATITUDE;
+import static my.photomanager.TestDataBuilder.EXAMPLE_004_LONGITUDE;
+import static my.photomanager.TestDataBuilder.EXAMPLE_004_PATH;
+import static my.photomanager.TestDataBuilder.EXAMPLE_004_WIDTH;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -35,7 +35,7 @@ import java.nio.file.Path;
 import java.time.LocalDate;
 import java.util.stream.Stream;
 import lombok.extern.log4j.Log4j2;
-import my.photomanager.TestConstants;
+import my.photomanager.TestDataBuilder;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -100,7 +100,7 @@ class PhotoMetadataReaderTest {
 	@DisplayName("should throw exception when reading non-image file")
 	void shouldThrowException() {
 		// --- WHEN / THEN ---
-		assertThrows(PhotoMetadataReaderException.class, () -> PhotoMetadataReader.readPhotoMetadata(TestConstants.TestFilePath.resolve("Textfile.txt")));
+		assertThrows(PhotoMetadataReaderException.class, () -> PhotoMetadataReader.readPhotoMetadata(TestDataBuilder.TestFilePath.resolve("Textfile.txt")));
 	}
 
 }

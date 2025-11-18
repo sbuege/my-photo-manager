@@ -11,7 +11,6 @@ import java.nio.file.Path;
 import java.util.Optional;
 import java.util.stream.Stream;
 import lombok.extern.log4j.Log4j2;
-import my.photomanager.TestConstants;
 import my.photomanager.TestDataBuilder;
 import my.photomanager.geoLocationResolver.GeoLocationResolverException;
 import my.photomanager.metadata.PhotoMetadata;
@@ -21,7 +20,6 @@ import my.photomanager.photo.cameraSettings.CameraSettings;
 import my.photomanager.photo.cameraSettings.CameraSettingsService;
 import my.photomanager.photo.location.PhotoLocation;
 import my.photomanager.photo.location.PhotoLocationService;
-import org.apache.logging.log4j.util.Strings;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -37,7 +35,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 class PhotoBuilderTest {
 
 	// TEST DATA
-	private final Path TEST_PHOTO_PATH = TestConstants.EXAMPLE_001_PATH;
+	private final Path TEST_PHOTO_PATH = TestDataBuilder.EXAMPLE_001_PATH;
 
 	@Mock
 	private PhotoLocationService photoLocationService;
