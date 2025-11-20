@@ -26,8 +26,8 @@ public class TestDataBuilder {
 	public static String EXAMPLE_001_CITY = "Miami Beach";
 	public static Photo EXAMPLE_001_PHOTO = Photo.builder()
 			.withHashValue("123456789")
-			.withFileName(EXAMPLE_001_PATH.getFileName()
-					.toString())
+			.withFileName(EXAMPLE_001_PATH.toFile()
+					.getAbsolutePath())
 			.withWidth(EXAMPLE_001_WIDTH)
 			.withHeight(EXAMPLE_001_HEIGHT)
 			.withCreationDate(EXAMPLE_001_CREATION_DATE)
@@ -47,8 +47,7 @@ public class TestDataBuilder {
 	public static String EXAMPLE_002_CITY = "Berlin";
 	public static Photo EXAMPLE_002_PHOTO = Photo.builder()
 			.withHashValue("123456789")
-			.withFileName(EXAMPLE_002_PATH.getFileName()
-					.toString())
+			.withFileName(EXAMPLE_002_PATH.toFile().getAbsolutePath())
 			.withWidth(EXAMPLE_002_WIDTH)
 			.withHeight(EXAMPLE_002_HEIGHT)
 			.withCreationDate(EXAMPLE_002_CREATION_DATE)
@@ -68,8 +67,7 @@ public class TestDataBuilder {
 	public static String EXAMPLE_003_CITY = "Miami Beach";
 	public static Photo EXAMPLE_003_PHOTO = Photo.builder()
 			.withHashValue("123456789")
-			.withFileName(EXAMPLE_003_PATH.getFileName()
-					.toString())
+			.withFileName(EXAMPLE_003_PATH.toFile().getAbsolutePath())
 			.withWidth(EXAMPLE_003_WIDTH)
 			.withHeight(EXAMPLE_003_HEIGHT)
 			.withCreationDate(EXAMPLE_003_CREATION_DATE)
@@ -89,8 +87,7 @@ public class TestDataBuilder {
 	public static String EXAMPLE_004_CITY = "Berlin";
 	public static Photo EXAMPLE_004_PHOTO = Photo.builder()
 			.withHashValue("123456789")
-			.withFileName(EXAMPLE_004_PATH.getFileName()
-					.toString())
+			.withFileName(EXAMPLE_004_PATH.toFile().getAbsolutePath())
 			.withWidth(EXAMPLE_004_WIDTH)
 			.withHeight(EXAMPLE_004_HEIGHT)
 			.withCreationDate(EXAMPLE_004_CREATION_DATE)
