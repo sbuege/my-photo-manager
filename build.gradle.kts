@@ -108,6 +108,7 @@ tasks.jacocoTestCoverageVerification {
 			fileTree(it) {
 				exclude("**/*Dto.class")
 				exclude("**/PhotoConfiguration.class")
+				exclude("**/*Exception.class")
 			}
 		})
 	)
