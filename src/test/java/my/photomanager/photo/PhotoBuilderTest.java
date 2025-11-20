@@ -12,14 +12,14 @@ import java.util.Optional;
 import java.util.stream.Stream;
 import lombok.extern.log4j.Log4j2;
 import my.photomanager.TestDataBuilder;
-import my.photomanager.geoLocationResolver.GeoLocationResolverException;
-import my.photomanager.metadata.PhotoMetadata;
-import my.photomanager.metadata.PhotoMetadataReader;
-import my.photomanager.metadata.PhotoMetadataReaderException;
-import my.photomanager.photo.cameraSettings.CameraSettings;
-import my.photomanager.photo.cameraSettings.CameraSettingsService;
-import my.photomanager.photo.location.PhotoLocation;
-import my.photomanager.photo.location.PhotoLocationService;
+import my.photomanager.gpsResolver.GpsResolverException;
+import my.photomanager.metadata.Metadata;
+import my.photomanager.metadata.MetadataParser;
+import my.photomanager.metadata.MetadataParserException;
+import my.photomanager.photo.cameraModel.CameraModel;
+import my.photomanager.photo.cameraModel.CameraModelService;
+import my.photomanager.photo.location.Location;
+import my.photomanager.photo.location.LocationService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -38,34 +38,34 @@ class PhotoBuilderTest {
 	private final Path TEST_PHOTO_PATH = TestDataBuilder.EXAMPLE_001_PATH;
 
 	@Mock
-	private PhotoLocationService photoLocationService;
+	private LocationService locationService;
 
 	@Mock
-	private CameraSettingsService cameraSettingsService;
+	private CameraModelService cameraModelService;
 
 	@InjectMocks
 	private PhotoBuilder photoBuilder;
 
 	@Test
-	@DisplayName("should invoke camera settings and location services")
-	void shouldInvokeCameraSettingsAndLocationServices()
-			throws PhotoBuilderException, GeoLocationResolverException, PhotoMetadataReaderException, IOException {
+	@DisplayName("should invoke camera model and location services")
+	void shouldInvokeCameraModelAndLocationServices()
+			throws PhotoBuilderException, GpsResolverException, MetadataParserException, IOException {
 
-		try (MockedStatic<PhotoMetadataReader> photoMetadataReader = mockStatic(PhotoMetadataReader.class)) {
+		try (MockedStatic<MetadataParser> photoMetadataReader = mockStatic(MetadataParser.class)) {
 			// --- GIVEN ---
-			photoMetadataReader.when(() -> PhotoMetadataReader.readPhotoMetadata(any(Path.class)))
+			photoMetadataReader.when(() -> MetadataParser.parseMetadata(any(Path.class)))
 					.thenReturn(TestDataBuilder.PhotoMetadataBuilder.build());
 
 			// --- WHEN ---
 			photoBuilder.buildPhoto(TEST_PHOTO_PATH);
 
 			// --- THEN ---
-			verify(cameraSettingsService).saveOrGetCameraSettings(any(CameraSettings.class));
-			verify(photoLocationService).saveOrGetPhotoLocation(any(PhotoLocation.class));
+			verify(cameraModelService).saveOrGetCameraModel(any(CameraModel.class));
+			verify(locationService).saveOrGetLocation(any(Location.class));
 		}
 	}
 
-	static Stream<PhotoMetadata> provideMetaDataWitInvalidCameraModel() {
+	static Stream<Metadata> provideMetaDataWitInvalidCameraModel() {
 		return Stream.of(/*TestDataBuilder.PhotoMetadataBuilder.build()
 						.toBuilder()
 						.cameraModel(Optional.of(Strings.EMPTY))
@@ -83,25 +83,25 @@ class PhotoBuilderTest {
 
 	@ParameterizedTest
 	@MethodSource("provideMetaDataWitInvalidCameraModel")
-	@DisplayName("should skip camera settings service when metadata contains no valid camera model")
-	void yshouldSkipCameraSettingsService(PhotoMetadata metadata)
-			throws PhotoBuilderException, GeoLocationResolverException, PhotoMetadataReaderException, IOException {
+	@DisplayName("should skip camera model service when metadata contains no valid camera model")
+	void shouldSkipCameraModelService(Metadata metadata)
+			throws PhotoBuilderException, GpsResolverException, MetadataParserException, IOException {
 
-		try (MockedStatic<PhotoMetadataReader> photoMetadataReader = mockStatic(PhotoMetadataReader.class)) {
+		try (MockedStatic<MetadataParser> photoMetadataReader = mockStatic(MetadataParser.class)) {
 			// --- GIVEN ---
-			photoMetadataReader.when(() -> PhotoMetadataReader.readPhotoMetadata(any(Path.class)))
+			photoMetadataReader.when(() -> MetadataParser.parseMetadata(any(Path.class)))
 					.thenReturn(metadata);
 
 			// --- WHEN ---
 			photoBuilder.buildPhoto(TEST_PHOTO_PATH);
 
 			// --- THEN ---
-			verify(cameraSettingsService, never()).saveOrGetCameraSettings(any(CameraSettings.class));
-			verify(photoLocationService).saveOrGetPhotoLocation(any(PhotoLocation.class));
+			verify(cameraModelService, never()).saveOrGetCameraModel(any(CameraModel.class));
+			verify(locationService).saveOrGetLocation(any(Location.class));
 		}
 	}
 
-	static Stream<PhotoMetadata> provideMetaDataWithInvalidGpsCoordinates() {
+	static Stream<Metadata> provideMetaDataWithInvalidGpsCoordinates() {
 		return Stream.of(TestDataBuilder.PhotoMetadataBuilder.build()
 						.toBuilder()
 						.gpsLongitude(Optional.empty())
@@ -115,24 +115,24 @@ class PhotoBuilderTest {
 	@ParameterizedTest
 	@MethodSource("provideMetaDataWithInvalidGpsCoordinates")
 	@DisplayName("should skip location service when metadata contains invalid gps coordinates")
-	void shouldSkipLocationService(PhotoMetadata metadata)
-			throws PhotoBuilderException, GeoLocationResolverException, PhotoMetadataReaderException, IOException {
+	void shouldSkipLocationService(Metadata metadata)
+			throws PhotoBuilderException, GpsResolverException, MetadataParserException, IOException {
 
-		try (MockedStatic<PhotoMetadataReader> photoMetadataReader = mockStatic(PhotoMetadataReader.class)) {
+		try (MockedStatic<MetadataParser> photoMetadataReader = mockStatic(MetadataParser.class)) {
 			// --- GIVEN ---
-			photoMetadataReader.when(() -> PhotoMetadataReader.readPhotoMetadata(any(Path.class)))
+			photoMetadataReader.when(() -> MetadataParser.parseMetadata(any(Path.class)))
 					.thenReturn(metadata);
 
 			// --- WHEN ---
 			photoBuilder.buildPhoto(TEST_PHOTO_PATH);
 
 			// --- THEN ---
-			verify(cameraSettingsService).saveOrGetCameraSettings(any(CameraSettings.class));
-			verify(photoLocationService, never()).saveOrGetPhotoLocation(any(PhotoLocation.class));
+			verify(cameraModelService).saveOrGetCameraModel(any(CameraModel.class));
+			verify(locationService, never()).saveOrGetLocation(any(Location.class));
 		}
 	}
 
-	static Stream<PhotoMetadata> provideMetaDataWithInvalidPhotoWidth() {
+	static Stream<Metadata> provideMetaDataWithInvalidPhotoWidth() {
 		return Stream.of(TestDataBuilder.PhotoMetadataBuilder.build()
 						.toBuilder()
 						.photoWidth(Optional.of(0))
@@ -151,11 +151,11 @@ class PhotoBuilderTest {
 	@ParameterizedTest
 	@MethodSource("provideMetaDataWithInvalidPhotoWidth")
 	@DisplayName("should throw exception when metadata contains invalid photo width")
-	void shouldThrowExceptionWhenMetadataContainsInvalidPhotoWidth(PhotoMetadata metadata) {
+	void shouldThrowExceptionWhenMetadataContainsInvalidPhotoWidth(Metadata metadata) {
 
-		try (MockedStatic<PhotoMetadataReader> mockedStatic = mockStatic(PhotoMetadataReader.class)) {
+		try (MockedStatic<MetadataParser> mockedStatic = mockStatic(MetadataParser.class)) {
 			// --- GIVEN ---
-			mockedStatic.when(() -> PhotoMetadataReader.readPhotoMetadata(any(Path.class)))
+			mockedStatic.when(() -> MetadataParser.parseMetadata(any(Path.class)))
 					.thenReturn(metadata);
 
 			// --- WHEN / THEN ---
@@ -163,7 +163,7 @@ class PhotoBuilderTest {
 		}
 	}
 
-	static Stream<PhotoMetadata> provideMetaDataWithInvalidPhotoHeight() {
+	static Stream<Metadata> provideMetaDataWithInvalidPhotoHeight() {
 		return Stream.of(TestDataBuilder.PhotoMetadataBuilder.build()
 						.toBuilder()
 						.photoHeight(Optional.of(0))
@@ -182,11 +182,11 @@ class PhotoBuilderTest {
 	@ParameterizedTest
 	@MethodSource("provideMetaDataWithInvalidPhotoHeight")
 	@DisplayName("should throw exception when metadata contains invalid photo height")
-	void shouldThrowExceptionWhenMetadataContainsInvalidPhotoHeight(PhotoMetadata metadata) {
+	void shouldThrowExceptionWhenMetadataContainsInvalidPhotoHeight(Metadata metadata) {
 
-		try (MockedStatic<PhotoMetadataReader> mockedStatic = mockStatic(PhotoMetadataReader.class)) {
+		try (MockedStatic<MetadataParser> mockedStatic = mockStatic(MetadataParser.class)) {
 			// --- GIVEN ---
-			mockedStatic.when(() -> PhotoMetadataReader.readPhotoMetadata(any(Path.class)))
+			mockedStatic.when(() -> MetadataParser.parseMetadata(any(Path.class)))
 					.thenReturn(metadata);
 
 			// --- WHEN / THEN ---

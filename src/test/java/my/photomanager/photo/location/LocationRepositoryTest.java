@@ -1,4 +1,4 @@
-package my.photomanager.photo;
+package my.photomanager.photo.location;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -13,20 +13,20 @@ import org.springframework.dao.DataIntegrityViolationException;
 
 @DataJpaTest
 @Import(TestUtils.PhotoIndexerMock.class)
-class PhotoRepositoryTest {
+class LocationRepositoryTest {
 
 	@Autowired
-	private PhotoRepository repository;
+	private LocationRepository repository;
 
 	@Test
-	@DisplayName("should enforce unique hash value constraint")
+	@DisplayName("should enforce unique country and city constraint")
 	void shouldEnforceUniqueConstraint() {
 		// --- GIVEN ---
-		var photo1 = TestDataBuilder.TestPhotoBuilder.build();
-		var photo2 = TestDataBuilder.TestPhotoBuilder.build();
-		repository.saveAndFlush(photo1);
+		var location1 = TestDataBuilder.TestPhotoLocationBuilder.build();
+		var location2 = TestDataBuilder.TestPhotoLocationBuilder.build();
+		repository.saveAndFlush(location1);
 
 		// --- WHEN / THEN ---
-		assertThrows(DataIntegrityViolationException.class, () -> repository.saveAndFlush(photo2));
+		assertThrows(DataIntegrityViolationException.class, () -> repository.saveAndFlush(location2));
 	}
 }

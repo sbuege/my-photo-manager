@@ -15,8 +15,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.ToString;
-import my.photomanager.photo.cameraSettings.CameraSettings;
-import my.photomanager.photo.location.PhotoLocation;
+import my.photomanager.photo.cameraModel.CameraModel;
+import my.photomanager.photo.location.Location;
 
 @Builder(setterPrefix = "with", toBuilder = true)
 @AllArgsConstructor(access = AccessLevel.PUBLIC)
@@ -53,8 +53,8 @@ public class Photo {
 	private LocalDate creationDate;
 
 	@ManyToOne(fetch = FetchType.EAGER)
-	private CameraSettings cameraSettings;
+	private CameraModel cameraModel;
 
 	@ManyToOne(fetch = FetchType.EAGER)
-	private PhotoLocation location;
+	private Location location;
 }

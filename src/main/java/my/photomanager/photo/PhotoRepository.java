@@ -3,7 +3,7 @@ package my.photomanager.photo;
 import java.util.Collection;
 import java.util.Optional;
 import lombok.NonNull;
-import my.photomanager.filterOption.CameraSettingsFilter;
+import my.photomanager.filterOption.CameraModelFilter;
 import my.photomanager.filterOption.CreationDateFilter;
 import my.photomanager.filterOption.LocationFilter;
 import my.photomanager.filterOption.OrientationFilter;
@@ -19,13 +19,13 @@ public interface PhotoRepository extends JpaRepository<Photo, Long>, JpaSpecific
 
 	@Query("""
 			SELECT 
-				p.cameraSettings.id AS ID,
-				p.cameraSettings.cameraModelName AS modelName,
+				p.cameraModel.id AS ID,
+				p.cameraModel.name AS modelName,
 				COUNT(p) AS numberOfPhotos 
 				FROM Photo p
-				GROUP BY p.cameraSettings
+				GROUP BY p.cameraModel
 			""")
-	Collection<CameraSettingsFilter> groupPhotosByCameraSettings();
+	Collection<CameraModelFilter> groupPhotosByCameraModel();
 
 
 	@Query("""

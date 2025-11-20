@@ -20,34 +20,34 @@ class PhotoServiceTest {
 	final Photo TEST_PHOTO = TestDataBuilder.TestPhotoBuilder.build();
 
 	@Mock
-	private PhotoRepository photoRepository;
+	private PhotoRepository repository;
 
 	@InjectMocks
-	private PhotoService photoService;
+	private PhotoService service;
 
 	@Test
 	@DisplayName("should call saveAndFlush when photo does not exist")
 	void shouldCallSaveAndFlush() {
 		// --- GIVEN ---
-		when(photoRepository.findByHashValue(TestDataBuilder.TEST_PHOTO_HASH_VALUE)).thenReturn(Optional.empty());
+		when(repository.findByHashValue(TestDataBuilder.TEST_PHOTO_HASH_VALUE)).thenReturn(Optional.empty());
 
 		// --- WHEN ---
-		photoService.saveIfPhotoNotExists(TEST_PHOTO);
+		service.saveIfPhotoNotExists(TEST_PHOTO);
 
 		// --- THEN ---
-		verify(photoRepository).saveAndFlush(TEST_PHOTO);
+		verify(repository).saveAndFlush(TEST_PHOTO);
 	}
 
 	@Test
 	@DisplayName("should not call saveAndFlush when photo already exists")
 	void shouldNotCallSaveAndFlush() {
 		// --- GIVEN ---
-		when(photoRepository.findByHashValue(TestDataBuilder.TEST_PHOTO_HASH_VALUE)).thenReturn(Optional.of(TEST_PHOTO));
+		when(repository.findByHashValue(TestDataBuilder.TEST_PHOTO_HASH_VALUE)).thenReturn(Optional.of(TEST_PHOTO));
 
 		// --- WHEN ---
-		photoService.saveIfPhotoNotExists(TEST_PHOTO);
+		service.saveIfPhotoNotExists(TEST_PHOTO);
 
 		// --- THEN ---
-		verify(photoRepository, never()).saveAndFlush(TEST_PHOTO);
+		verify(repository, never()).saveAndFlush(TEST_PHOTO);
 	}
 }

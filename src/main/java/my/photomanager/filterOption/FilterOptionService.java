@@ -13,10 +13,10 @@ public class FilterOptionService {
 		this.photoRepository = photoRepository;
 	}
 
-	public Collection<CameraSettingsFilter> getCameraSettingsFilters() {
-		return photoRepository.groupPhotosByCameraSettings()
+	public Collection<CameraModelFilter> getCameraModelFilters() {
+		return photoRepository.groupPhotosByCameraModel()
 				.stream()
-				.filter(filter -> filter.getModelName() != null)
+				.filter(filter -> filter.getName() != null)
 				.toList();
 	}
 

@@ -1,7 +1,7 @@
 package my.photomanager;
 
 import my.photomanager.filterOption.FilterOptionService;
-import my.photomanager.indexer.PhotoIndexer;
+import my.photomanager.indexer.Indexer;
 import my.photomanager.photo.PhotoService;
 import org.mockito.Mockito;
 import org.springframework.boot.test.context.TestConfiguration;
@@ -13,8 +13,8 @@ public class TestUtils {
 	public static class PhotoIndexerMock {
 
 		@Bean
-		PhotoIndexer photoIndexer() {
-			return Mockito.mock(PhotoIndexer.class);
+		Indexer photoIndexer() {
+			return Mockito.mock(Indexer.class);
 		}
 	}
 

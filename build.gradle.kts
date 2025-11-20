@@ -116,14 +116,11 @@ tasks.jacocoTestCoverageVerification {
 
 pitest {
 	pitestVersion.set("1.15.0")
-	junit5PluginVersion.set("1.2.0")   // ← WICHTIG!
-	// Welche Klassen mutiert werden sollen (Package anpassen)
-	targetClasses.set(listOf("my.photomanager.*"))
+	junit5PluginVersion.set("1.2.0")
 
-	// Welche Testklassen ausgeführt werden sollen
+	targetClasses.set(listOf("my.photomanager.*"))
 	targetTests.set(listOf("my.photomanager.*Test"))
 
-	// Optional: Mutations-Score Mindestgrenze
 	mutationThreshold.set(80)
 }
 

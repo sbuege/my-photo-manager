@@ -3,12 +3,12 @@ package my.photomanager;
 import java.nio.file.Path;
 import java.time.LocalDate;
 import java.util.Optional;
-import my.photomanager.metadata.PhotoMetadata;
+import my.photomanager.metadata.Metadata;
 import my.photomanager.photo.Photo;
-import my.photomanager.photo.album.PhotoAlbum;
-import my.photomanager.photo.cameraSettings.CameraSettings;
-import my.photomanager.photo.category.PhotoCategory;
-import my.photomanager.photo.location.PhotoLocation;
+import my.photomanager.photo.album.Album;
+import my.photomanager.photo.cameraModel.CameraModel;
+import my.photomanager.photo.category.Category;
+import my.photomanager.photo.location.Location;
 
 public class TestDataBuilder {
 
@@ -24,6 +24,16 @@ public class TestDataBuilder {
 	public static Double EXAMPLE_001_LATITUDE = 25.7862;
 	public static String EXAMPLE_001_COUNTRY = "Vereinigte Staaten von Amerika";
 	public static String EXAMPLE_001_CITY = "Miami Beach";
+	public static Photo EXAMPLE_001_PHOTO = Photo.builder()
+			.withHashValue("123456789")
+			.withFileName(EXAMPLE_001_PATH.getFileName()
+					.toString())
+			.withWidth(EXAMPLE_001_WIDTH)
+			.withHeight(EXAMPLE_001_HEIGHT)
+			.withCreationDate(EXAMPLE_001_CREATION_DATE)
+			.withCameraModel(TestCameraModelBuilder.build(EXAMPLE_001_CAMERA_MODEL))
+			.withLocation(TestPhotoLocationBuilder.build(EXAMPLE_001_COUNTRY, EXAMPLE_001_CITY))
+			.build();
 
 	// example 002
 	public static Path EXAMPLE_002_PATH = TestFilePath.resolve("example_002.jpg");
@@ -35,6 +45,16 @@ public class TestDataBuilder {
 	public static Double EXAMPLE_002_LATITUDE = 52.518680555555555;
 	public static String EXAMPLE_002_COUNTRY = "Deutschland";
 	public static String EXAMPLE_002_CITY = "Berlin";
+	public static Photo EXAMPLE_002_PHOTO = Photo.builder()
+			.withHashValue("123456789")
+			.withFileName(EXAMPLE_002_PATH.getFileName()
+					.toString())
+			.withWidth(EXAMPLE_002_WIDTH)
+			.withHeight(EXAMPLE_002_HEIGHT)
+			.withCreationDate(EXAMPLE_002_CREATION_DATE)
+			.withCameraModel(TestCameraModelBuilder.build(EXAMPLE_002_CAMERA_MODEL))
+			.withLocation(TestPhotoLocationBuilder.build(EXAMPLE_002_COUNTRY, EXAMPLE_002_CITY))
+			.build();
 
 	// example 003
 	public static Path EXAMPLE_003_PATH = TestFilePath.resolve("example_003.jpg");
@@ -46,6 +66,16 @@ public class TestDataBuilder {
 	public static Double EXAMPLE_003_LATITUDE = 25.7862;
 	public static String EXAMPLE_003_COUNTRY = "Vereinigte Staaten von Amerika";
 	public static String EXAMPLE_003_CITY = "Miami Beach";
+	public static Photo EXAMPLE_003_PHOTO = Photo.builder()
+			.withHashValue("123456789")
+			.withFileName(EXAMPLE_003_PATH.getFileName()
+					.toString())
+			.withWidth(EXAMPLE_003_WIDTH)
+			.withHeight(EXAMPLE_003_HEIGHT)
+			.withCreationDate(EXAMPLE_003_CREATION_DATE)
+			.withCameraModel(TestCameraModelBuilder.build(EXAMPLE_003_CAMERA_MODEL))
+			.withLocation(TestPhotoLocationBuilder.build(EXAMPLE_003_COUNTRY, EXAMPLE_003_CITY))
+			.build();
 
 	// example 004
 	public static Path EXAMPLE_004_PATH = TestFilePath.resolve("example_004.webp");
@@ -57,12 +87,22 @@ public class TestDataBuilder {
 	public static Double EXAMPLE_004_LATITUDE = 52.518680555555555;
 	public static String EXAMPLE_004_COUNTRY = "Deutschland";
 	public static String EXAMPLE_004_CITY = "Berlin";
+	public static Photo EXAMPLE_004_PHOTO = Photo.builder()
+			.withHashValue("123456789")
+			.withFileName(EXAMPLE_004_PATH.getFileName()
+					.toString())
+			.withWidth(EXAMPLE_004_WIDTH)
+			.withHeight(EXAMPLE_004_HEIGHT)
+			.withCreationDate(EXAMPLE_004_CREATION_DATE)
+			.withCameraModel(TestCameraModelBuilder.build(EXAMPLE_004_CAMERA_MODEL))
+			.withLocation(TestPhotoLocationBuilder.build(EXAMPLE_004_COUNTRY, EXAMPLE_004_CITY))
+			.build();
 
-	public static final String TEST_PHOTO_ALBUM_NAME = "TestPhotoAlbum";
+	public static final String TEST_ALBUM_NAME = "TestAlbum";
 	public static final String TEST_CAMERA_MODEL_NAME = "TestCameraModel";
-	public static final String TEST_PHOTO_CATEGORY_NAME = "TestPhotoCategory";
-	public static final String TEST_PHOTO_LOCATION_COUNTRY = "TestPhotoLocationCountry";
-	public static final String TEST_PHOTO_LOCATION_CITY = "TestPhotoLocationCity";
+	public static final String TEST_CATEGORY_NAME = "TestCategory";
+	public static final String TEST_LOCATION_COUNTRY = "TestLocationCountry";
+	public static final String TEST_LOCATION_CITY = "TestLocationCity";
 	public static final String TEST_PHOTO_HASH_VALUE = "TestPhotoHashValue";
 	public static final String TEST_PHOTO_FILE_NAME = "TestPhotoFileName";
 	public static final Integer TEST_PHOTO_WIDTH = 1000;
@@ -73,38 +113,38 @@ public class TestDataBuilder {
 
 	public static class TestPhotoAlbumBuilder {
 
-		public static PhotoAlbum build() {
-			return build(TEST_PHOTO_ALBUM_NAME);
+		public static Album build() {
+			return build(TEST_ALBUM_NAME);
 		}
 
-		public static PhotoAlbum build(String name) {
-			return PhotoAlbum.builder()
+		public static Album build(String name) {
+			return Album.builder()
 					.withName(name)
 					.build();
 		}
 	}
 
-	public static class TestCameraSettingsBuilder {
+	public static class TestCameraModelBuilder {
 
-		public static CameraSettings build() {
+		public static CameraModel build() {
 			return build(TEST_CAMERA_MODEL_NAME);
 		}
 
-		public static CameraSettings build(String modelName) {
-			return CameraSettings.builder()
-					.withCameraModelName(modelName)
+		public static CameraModel build(String modelName) {
+			return CameraModel.builder()
+					.withName(modelName)
 					.build();
 		}
 	}
 
 	public static class TestPhotoCategoryBuilder {
 
-		public static PhotoCategory build() {
-			return build(TEST_PHOTO_CATEGORY_NAME);
+		public static Category build() {
+			return build(TEST_CATEGORY_NAME);
 		}
 
-		public static PhotoCategory build(String name) {
-			return PhotoCategory.builder()
+		public static Category build(String name) {
+			return Category.builder()
 					.withName(name)
 					.build();
 		}
@@ -112,12 +152,12 @@ public class TestDataBuilder {
 
 	public static class TestPhotoLocationBuilder {
 
-		public static PhotoLocation build() {
-			return build(TEST_PHOTO_LOCATION_COUNTRY, TEST_PHOTO_LOCATION_CITY);
+		public static Location build() {
+			return build(TEST_LOCATION_COUNTRY, TEST_LOCATION_CITY);
 		}
 
-		public static PhotoLocation build(String country, String city) {
-			return PhotoLocation.builder()
+		public static Location build(String country, String city) {
+			return Location.builder()
 					.withCountry(country)
 					.withCity(city)
 					.build();
@@ -143,13 +183,13 @@ public class TestDataBuilder {
 
 	public static class PhotoMetadataBuilder {
 
-		public static PhotoMetadata build() {
+		public static Metadata build() {
 			return build(TEST_PHOTO_WIDTH, TEST_PHOTO_HEIGHT, TEST_CAMERA_MODEL_NAME, TEST_PHOTO_CREATION_DATE, TEST_PHOTO_LONGITUDE, TEST_PHOTO_LATITUDE);
 		}
 
-		public static PhotoMetadata build(Integer photoWidth, Integer photoHeight, String photoCameraModel, LocalDate photoCreationDate, Double photoLongitude,
+		public static Metadata build(Integer photoWidth, Integer photoHeight, String photoCameraModel, LocalDate photoCreationDate, Double photoLongitude,
 				Double photoLatitude) {
-			return PhotoMetadata.builder()
+			return Metadata.builder()
 					.photoWidth(Optional.ofNullable(photoWidth))
 					.photoHeight(Optional.ofNullable(photoHeight))
 					.cameraModel(Optional.ofNullable(photoCameraModel))

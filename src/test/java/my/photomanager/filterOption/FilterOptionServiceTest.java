@@ -20,13 +20,13 @@ class FilterOptionServiceTest {
 	private FilterOptionService filterOptionService;
 
 	@Test
-	@DisplayName("should call group photos by camera settings")
-	void shouldCallGroupAndCountPhotosByCameraSettings() {
+	@DisplayName("should call group photos by camera model")
+	void shouldCallGroupPhotosByCameraModel() {
 		// --- WHEN  ---
-		filterOptionService.getCameraSettingsFilters();
+		filterOptionService.getCameraModelFilters();
 
 		// --- THEN ---
-		verify(photoRepository).groupPhotosByCameraSettings();
+		verify(photoRepository).groupPhotosByCameraModel();
 	}
 
 	@Test
