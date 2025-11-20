@@ -1,4 +1,4 @@
-package my.photomanager.photo;
+package my.photomanager.photo.cameraModel;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -13,20 +13,20 @@ import org.springframework.dao.DataIntegrityViolationException;
 
 @DataJpaTest
 @Import(TestUtils.PhotoIndexerMock.class)
-class PhotoRepositoryTest {
+class CameraModelRepositoryTest {
 
 	@Autowired
-	private PhotoRepository repository;
+	private CameraModelRepository repository;
 
 	@Test
-	@DisplayName("should enforce unique hash value constraint")
+	@DisplayName("should enforce unique name constraint")
 	void shouldEnforceUniqueConstraint() {
 		// --- GIVEN ---
-		var photo1 = TestDataBuilder.TestPhotoBuilder.build();
-		var photo2 = TestDataBuilder.TestPhotoBuilder.build();
-		repository.saveAndFlush(photo1);
+		var cameraModel1 = TestDataBuilder.TestCameraModelBuilder.build();
+		var cameraModel2 = TestDataBuilder.TestCameraModelBuilder.build();
+		repository.saveAndFlush(cameraModel1);
 
 		// --- WHEN / THEN ---
-		assertThrows(DataIntegrityViolationException.class, () -> repository.saveAndFlush(photo2));
+		assertThrows(DataIntegrityViolationException.class, () -> repository.saveAndFlush(cameraModel2));
 	}
 }

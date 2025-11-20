@@ -6,26 +6,26 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Base64;
 import java.util.Collection;
+import lombok.AccessLevel;
 import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import my.photomanager.filter.FilterProperties;
+import my.photomanager.filterOption.FilterProperties;
 import net.coobird.thumbnailator.Thumbnails;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
 
 @Service
+@RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 @Log4j2
 public class PhotoService {
 
-	private final PhotoRepository photoRepository;
+	private final PhotoRepository repository;
 
-	protected PhotoService(PhotoRepository photoRepository) {
-		this.photoRepository = photoRepository;
-	}
 
 	public boolean existsPhotoByHashValue(Path photoPath) throws IOException {
-		return photoRepository.existsByHashValue(DigestUtils.md5DigestAsHex(new FileInputStream(photoPath.toFile())));
+		return repository.existsByHashValue(DigestUtils.md5DigestAsHex(new FileInputStream(photoPath.toFile())));
 	}
 
 	/**
@@ -34,18 +34,18 @@ public class PhotoService {
 	 * @param photo the {@link Photo} to save or retrieve
 	 */
 	public void saveIfPhotoNotExists(@NonNull Photo photo) {
-		photoRepository.findByHashValue(photo.getHashValue())
+		repository.findByHashValue(photo.getHashValue())
 				.orElseGet(() -> {
-					var savedPhoto = photoRepository.saveAndFlush(photo);
-					log.info("saved photo with filename successfully", photo.getFileName());
+					var savedPhoto = repository.saveAndFlush(photo);
+					log.info("saved photo with filename {} successfully", photo.getFileName());
 
 					return savedPhoto;
 				});
 	}
 
 	public byte[] getThumbnail(@NonNull Long id) throws IOException, PhotoServiceException {
-		var photo = photoRepository.findById(id)
-				.orElseThrow(() -> new PhotoServiceException("no photo found with id " + id));
+		var photo = repository.findById(id)
+				.orElseThrow(() -> new PhotoServiceException("no photo found with id" + id));
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 
 		Thumbnails.of(Path.of(photo.getFileName())
@@ -68,7 +68,7 @@ public class PhotoService {
 	 * @return a collection of photo IDs matching the applied filters;
 	 */
 	public Collection<Long> filterPhotos(@NonNull FilterProperties filterProperties) {
-		var photos = photoRepository.findAll(Specification.where(containsLocation(filterProperties))
+		var photos = repository.findAll(Specification.where(containsLocation(filterProperties))
 				.and(createdBetween(filterProperties).and(containsCameraModel(filterProperties))));
 
 		return photos.stream()
@@ -100,7 +100,7 @@ public class PhotoService {
 			}
 
 			return root
-					.get("cameraSettings")
+					.get("cameraModel")
 					.get("id")
 					.in(cameraModelIds);
 		};
@@ -114,12 +114,15 @@ public class PhotoService {
 			if (startDate == null && endDate == null) {
 				return null;
 			}
+
 			if (startDate != null && endDate != null) {
 				return cb.between(root.get("creationDate"), startDate, endDate);
 			}
+
 			if (startDate != null) {
 				return cb.equal(root.get("creationDate"), startDate);
 			}
+
 			return cb.lessThanOrEqualTo(root.get("creationDate"), endDate);
 		};
 	}

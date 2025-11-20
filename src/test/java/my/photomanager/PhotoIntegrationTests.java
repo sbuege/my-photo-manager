@@ -1,53 +1,40 @@
 package my.photomanager;
 
-import static my.photomanager.TestConstants.EXAMPLE_001_CAMERA_MODEL;
-import static my.photomanager.TestConstants.EXAMPLE_001_CITY;
-import static my.photomanager.TestConstants.EXAMPLE_001_COUNTRY;
-import static my.photomanager.TestConstants.EXAMPLE_001_CREATION_DATE;
-import static my.photomanager.TestConstants.EXAMPLE_001_HEIGHT;
-import static my.photomanager.TestConstants.EXAMPLE_001_WIDTH;
-import static my.photomanager.TestConstants.EXAMPLE_002_CAMERA_MODEL;
-import static my.photomanager.TestConstants.EXAMPLE_002_CITY;
-import static my.photomanager.TestConstants.EXAMPLE_002_COUNTRY;
-import static my.photomanager.TestConstants.EXAMPLE_002_CREATION_DATE;
-import static my.photomanager.TestConstants.EXAMPLE_002_HEIGHT;
-import static my.photomanager.TestConstants.EXAMPLE_002_WIDTH;
-import static my.photomanager.TestConstants.EXAMPLE_003_CAMERA_MODEL;
-import static my.photomanager.TestConstants.EXAMPLE_003_CITY;
-import static my.photomanager.TestConstants.EXAMPLE_003_COUNTRY;
-import static my.photomanager.TestConstants.EXAMPLE_003_CREATION_DATE;
-import static my.photomanager.TestConstants.EXAMPLE_003_HEIGHT;
-import static my.photomanager.TestConstants.EXAMPLE_003_WIDTH;
-import static my.photomanager.TestConstants.EXAMPLE_004_CAMERA_MODEL;
-import static my.photomanager.TestConstants.EXAMPLE_004_CITY;
-import static my.photomanager.TestConstants.EXAMPLE_004_COUNTRY;
-import static my.photomanager.TestConstants.EXAMPLE_004_CREATION_DATE;
-import static my.photomanager.TestConstants.EXAMPLE_004_HEIGHT;
-import static my.photomanager.TestConstants.EXAMPLE_004_WIDTH;
+import static my.photomanager.TestDataBuilder.EXAMPLE_001_CREATION_DATE;
+import static my.photomanager.TestDataBuilder.EXAMPLE_001_PHOTO;
+import static my.photomanager.TestDataBuilder.EXAMPLE_002_PHOTO;
+import static my.photomanager.TestDataBuilder.EXAMPLE_003_PHOTO;
+import static my.photomanager.TestDataBuilder.EXAMPLE_004_CREATION_DATE;
+import static my.photomanager.TestDataBuilder.EXAMPLE_004_PHOTO;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.tuple;
+import static org.junit.jupiter.api.TestInstance.Lifecycle.PER_CLASS;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Stream;
 import lombok.extern.log4j.Log4j2;
-import my.photomanager.filter.FilterProperties;
-import my.photomanager.indexer.PhotoIndexer;
+import my.photomanager.config.PhotoManagerConfiguration;
+import my.photomanager.filterOption.FilterProperties;
+import my.photomanager.indexer.Indexer;
 import my.photomanager.photo.Photo;
 import my.photomanager.photo.PhotoRepository;
 import my.photomanager.photo.PhotoService;
-import org.assertj.core.groups.Tuple;
 import org.awaitility.Awaitility;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Profile;
 import org.springframework.test.context.TestPropertySource;
 
 @SpringBootTest
+@TestInstance(PER_CLASS)
+@Profile("test")
 @TestPropertySource(properties = {"photo.sourceFolder=src/test/resources/Testdata/"})
 @Log4j2
 class PhotoIntegrationTests {
@@ -56,141 +43,90 @@ class PhotoIntegrationTests {
 	private PhotoManagerConfiguration configuration;
 
 	@Autowired
-	private PhotoIndexer photoIndexer;
+	private Indexer photoIndexer;
 
 	@Autowired
-	private PhotoService photoService;
+	private PhotoService service;
 
 	@Autowired
-	private PhotoRepository photoRepository;
+	private PhotoRepository repository;
 
-	@BeforeEach
+	@BeforeAll
 	void setUp() {
-		// given
+		// --- GIVEN ---
+		repository.deleteAll();
+		assertThat(repository.count()).isZero();
+
 		Awaitility.await()
 				.atMost(5, TimeUnit.SECONDS)
-				.until(() -> photoRepository.count() == 4);
+				.until(() -> repository.count() == 4);
 	}
 
 	@Test
-	void shouldIndexAndCreatePhotos() {
-		// when
-		var photos = photoRepository.findAll();
+	@DisplayName("should index and save photos")
+	void shouldIndexAndSavePhotos() {
+		// --- WHEN ---
+		var photos = repository.findAll();
 
-		// then
-		assertThat(photos).extracting(Photo::getHeight,
-						Photo::getWidth,
-						Photo::getCreationDate,
-						p -> p.getLocation() != null ? p.getLocation()
-								.getCountry() : null,
-						p -> p.getLocation() != null ? p.getLocation()
-								.getCity() : null,
-						p -> p.getCameraSettings() != null ? p.getCameraSettings()
-								.getCameraModelName() : null
-
-				)
-				.containsExactlyInAnyOrder(
-						tuple(EXAMPLE_001_HEIGHT, EXAMPLE_001_WIDTH, EXAMPLE_001_CREATION_DATE, EXAMPLE_001_COUNTRY, EXAMPLE_001_CITY,
-								EXAMPLE_001_CAMERA_MODEL),
-						tuple(EXAMPLE_002_HEIGHT, EXAMPLE_002_WIDTH, EXAMPLE_002_CREATION_DATE, EXAMPLE_002_COUNTRY, EXAMPLE_002_CITY,
-								EXAMPLE_002_CAMERA_MODEL),
-						tuple(EXAMPLE_003_HEIGHT, EXAMPLE_003_WIDTH, EXAMPLE_003_CREATION_DATE, EXAMPLE_003_COUNTRY, EXAMPLE_003_CITY,
-								EXAMPLE_003_CAMERA_MODEL),
-						tuple(EXAMPLE_004_HEIGHT, EXAMPLE_004_WIDTH, EXAMPLE_004_CREATION_DATE, EXAMPLE_004_COUNTRY, EXAMPLE_004_CITY,
-								EXAMPLE_004_CAMERA_MODEL));
-
-
+		// --- THEN ---
+		assertThat(photos)
+				.usingRecursiveFieldByFieldElementComparatorIgnoringFields("id", "hashValue", "fileName", "location.id", "cameraModel.id")
+				.containsExactlyInAnyOrderElementsOf(List.of(EXAMPLE_001_PHOTO, EXAMPLE_002_PHOTO, EXAMPLE_003_PHOTO, EXAMPLE_004_PHOTO));
 	}
 
-	static Stream<Arguments> testDataProvider() {
+	static Stream<Arguments> testFilterPropertiesProvider() {
 		return Stream.of(
 				// location
 				Arguments.of(FilterProperties.builder()
 								.withLocationIDs(List.of(1L))
-
 								.build(),
-						List.of(
-								tuple(EXAMPLE_001_CREATION_DATE, EXAMPLE_001_COUNTRY, EXAMPLE_001_CITY,
-										EXAMPLE_001_CAMERA_MODEL),
-								tuple(EXAMPLE_003_CREATION_DATE, EXAMPLE_003_COUNTRY, EXAMPLE_003_CITY,
-										EXAMPLE_003_CAMERA_MODEL)
-						)),
+						List.of(EXAMPLE_001_PHOTO, EXAMPLE_003_PHOTO)),
+
 				// creation date
 				Arguments.of(FilterProperties.builder()
 								.withStartDate(EXAMPLE_001_CREATION_DATE)
 								.build(),
-						List.of(tuple(EXAMPLE_001_CREATION_DATE, EXAMPLE_001_COUNTRY, EXAMPLE_001_CITY,
-										EXAMPLE_001_CAMERA_MODEL),
-								tuple(EXAMPLE_002_CREATION_DATE, EXAMPLE_002_COUNTRY, EXAMPLE_002_CITY,
-										EXAMPLE_002_CAMERA_MODEL)
-						)
+						List.of(EXAMPLE_001_PHOTO, EXAMPLE_002_PHOTO)
 				),
 
 				Arguments.of(FilterProperties.builder()
 								.withEndDate(EXAMPLE_004_CREATION_DATE)
 								.build(),
-						List.of(tuple(EXAMPLE_001_CREATION_DATE, EXAMPLE_001_COUNTRY, EXAMPLE_001_CITY,
-										EXAMPLE_001_CAMERA_MODEL),
-								tuple(EXAMPLE_002_CREATION_DATE, EXAMPLE_002_COUNTRY, EXAMPLE_002_CITY,
-										EXAMPLE_002_CAMERA_MODEL),
-								tuple(EXAMPLE_003_CREATION_DATE, EXAMPLE_003_COUNTRY, EXAMPLE_003_CITY,
-										EXAMPLE_003_CAMERA_MODEL),
-								tuple(EXAMPLE_004_CREATION_DATE, EXAMPLE_004_COUNTRY, EXAMPLE_004_CITY,
-										EXAMPLE_004_CAMERA_MODEL)
-
-						)
+						List.of(EXAMPLE_001_PHOTO, EXAMPLE_002_PHOTO, EXAMPLE_003_PHOTO, EXAMPLE_004_PHOTO)
 				),
 
 				Arguments.of(FilterProperties.builder()
 								.withStartDate(EXAMPLE_001_CREATION_DATE)
 								.withEndDate(EXAMPLE_004_CREATION_DATE)
 								.build(),
-						List.of(
-								tuple(EXAMPLE_001_CREATION_DATE, EXAMPLE_001_COUNTRY, EXAMPLE_001_CITY,
-										EXAMPLE_001_CAMERA_MODEL),
-								tuple(EXAMPLE_002_CREATION_DATE, EXAMPLE_002_COUNTRY, EXAMPLE_002_CITY,
-										EXAMPLE_002_CAMERA_MODEL),
-								tuple(EXAMPLE_003_CREATION_DATE, EXAMPLE_003_COUNTRY, EXAMPLE_003_CITY,
-										EXAMPLE_003_CAMERA_MODEL),
-								tuple(EXAMPLE_004_CREATION_DATE, EXAMPLE_004_COUNTRY, EXAMPLE_004_CITY,
-										EXAMPLE_004_CAMERA_MODEL)
-						)
+						List.of(EXAMPLE_001_PHOTO, EXAMPLE_002_PHOTO, EXAMPLE_003_PHOTO, EXAMPLE_004_PHOTO)
+
 				),
 
 				// camera model
 				Arguments.of(FilterProperties.builder()
 								.withCameraModelIds(List.of(1L))
 								.build(),
-						List.of(
-								tuple(EXAMPLE_001_CREATION_DATE, EXAMPLE_001_COUNTRY, EXAMPLE_001_CITY,
-										EXAMPLE_001_CAMERA_MODEL),
-								tuple(EXAMPLE_003_CREATION_DATE, EXAMPLE_003_COUNTRY, EXAMPLE_003_CITY,
-										EXAMPLE_003_CAMERA_MODEL)
-						))
+						List.of(EXAMPLE_001_PHOTO, EXAMPLE_003_PHOTO,EXAMPLE_004_PHOTO))
+
 		);
 
 	}
 
 	@ParameterizedTest
-	@MethodSource("testDataProvider")
-	void shouldFilterPhotos(FilterProperties filterProperties, List<Tuple> expected) {
-		// when
-		var photoIDs = photoService.filterPhotos(filterProperties);
-		var photos = photoRepository.findAll()
+	@MethodSource("testFilterPropertiesProvider")
+	void shouldFilterPhotos(FilterProperties filterProperties, List<Photo> expectedPhotos) {
+		// --- WHEN ---
+		var photoIDs = service.filterPhotos(filterProperties);
+		var photos = repository.findAll()
 				.stream()
 				.filter(photo -> photoIDs.contains(photo.getId()))
 				.toList();
 
-		// then
-		assertThat(photos).extracting(Photo::getCreationDate,
-						p -> p.getLocation() != null ? p.getLocation()
-								.getCountry() : null,
-						p -> p.getLocation() != null ? p.getLocation()
-								.getCity() : null,
-						p -> p.getCameraSettings() != null ? p.getCameraSettings()
-								.getCameraModelName() : null
-				)
-				.containsExactlyInAnyOrderElementsOf(expected);
+		// --- THEN ---
+		assertThat(photos)
+				.usingRecursiveFieldByFieldElementComparatorIgnoringFields("id", "hashValue", "fileName", "location.id", "cameraModel.id")
+				.containsExactlyInAnyOrderElementsOf(expectedPhotos);
 
 	}
 }

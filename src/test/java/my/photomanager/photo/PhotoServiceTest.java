@@ -1,71 +1,81 @@
 package my.photomanager.photo;
 
+import static my.photomanager.TestDataBuilder.EXAMPLE_001_PHOTO;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import java.time.LocalDate;
+import java.io.IOException;
 import java.util.Optional;
-import org.junit.jupiter.api.BeforeEach;
+import my.photomanager.TestDataBuilder;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
 class PhotoServiceTest {
 
-	private PhotoService photoService;
+	// TEST DATA
+	final Photo TEST_PHOTO = TestDataBuilder.TestPhotoBuilder.build();
 
 	@Mock
-	private PhotoRepository photoRepository;
+	private PhotoRepository repository;
 
-	@BeforeEach
-	void setUp() {
-		photoService = new PhotoService(photoRepository);
+	@InjectMocks
+	private PhotoService service;
+
+	@Test
+	@DisplayName("should call saveAndFlush when photo does not exist")
+	void shouldCallSaveAndFlush() {
+		// --- GIVEN ---
+		when(repository.findByHashValue(TestDataBuilder.TEST_PHOTO_HASH_VALUE)).thenReturn(Optional.empty());
+
+		// --- WHEN ---
+		service.saveIfPhotoNotExists(TEST_PHOTO);
+
+		// --- THEN ---
+		verify(repository).saveAndFlush(TEST_PHOTO);
 	}
 
 	@Test
-	void shouldSavePhotoWhenNotExisting() {
-		// given
-		final var photoHashValue = "TestPhotoHashValue";
-		final var photoFileName = "TestPhotoFileName";
-		final var photoCreationDate = LocalDate.now();
-		var photo = Photo.builder()
-				.withFileName(photoFileName)
-				.withHashValue(photoHashValue)
-				.withHeight(1000)
-				.withWidth(1000)
-				.withCreationDate(photoCreationDate)
-				.build();
-		when(photoRepository.findByHashValue(photoHashValue)).thenReturn(Optional.empty());
+	@DisplayName("should not call saveAndFlush when photo already exists")
+	void shouldNotCallSaveAndFlush() {
+		// --- GIVEN ---
+		when(repository.findByHashValue(TestDataBuilder.TEST_PHOTO_HASH_VALUE)).thenReturn(Optional.of(TEST_PHOTO));
 
-		// when
-		photoService.saveIfPhotoNotExists(photo);
+		// --- WHEN ---
+		service.saveIfPhotoNotExists(TEST_PHOTO);
 
-		// then
-		verify(photoRepository).saveAndFlush(photo);
+		// --- THEN ---
+		verify(repository, never()).saveAndFlush(TEST_PHOTO);
 	}
 
 	@Test
-	void shouldNotSavePhotoWhenExistingAlready() {
-		// given
-		final var photoHashValue = "TestPhotoHashValue";
-		final var photoFileName = "TestPhotoFileName";
-		final var photoCreationDate = LocalDate.now();
-		var photo = Photo.builder()
-				.withFileName(photoFileName)
-				.withHashValue(photoHashValue)
-				.withCreationDate(photoCreationDate)
-				.withHeight(1000)
-				.withWidth(1000)
-				.build();
-		when(photoRepository.findByHashValue(photoHashValue)).thenReturn(Optional.of(photo));
+	@DisplayName("should generate thumbnail")
+	void shouldGenerateThumbnail() throws PhotoServiceException, IOException {
+		// --- GIVEN ---
+		when(repository.findById(anyLong())).thenReturn(Optional.of(EXAMPLE_001_PHOTO));
 
-		// when
-		photoService.saveIfPhotoNotExists(photo);
+		// --- WHEN ---
+		var thumbnailBytes = service.getThumbnail(anyLong());
 
-		// then
-		verify(photoRepository, never()).saveAndFlush(photo);
+		// --- THEN ---
+		assertThat(thumbnailBytes).isNotNull();
+	}
+
+	@Test
+	@DisplayName("should throw exception when photo id not found")
+	void shouldThrowException() {
+		// --- GIVEN ---
+		when(repository.findById(anyLong())).thenReturn(Optional.empty());
+
+		// --- WHEN / THEN ---
+		assertThrows(PhotoServiceException.class, () -> service.getThumbnail(anyLong()));
 	}
 }

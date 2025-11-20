@@ -1,6 +1,6 @@
 package my.photomanager;
 
-import my.photomanager.indexer.PhotoIndexer;
+import my.photomanager.indexer.Indexer;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -10,15 +10,15 @@ import org.springframework.scheduling.annotation.EnableAsync;
 @EnableAsync
 public class PhotoManagerApplication implements CommandLineRunner {
 
-	private final PhotoIndexer photoIndexer;
+	private final Indexer photoIndexer;
 
-	protected PhotoManagerApplication(PhotoIndexer photoIndexer) {
+	protected PhotoManagerApplication(Indexer photoIndexer) {
 		this.photoIndexer = photoIndexer;
 	}
 
 
 	@Override
-	public void run(String... args) throws Exception {
+	public void run(String... args) {
 		photoIndexer.indexPhotos();
 	}
 
