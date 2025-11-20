@@ -18,10 +18,10 @@ public interface PhotoRepository extends JpaRepository<Photo, Long>, JpaSpecific
 	boolean existsByHashValue(@NonNull String hashValue);
 
 	@Query("""
-			SELECT 
+			SELECT
 				p.cameraModel.id AS ID,
 				p.cameraModel.name AS modelName,
-				COUNT(p) AS numberOfPhotos 
+				COUNT(p) AS numberOfPhotos
 				FROM Photo p
 				GROUP BY p.cameraModel
 			""")
@@ -29,7 +29,7 @@ public interface PhotoRepository extends JpaRepository<Photo, Long>, JpaSpecific
 
 
 	@Query("""
-			SELECT 
+			SELECT
 				p.location.id AS ID,
 				p.location.country AS country,
 				p.location.city AS city,
@@ -48,15 +48,15 @@ public interface PhotoRepository extends JpaRepository<Photo, Long>, JpaSpecific
 	Collection<CreationDateFilter> groupPhotosByCreationYear();
 
 	@Query("""
-			SELECT         
-				CASE
-			                   WHEN p.height > p.width THEN 'PORTRAIT'
-			                   WHEN p.width > p.height THEN 'LANDSCAPE'
-			                   ELSE 'SQUARE'
-			             END AS orientation,
-			    COUNT(p) AS numberOfPhotos
-			FROM Photo p
-			GROUP BY orientation
-			""")
+				SELECT
+					CASE
+				                   WHEN p.height > p.width THEN 'PORTRAIT'
+				                   WHEN p.width > p.height THEN 'LANDSCAPE'
+				                   ELSE 'SQUARE'
+				             END AS orientation,
+				    COUNT(p) AS numberOfPhotos
+				FROM Photo p
+				GROUP BY orientation
+			\t""")
 	Collection<OrientationFilter> groupPhotosByOrientation();
 }
