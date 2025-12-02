@@ -27,7 +27,7 @@ public class FilterOptionService {
 				.toList();
 	}
 
-	public Collection<CreationDateFilter> getCreationDateFilters() {
+	public Collection<CreationDateFilter> getCreationYearFilters() {
 		return photoRepository.groupPhotosByCreationYear()
 				.stream()
 				.filter(filter -> filter.getYear() != null)
