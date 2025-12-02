@@ -53,12 +53,21 @@ public class PhotoBuilder {
 			throw new PhotoBuilderException("photo width cannot be zero");
 		}
 
+		var photoOrientation = Orientation.SQUARE;
+		if (photoHeight > photoWidth){
+			photoOrientation = Orientation.PORTRAIT;
+		}
+		if (photoWidth > photoHeight){
+			photoOrientation = Orientation.LANDSCAPE;
+		}
+
 		var photo = Photo.builder()
 				.withHashValue(hashValue)
 				.withFileName(photoPath.toAbsolutePath()
 						.toString())
 				.withHeight(photoHeight)
 				.withWidth(photoWidth)
+				.withOrientation(photoOrientation)
 				.build();
 
 		if (photoMetadata.creationDate()
