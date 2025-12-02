@@ -3,8 +3,8 @@ package my.photomanager.photo;
 import java.io.IOException;
 import java.util.List;
 import lombok.extern.log4j.Log4j2;
-import my.photomanager.filterOption.FilterProperties;
 import my.photomanager.filterOption.FilterOptionService;
+import my.photomanager.filterOption.FilterProperties;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -35,10 +35,18 @@ public class PhotoController {
 		var photoIDs = photoService.filterPhotos(FilterProperties.builder()
 				.build());
 
+		model.addAttribute("activeCameraFilters", List.of());
 		model.addAttribute("cameraFilters", filterService.getCameraModelFilters());
+
+		model.addAttribute("activeLocationFilters", List.of());
 		model.addAttribute("locationFilters", filterService.getLocationFilters());
-		model.addAttribute("creationDateFilters", filterService.getCreationDateFilters());
+
+		model.addAttribute("activeCreationDateFilters", List.of());
+		model.addAttribute("creationDateFilters", filterService.getCreationYearFilters());
+
+		model.addAttribute("activeOrientationFilters", List.of());
 		model.addAttribute("orientationFilters", filterService.getOrientationFilters());
+
 		model.addAttribute("photoIDs", photoIDs);
 
 		return "index";
@@ -54,19 +62,25 @@ public class PhotoController {
 	}
 
 	@PostMapping("/filter")
-	protected String filterPhotos(Model model, @RequestParam(required = false) List<Long> cameraIds, @RequestParam(required = false) List<Long> locationIds) {
+	protected String filterPhotos(Model model, @RequestParam(required = false) List<Long> cameraIds, @RequestParam(required = false) List<Long> locationIds,
+			@RequestParam(required = false) List<Integer> creationYears, @RequestParam(required = false) List<String> orientations) {
 		log.info("filter photos");
-		log.debug("camera ids: {}", cameraIds);
-		log.debug("location ids: {}", locationIds);
 
 		var photoIDs = photoService.filterPhotos(FilterProperties.builder()
 				.withCameraModelIds(cameraIds)
 				.withLocationIDs(locationIds)
+				.withOrientations(orientations)
 				.build());
-
+		model.addAttribute("activeCameraFilters", cameraIds);
 		model.addAttribute("cameraFilters", filterService.getCameraModelFilters());
+
+		model.addAttribute("activeLocationFilters", locationIds);
 		model.addAttribute("locationFilters", filterService.getLocationFilters());
-		model.addAttribute("creationDateFilters", filterService.getCreationDateFilters());
+
+		model.addAttribute("activeCreationDateFilters", creationYears);
+		model.addAttribute("creationDateFilters", filterService.getCreationYearFilters());
+
+		model.addAttribute("activeOrientationFilters", orientations);
 		model.addAttribute("orientationFilters", filterService.getOrientationFilters());
 		model.addAttribute("photoIDs", photoIDs);
 
