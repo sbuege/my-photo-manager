@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import my.photomanager.filterOption.FilterProperties;
 import net.coobird.thumbnailator.Thumbnails;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
@@ -68,8 +69,15 @@ public class PhotoService {
 	 * @return a collection of photo IDs matching the applied filters;
 	 */
 	public Collection<Long> filterPhotos(@NonNull FilterProperties filterProperties) {
-		var photos = repository.findAll(Specification.where(containsLocation(filterProperties))
-				.and(createdBetween(filterProperties).and(containsCameraModel(filterProperties))));
+
+		Specification<Photo> spec = Specification.where(null);
+
+		spec = spec.and(containsLocation(filterProperties));
+		spec = spec.and(createdBetween(filterProperties));
+		spec = spec.and(containsCameraModel(filterProperties));
+		spec = spec.and(containsOrientation(filterProperties));
+
+		var photos = repository.findAll(spec, Sort.by(Sort.Direction.DESC, "creationDate"));
 
 		return photos.stream()
 				.map(Photo::getId)
@@ -124,6 +132,24 @@ public class PhotoService {
 			}
 
 			return cb.lessThanOrEqualTo(root.get("creationDate"), endDate);
+		};
+	}
+
+	private Specification<Photo> containsOrientation(@NonNull FilterProperties filterProperties) {
+		var orientations = filterProperties.orientations();
+
+		System.out.println("=================");
+		System.out.println(orientations);
+		System.out.println("=================");
+
+		return (root, query, cb) -> {
+			if (orientations == null || orientations.isEmpty()) {
+				return null;
+			}
+
+			return root
+					.get("orientation")
+					.in(orientations);
 		};
 	}
 }

@@ -43,7 +43,7 @@ class FilterOptionServiceTest {
 	@DisplayName("should call group photos by creation year")
 	void shouldCallGroupPhotosByCreationYear() {
 		// --- WHEN  ---
-		filterOptionService.getCreationDateFilters();
+		filterOptionService.getCreationYearFilters();
 
 		// --- THEN ---
 		verify(photoRepository).groupPhotosByCreationYear();

@@ -1,40 +1,156 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="de" xmlns:th="http://www.thymeleaf.org">
+
 <head>
+	<meta charset="UTF-8"/>
 	<title>My Photo Manager</title>
-	<meta charset="UTF-8">
 	<script src="https://cdn.tailwindcss.com"></script>
 </head>
 
-<body class="bg-neutral-100 dark:bg-slate-700">
+<body>
 
-<div class="flex space-x-4 bg-gray-100 p-4 rounded-xl shadow-md">
-	<details class="relative inline-block text-left">
-		<summary class="list-none px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition cursor-pointer">
-			Filter
-		</summary>
+<div class="flex">
 
+
+
+	<!-- Seitenmenü (Filter) -->
+	<aside class="w-64 p-4 border-r space-y-6 min-h-screen">
 
 		<form action="/photos/filter" method="POST">
-			<fieldset>
-				<legend>Kamera</legend>
+			<!-- creation year -->
+			<div>
+				<h3 class="font-semibold mb-2">Jahr</h3>
+				<label th:each="creationDateFilter : ${creationDateFilters}"
+					   class="inline-flex items-center cursor-pointer select-none mr-2 mb-2">
 
-				<!-- camera filter -->
-				<label class="flex items-center space-x-2" th:each="cameraFilter : ${cameraFilters}">
-					<input type="checkbox" name="cameraIds" th:value="${cameraFilter.getID()}"/>
-					<span th:text="${cameraFilter.getModelName()}"></span>
+					<input type="checkbox"
+						   class="peer hidden filter-checkbox"
+						   name="creationYears"
+						   th:value="${creationDateFilter.getYear()}"
+						   th:checked="${activeCreationDateFilters != null and activeCreationDateFilters.contains(creationDateFilter.getYear())}"
+						   data-filter="creationYear"
+						   th:data-label="${creationDateFilter.getYear()}">
+
+					<span class="flex items-center gap-1 px-3 py-1 rounded-full border text-sm
+						   border-gray-300 text-gray-700
+						   peer-checked:bg-blue-600 peer-checked:text-white
+						   transition">
+
+						<span th:text="${creationDateFilter.year}"></span>
+
+						<button type="button"
+								class="hidden peer-checked:inline text-xs
+									   rounded-full px-1 hover:bg-blue-800 transition"
+								onclick="this.closest('label').querySelector('input').checked = false;
+										 updateChips();">
+							✕
+						</button>
+					</span>
 				</label>
-			</fieldset>
+			</div>
 
-			<fieldset>
-				<legend>Orte</legend>
+			<!-- camera -->
+			<div>
+				<h3 class="font-semibold mb-2">Kamera</h3>
 
-				<!-- location filter -->
-				<label class="flex items-center space-x-2" th:each="locationFilter : ${locationFilters}">
-					<input type="checkbox" name="locationIds" th:value="${locationFilter.getID()}"/>
-					<span th:text="${locationFilter.getCountry()}"></span>
+				<label th:each="cameraFilter : ${cameraFilters}"
+					   class="inline-flex items-center cursor-pointer select-none mr-2 mb-2">
+
+					<input type="checkbox"
+						   class="peer hidden filter-checkbox"
+						   name="cameraIds"
+						   th:value="${cameraFilter.getID()}"
+						   th:checked="${activeCameraFilters != null and activeCameraFilters.contains(cameraFilter.getID())}"
+						   data-filter="camera"
+						   th:data-label="${cameraFilter.name}">
+
+					<span class="flex items-center gap-1 px-3 py-1 rounded-full border text-sm
+						   border-gray-300 text-gray-700
+						   peer-checked:bg-blue-600 peer-checked:text-white
+						   transition">
+
+						<span th:text="${cameraFilter.name}"></span>
+
+						<button type="button"
+								class="hidden peer-checked:inline text-xs
+									   rounded-full px-1 hover:bg-blue-800 transition"
+								onclick="this.closest('label').querySelector('input').checked = false;
+										 updateChips();">
+							✕
+						</button>
+					</span>
 				</label>
-			</fieldset>
+			</div>
+
+			<!-- location -->
+			<div>
+				<h3 class="font-semibold mb-2">Location</h3>
+
+				<label th:each="locationFilter : ${locationFilters}"
+					   class="inline-flex items-center cursor-pointer select-none mr-2 mb-2">
+
+					<input type="checkbox"
+						   class="peer hidden filter-checkbox"
+						   name="locationIds"
+						   th:value="${locationFilter.getID()}"
+						   th:checked="${activeLocationFilters != null and activeLocationFilters.contains(locationFilter.getID())}"
+						   data-filter="locations"
+						   th:data-label="${locationFilter.city}">
+
+					<span class="flex items-center gap-1 px-3 py-1 rounded-full border text-sm
+						   border-gray-300 text-gray-700
+						   peer-checked:bg-blue-600 peer-checked:text-white
+						   transition">
+
+						<span th:text="${locationFilter.city}"></span>
+
+						<button type="button"
+								class="hidden peer-checked:inline text-xs
+									   rounded-full px-1 hover:bg-blue-800 transition"
+								onclick="this.closest('label').querySelector('input').checked = false;
+										 updateChips();">
+							✕
+						</button>
+					</span>
+				</label>
+
+			</div>
+
+			<!-- orientations -->
+			<div>
+				<h3 class="font-semibold mb-2">Format</h3>
+
+				<label th:each="orientationFilter : ${orientationFilters}"
+					   class="inline-flex items-center cursor-pointer select-none mr-2 mb-2">
+
+					<input type="checkbox"
+						   class="peer hidden filter-checkbox"
+						   name="orientations"
+						   th:value="${orientationFilter.getOrientation()}"
+						   th:checked="${activeLocationFilters != null and activeLocationFilters.contains(orientationFilter.getOrientation())}"
+						   data-filter="orientations"
+						   th:data-label="${orientationFilter.getOrientation()}">
+
+					<span class="flex items-center gap-1 px-3 py-1 rounded-full border text-sm
+						   border-gray-300 text-gray-700
+						   peer-checked:bg-blue-600 peer-checked:text-white
+						   transition">
+
+						<span th:text="${orientationFilter.getOrientation()}"></span>
+
+						<button type="button"
+								class="hidden peer-checked:inline text-xs
+									   rounded-full px-1 hover:bg-blue-800 transition"
+								onclick="this.closest('label').querySelector('input').checked = false;
+										 updateChips();">
+							✕
+						</button>
+					</span>
+				</label>
+
+			</div>
+
+			<hr>
 
 			<div>
 				<button type="reset">
@@ -44,17 +160,79 @@
 					Anwenden
 				</button>
 			</div>
+
 		</form>
-	</details>
+	</aside>
+
+	<!-- Hauptbereich -->
+	<main class="flex-1 p-6">
+
+		<!-- Aktive Filter -->
+		<div id="activeFilters" class="flex gap-2 flex-wrap mb-4"></div>
+
+		<div class="columns-2 md:columns-3 lg:columns-4 gap-4">
+			<div th:each="id : ${photoIDs}" class="break-inside-avoid mb-4">
+				<img th:src="@{'/photos/' + ${id} + '/thumbnail'}"
+					 alt="Foto"
+					 loading="lazy"
+					 class="w-full h-auto rounded-lg shadow-sm" />
+			</div>
+		</div>
+	</main>
 </div>
 
-<main>
-	<div>
-		<th:block th:each="id : ${photoIDs}">
-			<img th:src="@{'/photos/' + ${id} + '/thumbnail'}" loading="lazy" alt="">
-		</th:block>
-	</div>
-</main>
-
 </body>
+
+<script>
+
+	const checkboxes = document.querySelectorAll(".filter-checkbox");
+	const activeFiltersContainer = document.getElementById("activeFilters");
+
+	function renderActiveFilters() {
+		activeFiltersContainer.innerHTML = "";
+
+		checkboxes.forEach(cb => {
+			if (cb.checked) {
+				const tag = document.createElement("div");
+				tag.className =
+					"flex items-center bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-sm";
+
+				tag.innerHTML = `
+				  ${cb.dataset.filter}: ${cb.dataset.label}
+				  <button class="ml-2 text-blue-500 hover:text-blue-700 remove-filter"
+						  data-value="${cb.value}"
+						  data-filter="${cb.dataset.filter}">
+					✕
+				  </button>
+				`;
+				activeFiltersContainer.appendChild(tag);
+			}
+		});
+
+		attachRemoveEvents();
+	}
+
+	function attachRemoveEvents() {
+		const removeButtons = document.querySelectorAll(".remove-filter");
+
+		removeButtons.forEach(btn => {
+			btn.addEventListener("click", () => {
+				checkboxes.forEach(cb => {
+					if (cb.value === btn.dataset.value && cb.dataset.filter === btn.dataset.filter) {
+						cb.checked = false;
+					}
+				});
+				renderActiveFilters();
+			});
+		});
+	}
+
+	checkboxes.forEach(cb => {
+		cb.addEventListener("change", renderActiveFilters);
+	});
+
+	renderActiveFilters();
+</script>
+
 </html>
+
