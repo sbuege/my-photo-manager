@@ -1,9 +1,9 @@
 package my.photomanager.filterOption;
 
-import my.photomanager.photo.Orientation;
+import my.photomanager.photo.orientation.OrientationName;
 
 public interface OrientationFilter extends FilterOption {
 
-	Orientation getOrientation();
+	OrientationName getOrientation();
 
 }

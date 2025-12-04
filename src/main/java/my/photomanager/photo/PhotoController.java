@@ -63,13 +63,13 @@ public class PhotoController {
 
 	@PostMapping("/filter")
 	protected String filterPhotos(Model model, @RequestParam(required = false) List<Long> cameraIds, @RequestParam(required = false) List<Long> locationIds,
-			@RequestParam(required = false) List<Integer> creationYears, @RequestParam(required = false) List<String> orientations) {
+			@RequestParam(required = false) List<Integer> creationYears, @RequestParam(required = false) List<Long> orientationIds) {
 		log.info("filter photos");
 
 		var photoIDs = photoService.filterPhotos(FilterProperties.builder()
 				.withCameraModelIds(cameraIds)
 				.withLocationIDs(locationIds)
-				.withOrientations(orientations)
+				.withOrientationIDs(orientationIds)
 				.build());
 		model.addAttribute("activeCameraFilters", cameraIds);
 		model.addAttribute("cameraFilters", filterService.getCameraModelFilters());
@@ -80,7 +80,7 @@ public class PhotoController {
 		model.addAttribute("activeCreationDateFilters", creationYears);
 		model.addAttribute("creationDateFilters", filterService.getCreationYearFilters());
 
-		model.addAttribute("activeOrientationFilters", orientations);
+		model.addAttribute("activeOrientationFilters", orientationIds);
 		model.addAttribute("orientationFilters", filterService.getOrientationFilters());
 		model.addAttribute("photoIDs", photoIDs);
 

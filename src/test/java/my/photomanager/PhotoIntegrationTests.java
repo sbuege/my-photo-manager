@@ -70,7 +70,7 @@ class PhotoIntegrationTests {
 
 		// --- THEN ---
 		assertThat(photos)
-				.usingRecursiveFieldByFieldElementComparatorIgnoringFields("id", "hashValue", "fileName", "location.id", "cameraModel.id")
+				.usingRecursiveFieldByFieldElementComparatorIgnoringFields("id", "hashValue", "fileName", "location.id", "cameraModel.id", "orientation.id")
 				.containsExactlyInAnyOrderElementsOf(List.of(EXAMPLE_001_PHOTO, EXAMPLE_002_PHOTO, EXAMPLE_003_PHOTO, EXAMPLE_004_PHOTO));
 	}
 
@@ -107,10 +107,15 @@ class PhotoIntegrationTests {
 				Arguments.of(FilterProperties.builder()
 								.withCameraModelIds(List.of(1L))
 								.build(),
-						List.of(EXAMPLE_001_PHOTO, EXAMPLE_003_PHOTO,EXAMPLE_004_PHOTO))
+						List.of(EXAMPLE_001_PHOTO, EXAMPLE_003_PHOTO, EXAMPLE_004_PHOTO)),
+
+				// orientation
+				Arguments.of(FilterProperties.builder()
+						.withOrientationIDs(List.of(1L))
+						.build(),
+						List.of(EXAMPLE_001_PHOTO, EXAMPLE_002_PHOTO, EXAMPLE_003_PHOTO, EXAMPLE_004_PHOTO))
 
 		);
-
 	}
 
 	@ParameterizedTest
@@ -125,7 +130,7 @@ class PhotoIntegrationTests {
 
 		// --- THEN ---
 		assertThat(photos)
-				.usingRecursiveFieldByFieldElementComparatorIgnoringFields("id", "hashValue", "fileName", "location.id", "cameraModel.id")
+				.usingRecursiveFieldByFieldElementComparatorIgnoringFields("id", "hashValue", "fileName", "location.id", "cameraModel.id", "orientation.id")
 				.containsExactlyInAnyOrderElementsOf(expectedPhotos);
 
 	}

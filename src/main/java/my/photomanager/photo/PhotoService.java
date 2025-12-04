@@ -136,20 +136,17 @@ public class PhotoService {
 	}
 
 	private Specification<Photo> containsOrientation(@NonNull FilterProperties filterProperties) {
-		var orientations = filterProperties.orientations();
-
-		System.out.println("=================");
-		System.out.println(orientations);
-		System.out.println("=================");
+		var orientationIds = filterProperties.orientationIDs();
 
 		return (root, query, cb) -> {
-			if (orientations == null || orientations.isEmpty()) {
+			if (orientationIds == null || orientationIds.isEmpty()) {
 				return null;
 			}
 
 			return root
 					.get("orientation")
-					.in(orientations);
+					.get("id")
+					.in(orientationIds);
 		};
 	}
 }
