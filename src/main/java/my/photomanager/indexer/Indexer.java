@@ -8,7 +8,7 @@ import lombok.NonNull;
 import lombok.extern.log4j.Log4j2;
 import my.photomanager.config.PhotoManagerConfiguration;
 import my.photomanager.utils.gpsResolver.GpsResolverException;
-import my.photomanager.metadata.MetadataParserException;
+import my.photomanager.utils.metaDataParser.MetadataParserException;
 import my.photomanager.photo.PhotoBuilder;
 import my.photomanager.photo.PhotoBuilderException;
 import my.photomanager.photo.PhotoService;
