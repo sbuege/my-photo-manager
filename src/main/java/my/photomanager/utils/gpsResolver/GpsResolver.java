@@ -1,4 +1,4 @@
-package my.photomanager.gpsResolver;
+package my.photomanager.utils.gpsResolver;
 
 import java.io.IOException;
 import java.net.URI;

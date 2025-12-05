@@ -7,6 +7,8 @@ import static my.photomanager.TestDataBuilder.EXAMPLE_001_LONGITUDE;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import lombok.extern.log4j.Log4j2;
+import my.photomanager.utils.gpsResolver.GpsResolver;
+import my.photomanager.utils.gpsResolver.GpsResolverException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

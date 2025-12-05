@@ -64,12 +64,6 @@ public class PhotoController {
 	@PostMapping("/filter")
 	protected String filterPhotos(Model model, @RequestParam(required = false) List<Long> cameraIds, @RequestParam(required = false) List<Long> locationIds,
 			@RequestParam(required = false) List<Integer> creationYears, @RequestParam(required = false) List<Long> orientationIds) {
-		log.info("filter photos");
-		log.info("cameraIds: {}", cameraIds);
-		log.info("locationIds: {}", locationIds);
-		log.info("creationYears: {}", creationYears);
-		log.info("orientationIds: {}", orientationIds);
-
 		var photoIDs = photoService.filterPhotos(FilterProperties.builder()
 				.withCameraModelIds(cameraIds)
 				.withLocationIDs(locationIds)
