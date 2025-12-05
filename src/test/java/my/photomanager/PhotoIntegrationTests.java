@@ -15,8 +15,8 @@ import java.util.stream.Stream;
 import lombok.extern.log4j.Log4j2;
 import my.photomanager.config.PhotoManagerConfiguration;
 import my.photomanager.filterOption.FilterProperties;
-import my.photomanager.indexer.Indexer;
 import my.photomanager.photo.Photo;
+
 import my.photomanager.photo.PhotoRepository;
 import my.photomanager.photo.PhotoService;
 import org.awaitility.Awaitility;
@@ -41,9 +41,6 @@ class PhotoIntegrationTests {
 
 	@Autowired
 	private PhotoManagerConfiguration configuration;
-
-	@Autowired
-	private Indexer photoIndexer;
 
 	@Autowired
 	private PhotoService service;
@@ -111,8 +108,8 @@ class PhotoIntegrationTests {
 
 				// orientation
 				Arguments.of(FilterProperties.builder()
-						.withOrientationIDs(List.of(1L))
-						.build(),
+								.withOrientationIDs(List.of(1L))
+								.build(),
 						List.of(EXAMPLE_001_PHOTO, EXAMPLE_002_PHOTO, EXAMPLE_003_PHOTO, EXAMPLE_004_PHOTO))
 
 		);
