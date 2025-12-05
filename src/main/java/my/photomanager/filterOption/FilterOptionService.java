@@ -37,7 +37,7 @@ public class FilterOptionService {
 	public Collection<OrientationFilter> getOrientationFilters() {
 		return photoRepository.groupPhotosByOrientation()
 				.stream()
-				.filter(filter -> filter.getOrientation() != null)
+				.filter(filter -> filter.getName() != null)
 				.toList();
 	}
 }

@@ -4,6 +4,8 @@ import my.photomanager.photo.orientation.OrientationName;
 
 public interface OrientationFilter extends FilterOption {
 
-	OrientationName getOrientation();
+	long getID();
+
+	String getName();
 
 }
