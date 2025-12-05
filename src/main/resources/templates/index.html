@@ -125,18 +125,18 @@
 
 					<input type="checkbox"
 						   class="peer hidden filter-checkbox"
-						   name="orientations"
-						   th:value="${orientationFilter.getOrientation()}"
-						   th:checked="${activeLocationFilters != null and activeLocationFilters.contains(orientationFilter.getOrientation())}"
+						   name="orientationIds"
+						   th:value="${orientationFilter.getID()}"
+						   th:checked="${activeOrientationFilters != null and activeOrientationFilters.contains(orientationFilter.getID())}"
 						   data-filter="orientations"
-						   th:data-label="${orientationFilter.getOrientation()}">
+						   th:data-label="${orientationFilter.name}">
 
 					<span class="flex items-center gap-1 px-3 py-1 rounded-full border text-sm
 						   border-gray-300 text-gray-700
 						   peer-checked:bg-blue-600 peer-checked:text-white
 						   transition">
 
-						<span th:text="${orientationFilter.getOrientation()}"></span>
+						<span th:text="${orientationFilter.name}"></span>
 
 						<button type="button"
 								class="hidden peer-checked:inline text-xs

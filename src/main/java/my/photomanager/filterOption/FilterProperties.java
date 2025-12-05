@@ -5,6 +5,6 @@ import java.util.List;
 import lombok.Builder;
 
 @Builder(setterPrefix = "with")
-public record FilterProperties(List<Long> locationIDs, LocalDate startDate, LocalDate endDate, List<Long> cameraModelIds, List<String> orientations) {
+public record FilterProperties(List<Long> locationIDs, LocalDate startDate, LocalDate endDate, List<Long> cameraModelIds, List<Long> orientationIDs) {
 
 }

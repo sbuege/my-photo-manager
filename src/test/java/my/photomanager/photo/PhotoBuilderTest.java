@@ -1,10 +1,12 @@
 package my.photomanager.photo;
 
+import static org.awaitility.Awaitility.given;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -20,6 +22,8 @@ import my.photomanager.photo.cameraModel.CameraModel;
 import my.photomanager.photo.cameraModel.CameraModelService;
 import my.photomanager.photo.location.Location;
 import my.photomanager.photo.location.LocationService;
+import my.photomanager.photo.orientation.Orientation;
+import my.photomanager.photo.orientation.OrientationService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -43,6 +47,9 @@ class PhotoBuilderTest {
 	@Mock
 	private CameraModelService cameraModelService;
 
+	@Mock
+	private OrientationService orientationService;
+
 	@InjectMocks
 	private PhotoBuilder photoBuilder;
 
@@ -55,6 +62,7 @@ class PhotoBuilderTest {
 			// --- GIVEN ---
 			photoMetadataReader.when(() -> MetadataParser.parseMetadata(any(Path.class)))
 					.thenReturn(TestDataBuilder.PhotoMetadataBuilder.build());
+			when(orientationService.saveOrGetOrientation(any())).thenReturn(TestDataBuilder.TestOrientationBuilder.build());
 
 			// --- WHEN ---
 			photoBuilder.buildPhoto(TEST_PHOTO_PATH);
@@ -91,6 +99,7 @@ class PhotoBuilderTest {
 			// --- GIVEN ---
 			photoMetadataReader.when(() -> MetadataParser.parseMetadata(any(Path.class)))
 					.thenReturn(metadata);
+			when(orientationService.saveOrGetOrientation(any())).thenReturn(TestDataBuilder.TestOrientationBuilder.build());
 
 			// --- WHEN ---
 			photoBuilder.buildPhoto(TEST_PHOTO_PATH);
@@ -122,6 +131,7 @@ class PhotoBuilderTest {
 			// --- GIVEN ---
 			photoMetadataReader.when(() -> MetadataParser.parseMetadata(any(Path.class)))
 					.thenReturn(metadata);
+			when(orientationService.saveOrGetOrientation(any())).thenReturn(TestDataBuilder.TestOrientationBuilder.build());
 
 			// --- WHEN ---
 			photoBuilder.buildPhoto(TEST_PHOTO_PATH);

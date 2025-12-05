@@ -49,14 +49,11 @@ public interface PhotoRepository extends JpaRepository<Photo, Long>, JpaSpecific
 
 	@Query("""
 				SELECT
-					CASE
-				                   WHEN p.height > p.width THEN 'PORTRAIT'
-				                   WHEN p.width > p.height THEN 'LANDSCAPE'
-				                   ELSE 'SQUARE'
-				             END AS orientation,
+					p.orientation.id AS ID,
+					p.orientation.name AS name,
 				    COUNT(p) AS numberOfPhotos
 				FROM Photo p
-				GROUP BY orientation
+				GROUP BY p.orientation
 			\t""")
 	Collection<OrientationFilter> groupPhotosByOrientation();
 }
