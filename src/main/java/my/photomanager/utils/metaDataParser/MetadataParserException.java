@@ -1,4 +1,4 @@
-package my.photomanager.metadataparser;
+package my.photomanager.utils.metaDataParser;
 
 public class MetadataParserException extends Exception {
 

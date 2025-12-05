@@ -36,6 +36,8 @@ import java.time.LocalDate;
 import java.util.stream.Stream;
 import lombok.extern.log4j.Log4j2;
 import my.photomanager.TestDataBuilder;
+import my.photomanager.utils.metaDataParser.MetadataParser;
+import my.photomanager.utils.metaDataParser.MetadataParserException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
