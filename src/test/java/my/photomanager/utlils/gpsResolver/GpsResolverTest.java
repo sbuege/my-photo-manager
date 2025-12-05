@@ -1,4 +1,4 @@
-package my.photomanager.gpsResolver;
+package my.photomanager.utlils.gpsResolver;
 
 import static my.photomanager.TestDataBuilder.EXAMPLE_001_CITY;
 import static my.photomanager.TestDataBuilder.EXAMPLE_001_COUNTRY;
