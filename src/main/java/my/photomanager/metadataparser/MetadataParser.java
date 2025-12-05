@@ -1,4 +1,4 @@
-package my.photomanager.metadata;
+package my.photomanager.metadataparser;
 
 import com.drew.imaging.ImageMetadataReader;
 import com.drew.imaging.ImageProcessingException;
