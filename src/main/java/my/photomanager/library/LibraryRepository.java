@@ -1,4 +1,4 @@
-package my.photomanager.medialibrary;
+package my.photomanager.library;
 
 public interface LibraryRepository {
 
