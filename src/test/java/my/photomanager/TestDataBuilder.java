@@ -3,7 +3,7 @@ package my.photomanager;
 import java.nio.file.Path;
 import java.time.LocalDate;
 import java.util.Optional;
-import my.photomanager.metadata.Metadata;
+import my.photomanager.utils.metaDataParser.Metadata;
 import my.photomanager.photo.Photo;
 import my.photomanager.photo.album.Album;
 import my.photomanager.photo.cameraModel.CameraModel;
