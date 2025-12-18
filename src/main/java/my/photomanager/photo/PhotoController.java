@@ -2,6 +2,8 @@ package my.photomanager.photo;
 
 import java.io.IOException;
 import java.util.List;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import my.photomanager.filterOption.FilterOptionService;
 import my.photomanager.filterOption.FilterProperties;
@@ -16,24 +18,22 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
-@RequestMapping({"/photos",})
+@RequiredArgsConstructor(access = AccessLevel.PROTECTED)
+@RequestMapping({"/photos"})
 @Log4j2
 public class PhotoController {
 
 	private final PhotoService photoService;
 	private final FilterOptionService filterService;
 
-	protected PhotoController(PhotoService photoService, FilterOptionService filterService) {
-		this.photoService = photoService;
-		this.filterService = filterService;
-	}
-
-	@GetMapping
+	@GetMapping("/index")
 	protected String index(Model model) {
-		log.info("get homepage");
-
 		var photoIDs = photoService.filterPhotos(FilterProperties.builder()
 				.build());
+
+		//model.addAttribute("mainContent", "fragments/gallery :: gallery");
+		model.addAttribute("mainTemplate", "fragments/gallery");
+		model.addAttribute("mainFragment", "gallery");
 
 		model.addAttribute("activeCameraFilters", List.of());
 		model.addAttribute("cameraFilters", filterService.getCameraModelFilters());
