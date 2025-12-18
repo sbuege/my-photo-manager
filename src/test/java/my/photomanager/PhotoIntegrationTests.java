@@ -15,8 +15,9 @@ import java.util.stream.Stream;
 import lombok.extern.log4j.Log4j2;
 import my.photomanager.config.PhotoManagerConfiguration;
 import my.photomanager.filterOption.FilterProperties;
+import my.photomanager.library.Library;
+import my.photomanager.library.LibrayService;
 import my.photomanager.photo.Photo;
-
 import my.photomanager.photo.PhotoRepository;
 import my.photomanager.photo.PhotoService;
 import org.awaitility.Awaitility;
@@ -43,6 +44,9 @@ class PhotoIntegrationTests {
 	private PhotoManagerConfiguration configuration;
 
 	@Autowired
+	private LibrayService libraryService;
+
+	@Autowired
 	private PhotoService service;
 
 	@Autowired
@@ -53,6 +57,8 @@ class PhotoIntegrationTests {
 		// --- GIVEN ---
 		repository.deleteAll();
 		assertThat(repository.count()).isZero();
+
+		libraryService.indexLibrary(Library.builder().withName("Test Library").withPath("src/test/resources/Testdata/").build());
 
 		Awaitility.await()
 				.atMost(5, TimeUnit.SECONDS)

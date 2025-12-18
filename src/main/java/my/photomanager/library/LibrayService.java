@@ -32,8 +32,8 @@ public class LibrayService {
 	 *
 	 * @param library the {@link Library} to save or retrieve
 	 */
-	public void saveLibray(@NonNull Library library) {
-		repository.findByPath(library.getPath())
+	public Library saveLibray(@NonNull Library library) {
+		return repository.findByPath(library.getPath())
 				.orElseGet(() -> {
 					var savedPhotoAlum = repository.saveAndFlush(library);
 					log.info("saved library with path {} successfully", library.getPath());
