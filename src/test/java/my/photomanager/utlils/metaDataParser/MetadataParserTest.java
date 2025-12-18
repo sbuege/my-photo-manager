@@ -1,4 +1,4 @@
-package my.photomanager.metadataparser;
+package my.photomanager.utlils.metaDataParser;
 
 import static my.photomanager.TestDataBuilder.EXAMPLE_001_CAMERA_MODEL;
 import static my.photomanager.TestDataBuilder.EXAMPLE_001_CREATION_DATE;
