@@ -17,7 +17,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 @WebMvcTest(PhotoController.class)
 @TestInstance(PER_CLASS)
-@Import({TestUtils.PhotoIndexerMock.class, TestUtils.PhotoServiceMock.class, TestUtils.FilterServiceMock.class})
+@Import({TestUtils.PhotoServiceMock.class, TestUtils.FilterServiceMock.class})
 class PhotoControllerTest {
 
 

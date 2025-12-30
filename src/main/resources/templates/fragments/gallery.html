@@ -1,0 +1,84 @@
+<main th:fragment="gallery" class="flex flex-1 overflow-hidden">
+	<!-- sidebar -->
+	<aside class="w-64 bg-white border-r p-4 overflow-y-auto">
+		<!-- creation year -->
+		<h3 class="font-semibold mb-2">Jahr</h3>
+		<label th:each="creationDateFilter : ${creationDateFilters}" class="inline-flex items-center cursor-pointer select-none mr-2 mb-2">
+			<input type="checkbox"
+				   class="peer hidden filter-checkbox"
+				   name="creationYears"
+				   th:value="${creationDateFilter.getYear()}"
+				   th:checked="${activeCreationDateFilters != null and activeCreationDateFilters.contains(creationDateFilter.getYear())}"
+				   data-filter="creationYear"
+				   th:data-label="${creationDateFilter.getYear()}">
+
+
+			<span class="flex items-center gap-1 px-3 py-1 rounded-full border border-gray-300 text-sm text-gray-700 peer-checked:bg-blue-600 peer-checked:text-white transition">
+					<span th:text="${creationDateFilter.year}"></span>
+					<button type="button" class="hidden peer-checked:inline text-xs rounded-full px-1 hover:bg-blue-800 transition"
+							onclick="this.closest('label').querySelector('input').checked = false; updateChips();">✕</button>
+				</span>
+		</label>
+
+		<!-- camera model-->
+		<div>
+			<h3 class="font-semibold mb-2">Kamera</h3>
+
+			<label th:each="cameraFilter : ${cameraFilters}" class="inline-flex items-center cursor-pointer select-none mr-2 mb-2">
+				<input type="checkbox"
+					   class="peer hidden filter-checkbox"
+					   name="cameraIds"
+					   th:value="${cameraFilter.getID()}"
+					   th:checked="${activeCameraFilters != null and activeCameraFilters.contains(cameraFilter.getID())}"
+					   data-filter="camera"
+					   th:data-label="${cameraFilter.name}">
+
+
+				<span class="flex items-center gap-1 px-3 py-1 rounded-full border border-gray-300 text-sm text-gray-700 peer-checked:bg-blue-600 peer-checked:text-white transition">
+					<span th:text="${cameraFilter.name}"></span>
+					<button type="button" class="hidden peer-checked:inline text-xs rounded-full px-1 hover:bg-blue-800 transition"
+							onclick="this.closest('label').querySelector('input').checked = false; updateChips();">✕</button>
+				</span>
+			</label>
+		</div>
+
+		<!-- orientations model-->
+		<div>
+			<h3 class="font-semibold mb-2">Format</h3>
+
+			<label th:each="orientationFilter : ${orientationFilters}" class="inline-flex items-center cursor-pointer select-none mr-2 mb-2">
+				<input type="checkbox"
+					   class="peer hidden filter-checkbox"
+					   name="orientationIds"
+					   th:value="${orientationFilter.getID()}"
+					   th:checked="${activeOrientationFilters != null and activeOrientationFilters.contains(orientationFilter.getID())}"
+					   data-filter="orientations"
+					   th:data-label="${orientationFilter.name}">
+
+
+				<span class="flex items-center gap-1 px-3 py-1 rounded-full border border-gray-300 text-sm text-gray-700 peer-checked:bg-blue-600 peer-checked:text-white transition">
+					<span th:text="${orientationFilter.name}"></span>
+					<button type="button" class="hidden peer-checked:inline text-xs rounded-full px-1 hover:bg-blue-800 transition"
+							onclick="this.closest('label').querySelector('input').checked = false; updateChips();">✕</button>
+				</span>
+			</label>
+		</div>
+	</aside>
+
+	<!-- main area -->
+	<section class="flex-1 p-6 overflow-y-auto">
+
+		<!-- active Filter -->
+		<div id="activeFilters" class="flex gap-2 flex-wrap mb-4"></div>
+
+		<div class="columns-2 md:columns-3 lg:columns-4 gap-4 space-y-4">
+			<div th:each="id : ${photoIDs}">
+				<img th:src="@{'/photos/' + ${id} + '/thumbnail'}"
+					 alt="Foto"
+					 loading="lazy"
+					 class="w-full rounded shadow-sm break-inside-avoid hover:opacity-90 transition"/>
+			</div>
+		</div>
+	</section>
+
+

@@ -1,5 +1,6 @@
 package my.photomanager.photo.album;
 
+import jakarta.persistence.EntityNotFoundException;
 import lombok.AccessLevel;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -12,6 +13,40 @@ import org.springframework.stereotype.Service;
 public class AlbumService {
 
 	private final AlbumRepository repository;
+
+	protected void addAlbum(@NonNull String name) {
+		var album = new Album(name);
+		log.info("created new album {}", album);
+
+		saveAlbumIfNotExists(album);
+	}
+
+	protected void updateAlbum(long id, @NonNull String name) {
+		var album = repository.findById(id)
+				.orElseThrow(() -> new EntityNotFoundException("no album found with id " + id));
+		log.info("found album {} to edit", album);
+
+		album.setName(name);
+		log.info("updated album {} successfully", album);
+
+		// TODO what happen if album with same name exists already
+		// TODO update all photos ???
+	}
+
+	protected void deleteAlbum(long id) {
+		var album = repository.findById(id)
+				.orElseThrow(() -> new EntityNotFoundException("no album found with id " + id));
+		log.info("found album {} to delete", album);
+
+		repository.delete(album);
+		log.info("deleted album {} successfully", album);
+		// TODO delete album
+		// TODO update all photos ???
+	}
+
+	private Album saveAlbumIfNotExists(@NonNull Album album) {
+		return null;
+	}
 
 	/**
 	 * Saves the given {@link Album} if no album with the same name exists,

@@ -1,14 +1,16 @@
-package my.photomanager.gpsResolver;
+package my.photomanager.utils.gpsResolver;
 
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
+import lombok.experimental.UtilityClass;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.util.Strings;
 import org.json.JSONObject;
 
+@UtilityClass
 @Log4j2
 public class GpsResolver {
 

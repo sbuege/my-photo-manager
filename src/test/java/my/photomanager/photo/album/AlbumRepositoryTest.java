@@ -12,7 +12,6 @@ import org.springframework.context.annotation.Import;
 import org.springframework.dao.DataIntegrityViolationException;
 
 @DataJpaTest
-@Import(TestUtils.PhotoIndexerMock.class)
 class AlbumRepositoryTest {
 
 	@Autowired

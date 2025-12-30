@@ -1,4 +1,4 @@
-package my.photomanager.gpsResolver;
+package my.photomanager.utils.gpsResolver;
 
 import lombok.NonNull;
 

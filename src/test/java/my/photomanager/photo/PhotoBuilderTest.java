@@ -1,6 +1,5 @@
 package my.photomanager.photo;
 
-import static org.awaitility.Awaitility.given;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mockStatic;
@@ -14,15 +13,14 @@ import java.util.Optional;
 import java.util.stream.Stream;
 import lombok.extern.log4j.Log4j2;
 import my.photomanager.TestDataBuilder;
-import my.photomanager.gpsResolver.GpsResolverException;
-import my.photomanager.metadata.Metadata;
-import my.photomanager.metadata.MetadataParser;
-import my.photomanager.metadata.MetadataParserException;
+import my.photomanager.utils.gpsResolver.GpsResolverException;
+import my.photomanager.utils.metaDataParser.Metadata;
+import my.photomanager.utils.metaDataParser.MetadataParser;
+import my.photomanager.utils.metaDataParser.MetadataParserException;
 import my.photomanager.photo.cameraModel.CameraModel;
 import my.photomanager.photo.cameraModel.CameraModelService;
 import my.photomanager.photo.location.Location;
 import my.photomanager.photo.location.LocationService;
-import my.photomanager.photo.orientation.Orientation;
 import my.photomanager.photo.orientation.OrientationService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

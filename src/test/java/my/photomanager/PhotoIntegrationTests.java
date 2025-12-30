@@ -15,7 +15,8 @@ import java.util.stream.Stream;
 import lombok.extern.log4j.Log4j2;
 import my.photomanager.config.PhotoManagerConfiguration;
 import my.photomanager.filterOption.FilterProperties;
-import my.photomanager.indexer.Indexer;
+import my.photomanager.library.Library;
+import my.photomanager.library.LibrayService;
 import my.photomanager.photo.Photo;
 import my.photomanager.photo.PhotoRepository;
 import my.photomanager.photo.PhotoService;
@@ -43,7 +44,7 @@ class PhotoIntegrationTests {
 	private PhotoManagerConfiguration configuration;
 
 	@Autowired
-	private Indexer photoIndexer;
+	private LibrayService libraryService;
 
 	@Autowired
 	private PhotoService service;
@@ -56,6 +57,8 @@ class PhotoIntegrationTests {
 		// --- GIVEN ---
 		repository.deleteAll();
 		assertThat(repository.count()).isZero();
+
+		//libraryService.indexLibrary(Library.builder().withName("Test Library").withPath("src/test/resources/Testdata/").build());
 
 		Awaitility.await()
 				.atMost(5, TimeUnit.SECONDS)
@@ -111,8 +114,8 @@ class PhotoIntegrationTests {
 
 				// orientation
 				Arguments.of(FilterProperties.builder()
-						.withOrientationIDs(List.of(1L))
-						.build(),
+								.withOrientationIDs(List.of(1L))
+								.build(),
 						List.of(EXAMPLE_001_PHOTO, EXAMPLE_002_PHOTO, EXAMPLE_003_PHOTO, EXAMPLE_004_PHOTO))
 
 		);

@@ -14,6 +14,4 @@ public enum OrientationName {
 	OrientationName(String name) {
 		this.name = name;
 	}
-
-
 }

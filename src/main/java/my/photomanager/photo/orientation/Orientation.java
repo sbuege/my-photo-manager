@@ -14,11 +14,9 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 
-@Builder(setterPrefix = "with", toBuilder = true)
-@AllArgsConstructor(access = AccessLevel.PUBLIC)
+
 @RequiredArgsConstructor(access = AccessLevel.PUBLIC)
 @NoArgsConstructor(access = AccessLevel.PUBLIC)
-@Getter
 @Entity
 @Table(name = "orientation")
 @ToString
@@ -27,10 +25,11 @@ public class Orientation {
 	@Id
 	@GeneratedValue
 	@Column(updatable = false, unique = true)
+	@Getter
 	private long id;
 
-	@Column(unique = true, nullable = false)
+	@Column(updatable = false, unique = true)
 	@NonNull
+	@Getter
 	private String name;
-
 }

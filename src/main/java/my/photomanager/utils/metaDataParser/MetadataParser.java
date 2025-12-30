@@ -1,4 +1,4 @@
-package my.photomanager.metadata;
+package my.photomanager.utils.metaDataParser;
 
 import com.drew.imaging.ImageMetadataReader;
 import com.drew.imaging.ImageProcessingException;
@@ -15,9 +15,11 @@ import java.time.ZoneId;
 import java.util.Locale;
 import java.util.Optional;
 import lombok.NonNull;
+import lombok.experimental.UtilityClass;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.lang3.time.DateUtils;
 
+@UtilityClass
 @Log4j2
 public class MetadataParser {
 
