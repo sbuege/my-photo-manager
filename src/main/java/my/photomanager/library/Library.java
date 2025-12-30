@@ -5,20 +5,17 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import java.time.Instant;
 import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import lombok.ToString;
 
-@Builder(setterPrefix = "with", toBuilder = true)
-@AllArgsConstructor(access = AccessLevel.PUBLIC)
 @RequiredArgsConstructor(access = AccessLevel.PUBLIC)
 @NoArgsConstructor(access = AccessLevel.PUBLIC)
-@Getter
 @Entity
 @Table(name = "library")
 @ToString
@@ -27,14 +24,26 @@ public class Library {
 	@Id
 	@GeneratedValue
 	@Column(updatable = false, unique = true)
+	@Getter
 	private long id;
 
 	@Column(unique = true, nullable = false)
 	@NonNull
+	@Getter
+	@Setter
 	private String name;
 
 	@Column(unique = true, nullable = false)
 	@NonNull
-	String path;
+	@Getter
+	@Setter
+	private String path;
 
+	@Getter
+	@Setter
+	private Instant lastScan;
+
+	@Getter
+	@Setter
+	private int numberOfPhotos;
 }

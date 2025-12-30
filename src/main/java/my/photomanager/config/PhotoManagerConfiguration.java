@@ -10,6 +10,4 @@ import org.springframework.context.annotation.Configuration;
 @Setter
 public class PhotoManagerConfiguration {
 
-	@Value("${photo.sourceFolder:photos}")
-	private String photoSourceFolder;
 }

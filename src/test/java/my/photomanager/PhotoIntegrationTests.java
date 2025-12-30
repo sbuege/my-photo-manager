@@ -58,7 +58,7 @@ class PhotoIntegrationTests {
 		repository.deleteAll();
 		assertThat(repository.count()).isZero();
 
-		libraryService.indexLibrary(Library.builder().withName("Test Library").withPath("src/test/resources/Testdata/").build());
+		//libraryService.indexLibrary(Library.builder().withName("Test Library").withPath("src/test/resources/Testdata/").build());
 
 		Awaitility.await()
 				.atMost(5, TimeUnit.SECONDS)

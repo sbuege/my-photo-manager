@@ -1,9 +1,12 @@
 package my.photomanager.photo.location;
 
+import jakarta.persistence.EntityNotFoundException;
 import lombok.AccessLevel;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import my.photomanager.photo.album.Album;
+import my.photomanager.photo.category.Category;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -12,6 +15,36 @@ import org.springframework.stereotype.Service;
 public class LocationService {
 
 	private final LocationRepository repository;
+
+	protected void addLocation(@NonNull String country, @NonNull String city) {
+		var location = new Location(country, city);
+		log.info("created new location {}", location);
+
+		saveLocationIfNotExists(location);
+	}
+
+	protected void editLocation(long id, @NonNull String country, @NonNull String city) {
+		var location = repository.findById(id)
+				.orElseThrow(() -> new EntityNotFoundException("no location found with id " + id));
+		log.info("found location {} to edit", location);
+
+		location.setCountry(country);
+		location.setCity(city);
+		log.info("updated location {} successfully", location);
+	}
+
+	protected void deleteLocation(long id) {
+		var location = repository.findById(id)
+				.orElseThrow(() -> new EntityNotFoundException("no location found with id " + id));
+		log.info("found location {} to delete", location);
+
+		repository.delete(location);
+		log.info("deleted location {} successfully", location);
+	}
+
+	private Location saveLocationIfNotExists(@NonNull Location location){
+		return null;
+	}
 
 	/**
 	 * Saves the given {@link Location} if no location with the same country and city exists,

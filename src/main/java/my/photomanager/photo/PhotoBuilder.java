@@ -7,10 +7,6 @@ import lombok.AccessLevel;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import my.photomanager.utils.gpsResolver.GpsResolver;
-import my.photomanager.utils.gpsResolver.GpsResolverException;
-import my.photomanager.utils.metaDataParser.MetadataParser;
-import my.photomanager.utils.metaDataParser.MetadataParserException;
 import my.photomanager.photo.cameraModel.CameraModel;
 import my.photomanager.photo.cameraModel.CameraModelService;
 import my.photomanager.photo.location.Location;
@@ -18,6 +14,10 @@ import my.photomanager.photo.location.LocationService;
 import my.photomanager.photo.orientation.Orientation;
 import my.photomanager.photo.orientation.OrientationName;
 import my.photomanager.photo.orientation.OrientationService;
+import my.photomanager.utils.gpsResolver.GpsResolver;
+import my.photomanager.utils.gpsResolver.GpsResolverException;
+import my.photomanager.utils.metaDataParser.MetadataParser;
+import my.photomanager.utils.metaDataParser.MetadataParserException;
 import org.springframework.stereotype.Component;
 import org.springframework.util.DigestUtils;
 
@@ -64,10 +64,7 @@ public class PhotoBuilder {
 		if (photoWidth > photoHeight) {
 			photoOrientationName = OrientationName.LANDSCAPE;
 		}
-		var orientation = orientationService.saveOrGetOrientation(Orientation.builder()
-				.withName(photoOrientationName.getName())
-				.build());
-
+		var orientation = orientationService.saveOrGetOrientation(new Orientation(photoOrientationName.getName()));
 
 		var photo = Photo.builder()
 				.withHashValue(hashValue)
@@ -95,10 +92,7 @@ public class PhotoBuilder {
 			var locationInfo = GpsResolver.resolveLongitudeLatitude(photoMetadata.gpsLongitude()
 					.get(), photoMetadata.gpsLatitude()
 					.get());
-			var photoLocation = Location.builder()
-					.withCountry(locationInfo.country())
-					.withCity(locationInfo.city())
-					.build();
+			var photoLocation = new Location(locationInfo.country(), locationInfo.city());
 			photoLocation = photoLocationService.saveOrGetLocation(photoLocation);
 
 			photo = photo.toBuilder()
@@ -108,14 +102,11 @@ public class PhotoBuilder {
 
 		if (photoMetadata.cameraModel()
 				.isPresent()) {
-			var cameraSettings = CameraModel.builder()
-					.withName(photoMetadata.cameraModel()
-							.get())
-					.build();
-			cameraSettings = cameraModelService.saveOrGetCameraModel(cameraSettings);
+			var cameraModel = new CameraModel(photoMetadata.cameraModel().get());
+			cameraModel = cameraModelService.saveOrGetCameraModel(cameraModel);
 
 			photo = photo.toBuilder()
-					.withCameraModel(cameraSettings)
+					.withCameraModel(cameraModel)
 					.build();
 		}
 

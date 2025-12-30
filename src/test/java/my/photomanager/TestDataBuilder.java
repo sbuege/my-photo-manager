@@ -3,7 +3,6 @@ package my.photomanager;
 import java.nio.file.Path;
 import java.time.LocalDate;
 import java.util.Optional;
-import my.photomanager.utils.metaDataParser.Metadata;
 import my.photomanager.photo.Photo;
 import my.photomanager.photo.album.Album;
 import my.photomanager.photo.cameraModel.CameraModel;
@@ -12,6 +11,7 @@ import my.photomanager.photo.location.Location;
 import my.photomanager.photo.orientation.Orientation;
 import my.photomanager.photo.orientation.OrientationName;
 import my.photomanager.photo.orientation.OrientationRepository;
+import my.photomanager.utils.metaDataParser.Metadata;
 
 public class TestDataBuilder {
 
@@ -130,9 +130,7 @@ public class TestDataBuilder {
 		}
 
 		public static Album build(String name) {
-			return Album.builder()
-					.withName(name)
-					.build();
+			return new Album(name);
 		}
 	}
 
@@ -143,9 +141,7 @@ public class TestDataBuilder {
 		}
 
 		public static CameraModel build(String modelName) {
-			return CameraModel.builder()
-					.withName(modelName)
-					.build();
+			return new CameraModel(modelName);
 		}
 	}
 
@@ -156,9 +152,7 @@ public class TestDataBuilder {
 		}
 
 		public static Category build(String name) {
-			return Category.builder()
-					.withName(name)
-					.build();
+			return new Category(name);
 		}
 	}
 
@@ -169,10 +163,7 @@ public class TestDataBuilder {
 		}
 
 		public static Location build(String country, String city) {
-			return Location.builder()
-					.withCountry(country)
-					.withCity(city)
-					.build();
+			return new Location(country, city);
 		}
 	}
 
@@ -183,9 +174,7 @@ public class TestDataBuilder {
 		}
 
 		public static Orientation build(OrientationName name) {
-			return Orientation.builder()
-					.withName(name.getName())
-					.build();
+			return new Orientation(name.getName());
 		}
 
 		public static Orientation buildAndSave(OrientationRepository repository) {
