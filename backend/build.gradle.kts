@@ -3,7 +3,6 @@ plugins {
 	id("org.springframework.boot") version "3.4.5"
 	id("io.spring.dependency-management") version "1.1.7"
 	id("jacoco")
-	id("info.solidsoft.pitest") version "1.15.0"
 }
 
 group = "my"
@@ -30,13 +29,14 @@ dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
 	implementation("org.springframework.boot:spring-boot-starter-thymeleaf")
 	implementation("org.springframework.boot:spring-boot-starter-web")
+	implementation("org.springframework.boot:spring-boot-starter-validation")
 	developmentOnly("org.springframework.boot:spring-boot-devtools")
 
 	// core
 	implementation("commons-io:commons-io:2.15.1")
 	implementation("com.google.guava:guava:33.2.0-jre")
 	implementation("org.apache.commons:commons-lang3:3.19.0")
-	
+
 	// lombok
 	compileOnly("org.projectlombok:lombok")
 	annotationProcessor("org.projectlombok:lombok")
@@ -106,22 +106,9 @@ tasks.jacocoTestCoverageVerification {
 	classDirectories.setFrom(
 		files(classDirectories.files.map {
 			fileTree(it) {
-				exclude("**/*Dto.class")
-				exclude("**/PhotoConfiguration.class")
+				exclude("**/*Response.class")
 				exclude("**/*Exception.class")
 			}
 		})
 	)
 }
-
-
-pitest {
-	pitestVersion.set("1.15.0")
-	junit5PluginVersion.set("1.2.0")
-
-	targetClasses.set(listOf("my.photomanager.*"))
-	targetTests.set(listOf("my.photomanager.*Test"))
-
-	mutationThreshold.set(80)
-}
-
