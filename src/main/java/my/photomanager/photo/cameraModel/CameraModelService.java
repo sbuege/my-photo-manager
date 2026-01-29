@@ -5,6 +5,7 @@ import lombok.AccessLevel;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import my.photoLibrary.utils.metaDataParser.Metadata;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -60,4 +61,6 @@ public class CameraModelService {
 					return savedCameraModel;
 				});
 	}
+
+
 }
