@@ -60,7 +60,7 @@ public class FilterService {
 	public List<CreationYearStatistic> getCreationYearStatistics() {
 		return repository.groupPhotosByCreationYear()
 				.stream()
-				.filter(filter -> filter.getYear() != 0)
+				.filter(filter -> filter != null && filter.getYear() != 0)
 				.toList();
 	}
 

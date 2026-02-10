@@ -45,22 +45,11 @@ public class PhotoController {
 	}
 
 	@GetMapping("/")
-	protected ResponseEntity<Map<String, List<?>>> getPhotos() {
+	protected ResponseEntity<List<Long>> getPhotos() {
 		var emptyActiveFilter = new ActiveFilter(List.of(), List.of(), List.of(), List.of());
 		var photoIDs = filterService.filterPhotos(emptyActiveFilter);
 
-		var data = Map.of(
-				"activeCameraModelIDs", List.of(),
-				"cameraFilters", filterService.getCameraModelStatistics(),
-				"activeLocationIDs", List.of(),
-				"locationFilters", filterService.getLocationStatistics(),
-				"activeCreationDateFilters", List.of(),
-				"creationDateFilters", filterService.getCreationYearStatistics(),
-				"activeOrientationIDs", List.of(),
-				"orientationFilters", filterService.getOrientationStatistics(),
-				"photoIDs", photoIDs
-		);
-		return ResponseEntity.ok(data);
+		return ResponseEntity.ok(photoIDs);
 	}
 
 	@GetMapping("/thumbnail/{ID}")

@@ -1,21 +1,19 @@
 <script setup>
-import CameraFilter from './CameraFilter.vue'
-// import CreationYearFilter from './CreationYearFilter.vue'
-import LocationFilter from "@/components/filter/LocationFilter.vue";
-import OrientationFilter from "@/components/filter/OrientationFilter.vue";
+import FilterSection from "@/components/filter/sections/FilterSection.vue";
 </script>
 
 <template>
-  <main>
-    <h2>Filter</h2>
 
 
-    <CameraFilter/>
+  <aside class="bg-gray-100 rounded-xl p-5 space-y-5">
+    <h2 class="text-lg font-semibold text-gray-800 text-left"> Filter </h2>
 
-    <LocationFilter/>
-    <OrientationFilter/>
+    <FilterSection label="Camera Model" url="/filter/cameraFilter"></FilterSection>
+    <FilterSection label="Orientation" url="/filter/orientationFilter"></FilterSection>
 
-  </main>
+  </aside>
+
+
 </template>
 
 <style scoped>

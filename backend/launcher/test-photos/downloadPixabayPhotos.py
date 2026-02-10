@@ -3,7 +3,7 @@ import requests
 
 # === CONFIGURATION ===
 PIXABAY_API_KEY = "12161072-f434bc65ed04ec228861905c2"
-DOWNLOAD_DIR = ""
+DOWNLOAD_DIR = "."
 IMAGE_COUNT = 25
 
 def download_images(save_dir, category):
