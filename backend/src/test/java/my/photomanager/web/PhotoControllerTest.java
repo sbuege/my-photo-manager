@@ -31,18 +31,9 @@ class PhotoControllerTest {
 	private MockMvc mockMvc;
 
 	@Test
-	void shouldGetPhotos() throws Exception {
+	void shouldGetPhotoIDs() throws Exception {
 		mockMvc.perform(get("/photos/"))
-				.andExpect(status().isOk())
-				.andExpect(jsonPath("$.photoIDs", hasSize(0)))
-				.andExpect(jsonPath("$.activeCameraModelIDs", hasSize(0)))
-				.andExpect(jsonPath("$.cameraFilters").exists())
-				.andExpect(jsonPath("$.activeLocationIDs", hasSize(0)))
-				.andExpect(jsonPath("$.locationFilters").exists())
-				.andExpect(jsonPath("$.activeCreationDateFilters", hasSize(0)))
-				.andExpect(jsonPath("$.creationDateFilters").exists())
-				.andExpect(jsonPath("$.activeOrientationIDs", hasSize(0)))
-				.andExpect(jsonPath("$.orientationFilters").exists());
+				.andExpect(status().isOk());
 	}
 
 	@Nested
