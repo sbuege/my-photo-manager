@@ -71,6 +71,28 @@ class LibraryControllerTest {
 	}
 
 	@Nested
+	class IndexLibraryTest {
+
+		@Test
+		void shouldIndexLibrary() throws Exception {
+			mockMvc.perform(post("/library/index/" + TestDataBuilder.TestLibraryId))
+					.andExpect(status().isOk());
+		}
+
+		@Test
+		void shouldReturnBadRequestWhenLibraryIdNotFound() throws Exception {
+			long nonExistingId = TestDataBuilder.TestLibraryId;
+
+			doThrow(new LibraryServiceException("Library not found"))
+					.when(libraryService)
+					.indexLibrary(nonExistingId);
+
+			mockMvc.perform(post("/library/index/" + nonExistingId))
+					.andExpect(status().isBadRequest());
+		}
+	}
+
+	@Nested
 	class EditLibraryTest {
 
 		@Test

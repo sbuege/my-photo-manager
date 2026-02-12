@@ -1,6 +1,8 @@
 package my.photomanager.web;
 
 import jakarta.validation.constraints.NotBlank;
+
+import java.io.IOException;
 import java.util.List;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -46,6 +48,14 @@ public class LibraryController {
 	@PostMapping("/add")
 	protected ResponseEntity<Void> addLibrary(@RequestParam @NotBlank String name, @RequestParam @NotBlank String path) {
 		libraryService.createAndSaveLibrary(name, path);
+
+		return ResponseEntity.ok()
+				.build();
+	}
+
+	@PostMapping("/index/{ID}")
+	protected ResponseEntity<Void> indexLibrary(@PathVariable long ID) throws IOException {
+		libraryService.indexLibrary(ID);
 
 		return ResponseEntity.ok()
 				.build();
