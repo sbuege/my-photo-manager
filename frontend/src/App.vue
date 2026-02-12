@@ -6,7 +6,7 @@ import PhotoView from "@/components/photo/PhotoView.vue";
 </script>
 
 <template>
-  <main class="bg-gray-100 h-screen">
+  <main class="bg-gray-100 h-screen flex">
     <FilterView />
     <PhotoView />
   </main>

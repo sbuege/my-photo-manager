@@ -8,8 +8,8 @@ import PhotoSection from "@/components/photo/sections/PhotoSection.vue";
 </script>
 
 <template>
-  <main>
-    <h2>Photos</h2>
+  <main class="flex-1 p-6 bg-gray-50">
+
     <PhotoSection/>
   </main>
 </template>

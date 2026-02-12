@@ -38,18 +38,15 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div>
-    <hr />
-    <h2>Photo - Section</h2>
+  <div class="columns-1 sm:columns-2 md:columns-3 lg:columns-4 gap-6 space-y-6">
 
     <p v-if="loading">Lade...</p>
     <p v-else-if="error" style="color: red">{{ error }}</p>
 
-    <ul v-else>
-      <PhotoItem
+     <PhotoItem
           v-for="id in photoIds"
           :id="id"
       />
-    </ul>
+
   </div>
 </template>

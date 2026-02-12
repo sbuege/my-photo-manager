@@ -11,8 +11,7 @@ const props = defineProps({
 </script>
 
 <template>
-
-  <img :src="`/photos/thumbnail/${props.id}`" alt="Thumbnail" />
+  <img :src="`/photos/thumbnail/${props.id}`" alt="Thumbnail" class="w-full rounded-2xl shadow-md transition duration-300 break-inside-avoid" />
 </template>
 
 <style scoped>
