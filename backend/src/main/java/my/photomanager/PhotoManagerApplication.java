@@ -9,20 +9,11 @@ import org.springframework.scheduling.annotation.EnableAsync;
 
 @SpringBootApplication
 @EnableAsync
-//public class PhotoManagerApplication implements CommandLineRunner {
 public class PhotoManagerApplication  {
-
-   // @Autowired
-   //  private LibraryService libraryService;
 
 
     public static void main(String[] args) {
         SpringApplication.run(PhotoManagerApplication.class, args);
     }
-/*
-    @Override
-    public void run(String... args) throws Exception {
-        var library = libraryService.createAndSaveLibrary("Test Photos", "/Users/sebastianbuge/dev/git/private/my-photo-manager/backend/launcher/test-photos");
-        libraryService.indexLibrary(library.getId());
-    }*/
+
 }
