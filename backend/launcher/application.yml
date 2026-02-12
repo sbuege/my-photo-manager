@@ -1,0 +1,5 @@
+server:
+  port: 8181
+
+photo:
+    sourceFolder: test-photos

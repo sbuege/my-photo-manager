@@ -1,0 +1,3 @@
+spring:
+  application:
+    name: my-photo-manager
