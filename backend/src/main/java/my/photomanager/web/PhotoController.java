@@ -39,11 +39,6 @@ public class PhotoController {
 				.body(e.getMessage());
 	}
 
-	@GetMapping("/test")
-	protected ResponseEntity<List<Long>> getTestIds() {
-		return ResponseEntity.ok(List.of(1L, 2L, 3L));
-	}
-
 	@GetMapping("/")
 	protected ResponseEntity<List<Long>> getPhotos() {
 		var emptyActiveFilter = new ActiveFilter(List.of(), List.of(), List.of(), List.of());
