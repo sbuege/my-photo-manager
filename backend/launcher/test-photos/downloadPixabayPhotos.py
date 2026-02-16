@@ -4,7 +4,7 @@ import requests
 # === CONFIGURATION ===
 PIXABAY_API_KEY = "12161072-f434bc65ed04ec228861905c2"
 DOWNLOAD_DIR = "."
-IMAGE_COUNT = 25
+IMAGE_COUNT = 50
 
 def download_images(save_dir, category):
     if not os.path.exists(save_dir):
@@ -42,6 +42,8 @@ def search_pixabay(category, per_page):
 def main():
     download_images(DOWNLOAD_DIR, "nature")
     download_images(DOWNLOAD_DIR, "animals")
+    download_images(DOWNLOAD_DIR, "flowers")
+    download_images(DOWNLOAD_DIR, "sport")
 
 if __name__ == "__main__":
     main()
