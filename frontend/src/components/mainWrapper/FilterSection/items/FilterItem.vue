@@ -17,6 +17,9 @@ const props = defineProps({
 </script>
 
 <template>
+
+
+
   <li>
     <label class="flex items-center gap-3">
       <input type="checkbox" :checked="selected" class="h-4 w-4 text-blue-600 rounded">

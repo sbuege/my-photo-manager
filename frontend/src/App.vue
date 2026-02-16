@@ -1,14 +1,16 @@
 <script setup>
-
-import FilterView from "@/components/filter/FilterView.vue";
-import PhotoView from "@/components/photo/PhotoView.vue";
-
+import HeaderWrapper from "@/components/headerWrapper/HeaderWrapper.vue";
+import FooterWrapper from "@/components/footerWrapper/FooterWrapper.vue";
+import MainWrapper from "@/components/mainWrapper/MainWrapper.vue";
 </script>
 
 <template>
-  <main class="bg-gray-100 h-screen flex">
-    <FilterView />
-    <PhotoView />
-  </main>
+
+  <HeaderWrapper />
+
+  <MainWrapper />
+
+  <FooterWrapper />
+
 </template>
 
