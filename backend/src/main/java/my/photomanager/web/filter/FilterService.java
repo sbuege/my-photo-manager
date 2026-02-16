@@ -87,7 +87,7 @@ public class FilterService {
 	 *                     and orientation IDs to filter the photos.
 	 * @return a list of photo IDs that match the specified filtering criteria.
 	 */
-	public List<Long> filterPhotos(ActiveFilter activeFilter) {
+	public List<Photo> filterPhotos(ActiveFilter activeFilter) {
 		Specification<Photo> spec = Specification.where(null);
 
 		spec = spec.and(filterPhotosByLocationIds(activeFilter.locationIds()));
@@ -98,7 +98,6 @@ public class FilterService {
 		var photos = repository.findAll(spec, Sort.by(Sort.Direction.DESC, "creationDate"));
 
 		return photos.stream()
-				.map(Photo::getId)
 				.toList();
 	}
 
