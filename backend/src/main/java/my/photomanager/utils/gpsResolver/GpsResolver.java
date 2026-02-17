@@ -38,34 +38,40 @@ public class GpsResolver {
             GpsResolverException {
         var country = DEFAULT_COUNTRY;
         var city = DEFAULT_CITY;
-        var openStreetMapURL = "https://nominatim.openstreetmap.org/reverse.php?lon=" + longitude
-                + "&lat=" + latitude + "&format=jsonv2&accept-language=de";
 
-        try {
-            var httpClient = HttpClient.newBuilder()
-                    .connectTimeout(Duration.ofSeconds(10))
-                    .followRedirects(HttpClient.Redirect.NORMAL)
-                    .build();
+        if (longitude != 0.0 && latitude != 0.0) {
 
-            var request = HttpRequest.newBuilder(new URI(openStreetMapURL))
-                    .timeout(Duration.ofSeconds(20))
-                    //.header("User-Agent", USER_AGENT)
-                    .header("Accept", "application/json")
-                    .GET()
-                    .build();
+            var openStreetMapURL = "https://nominatim.openstreetmap.org/reverse.php?lon=" + longitude
+                    + "&lat=" + latitude + "&format=jsonv2&accept-language=de";
+            log.debug("OpenStreetMap Nominatim API URL: {}", openStreetMapURL);
+            log.info("resolving longitude {} and latitude {} coordinates using OpenStreetMap Nominatim API", longitude, latitude);
 
-            var response = httpClient.send(request, HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8));
-            var addressDetails = new JSONObject(response.body());
+            try {
+                var httpClient = HttpClient.newBuilder()
+                        .connectTimeout(Duration.ofSeconds(10))
+                        .followRedirects(HttpClient.Redirect.NORMAL)
+                        .build();
+
+                var request = HttpRequest.newBuilder(new URI(openStreetMapURL))
+                        .timeout(Duration.ofSeconds(20))
+                        //.header("User-Agent", USER_AGENT)
+                        .header("Accept", "application/json")
+                        .GET()
+                        .build();
+
+                var response = httpClient.send(request, HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8));
+                var addressDetails = new JSONObject(response.body());
 
 
-            if (addressDetails.has("address")) {
-                var addressJson = addressDetails.getJSONObject("address");
-                country = addressJson.optString("country");
-                city = addressJson.optString("city");
+                if (addressDetails.has("address")) {
+                    var addressJson = addressDetails.getJSONObject("address");
+                    country = addressJson.optString("country");
+                    city = addressJson.optString("city");
+                }
+            } catch (IOException | URISyntaxException | InterruptedException e) {
+                log.error("an exception occurred while resolving longitude {} and latitude {} coordinates", longitude, latitude, e);
+                throw new GpsResolverException(e);
             }
-        } catch (IOException | URISyntaxException | InterruptedException e) {
-            log.error("an exception occurred while resolving longitude {} and latitude {} coordinates", longitude, latitude, e);
-            throw new GpsResolverException(e);
         }
 
         var locationInfo = new LocationInfo(country, city);

@@ -50,7 +50,10 @@ public class PhotoService {
 	 * @throws MetadataParserException if there is an error while parsing the photo metadata.
 	 * @throws GpsResolverException    if there is an error resolving the photo's GPS metadata.
 	 */
-	public Photo createAndSavePhoto(@NonNull Path photoPath) throws IOException, MetadataParserException, GpsResolverException {
+	public Photo createAndSavePhoto(@NonNull Path photoPath)
+			throws IOException, MetadataParserException, GpsResolverException {
+		log.info("processing photo {}", photoPath);
+
 		Photo savedPhoto;
 		var hashValue = DigestUtils.md5DigestAsHex(new FileInputStream(photoPath.toFile()));
 
