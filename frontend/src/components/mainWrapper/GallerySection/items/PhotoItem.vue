@@ -5,9 +5,9 @@ const props = defineProps({
     type: Number,
     required: true
   },
-  cameraModel: {
-    type: String,
-  }
+  tags:{
+    type: Array,
+  },
 
 })
 
@@ -16,6 +16,10 @@ const props = defineProps({
 <template>
   <div class="rounded-xl shadow p-2 border-1 border-gray-300">
     <img :src="`/photos/thumbnail/${props.id}`" alt="Thumbnail" class="w-full h-auto" />
-    <p class="text-sm text-gray-500" >{{ props.cameraModel }}</p>
+    <p
+      v-for="tag in tags"
+      class="text-sm text-gray-500"
+  >{{tag.name}}</p>
+
   </div>
 </template>

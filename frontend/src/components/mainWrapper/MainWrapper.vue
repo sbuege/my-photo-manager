@@ -1,6 +1,6 @@
 <script setup>
 
-import FilterSection from "@/components/mainWrapper/FilterSection/FilterSection.vue";
+import TagSection from "@/components/mainWrapper/TagSection/TagSection.vue";
 import GallerySection from "@/components/mainWrapper/GallerySection/GallerySection.vue";
 import TestFilterSection from "@/components/mainWrapper/TestFilterSection/TestFilterSection.vue";
 </script>
@@ -11,16 +11,18 @@ import TestFilterSection from "@/components/mainWrapper/TestFilterSection/TestFi
 
     <div class="flex flex-1 max-w-7xl mx-auto w-full p-6 gap-6">
 
-      <aside class="w-1/5 bg-white p-4 rounded-xl shadow">
-        <FilterSection label="Orientation Filter" url="/filter/orientationFilter" />
+      <aside class="w-1/4 bg-white p-4 rounded-xl shadow">
+        <TagSection label="Orientation Tags" url="/tag/orientationTags" />
 
-        <FilterSection label="Camera Filter" url="/filter/cameraFilter" />
+        <TagSection label="Camera Tags" url="/tag/cameraTags" />
 
-        <FilterSection label="Location Filter" url="/filter/locationFilter" />
+        <TagSection label="Location Tags" url="/tag/locationTags" />
+
+        <TagSection label="Creation Year Tags" url="/tag/creationYearTags" />
 
       </aside>
 
-      <section class="w-4/5 bg-white p-4 rounded-xl shadow">
+      <section class="w-3/4 bg-white p-4 rounded-xl shadow">
         <GallerySection />
       </section>
 

@@ -18,12 +18,13 @@ const props = defineProps({
 
 <template>
 
+  <button
+      class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800 hover:bg-blue-200 transition"
+  >
+    {{ props.label }}
+    <span class="text-blue-600 hover:text-blue-800">&times;</span>
+  </button>
 
 
-  <li>
-    <label class="flex items-center gap-3">
-      <input type="checkbox" :checked="selected" class="h-4 w-4 text-blue-600 rounded">
-      <span class="text-sm text-gray-700">{{ props.label }}</span>
-    </label>
-  </li>
+
 </template>

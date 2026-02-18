@@ -39,7 +39,7 @@ onUnmounted(() => {
     <PhotoItem
         v-for="photo in photos"
         :id="photo.id"
-        :camera-model="photo.cameraModel ?? 'unknown camera model'"
+        :tags="photo.tags"
     />
   </div>
 </template>
