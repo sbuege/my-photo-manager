@@ -1,7 +1,7 @@
 <script setup>
 
 import {onMounted, onUnmounted, ref} from "vue";
-import FilterItem from "@/components/mainWrapper/FilterSection/items/FilterItem.vue";
+import TagItem from "@/components/mainWrapper/TagSection/items/TagItem.vue";
 
 const props = defineProps({
   url: {
@@ -52,7 +52,7 @@ onUnmounted(() => {
     {{ label }}
   </h3>
 
-  <FilterItem
+  <TagItem
       v-for="filter in filters"
       :id="filter.id"
       :label="filter.name"

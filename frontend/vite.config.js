@@ -21,6 +21,7 @@ export default defineConfig({
 		proxy: {
 			'/photos': 'http://localhost:8181',
 			'/filter': 'http://localhost:8181',
+            '/tag': 'http://localhost:8181'
 
 		}
 	}

@@ -1,86 +1,85 @@
 package my.photomanager;
 
-import static my.photomanager.TestDataBuilder.TestFilePath;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.TestInstance.Lifecycle.PER_CLASS;
-
-import java.io.IOException;
-import java.time.Instant;
-import java.util.List;
 import my.photomanager.core.library.LibraryService;
-import my.photomanager.core.location.LocationStatistic;
-import my.photomanager.core.orientation.OrientationStatistic;
-import my.photomanager.core.photo.CreationYearStatistic;
-import my.photomanager.core.photo.PhotoService;
+import my.photomanager.core.tag.TagService;
 import my.photomanager.web.filter.FilterService;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.io.IOException;
+import java.time.Instant;
+
+import static my.photomanager.TestDataBuilder.TestFilePath;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.TestInstance.Lifecycle.PER_CLASS;
+
 @SpringBootTest
 @TestInstance(PER_CLASS)
 public class PhotoManagerIntegrationTest {
 
-	@Autowired
-	private LibraryService libraryService;
+    @Autowired
+    private LibraryService libraryService;
 
-	@Autowired
-	private FilterService filterService;
+    @Autowired
+    private FilterService filterService;
 
-	@BeforeAll
-	void setUp() throws IOException {
-		// --- GIVEN ---
-		var library = libraryService.createAndSaveLibrary("TestLibrary", TestFilePath.toString());
+    @Autowired
+    private TagService tagService;
 
-		// --- WHEN
-		var indexStartTimeStamp = Instant.now();
-		library = libraryService.indexLibrary(library.getId());
+    @BeforeAll
+    void setUp() throws IOException {
+        // --- GIVEN ---
+        var library = libraryService.createAndSaveLibrary("TestLibrary", TestFilePath.toString());
 
-		// --- THEN
-		assertThat(library.getNumberOfPhotos()).isEqualTo(4);
-		assertThat(library.getLastIndexAt()).isAfter(indexStartTimeStamp);
-	}
+        // --- WHEN
+        var indexStartTimeStamp = Instant.now();
+        library = libraryService.indexLibrary(library.getId());
 
-	@Test
-	void shouldReturnCameraStatistic() throws IOException {
-		// --- WHEN
-		var cameraStatistic = filterService.getCameraModelStatistics();
+        // --- THEN
+        assertThat(library.getNumberOfPhotos()).isEqualTo(4);
+        assertThat(library.getLastIndexAt()).isAfter(indexStartTimeStamp);
+    }
 
-		// --- THEN
-		assertThat(cameraStatistic).isNotEmpty();
-		//TODO check content
-	}
+    @Test
+    void shouldReturnCameraTags() throws IOException {
+        // --- WHEN
+        var cameraTags = tagService.getCameraTags();
 
-	@Test
-	void shouldReturnLocationsStatistic(){
-		// --- WHEN ---
-		var locationStatistics = filterService.getLocationStatistics();
+        // --- THEN
+        assertThat(cameraTags).isNotEmpty();
+        //TODO check content
+    }
 
-		// --- THEN
-		assertThat(locationStatistics).isNotEmpty();
-		//TODO check content
-	}
+    @Test
+    void shouldReturnLocationTags() {
+        // --- WHEN ---
+        var locationTags = tagService.getLocationTags();
 
-	@Test
-	void shouldReturnOrientationStatistic(){
-		// --- WHEN ---
-		var orientationStatistics = filterService.getOrientationStatistics();
+        // --- THEN
+        assertThat(locationTags).isNotEmpty();
+        //TODO check content
+    }
 
-		// --- THEN
-		assertThat(orientationStatistics).isNotEmpty();
-		//TODO check content
-	}
+    @Test
+    void shouldReturnOrientationTags() {
+        // --- WHEN ---
+        var orientationTags = tagService.getOrientationTags();
 
-	@Test
-	void shouldReturnCreationYearStatistic(){
-		// --- WHEN ---
-		var creationYearStatistics = filterService.getCreationYearStatistics();
+        // --- THEN
+        assertThat(orientationTags).isNotEmpty();
+        //TODO check content
+    }
 
-		// --- THEN
-		assertThat(creationYearStatistics).isNotEmpty();
-		//TODO check content
-	}
+    @Test
+    void shouldReturnCreationYearTags() {
+        // --- WHEN ---
+        var creationYearTags = tagService.getCreationYearTags();
+
+        // --- THEN
+        assertThat(creationYearTags).isNotEmpty();
+        //TODO check content
+    }
 }

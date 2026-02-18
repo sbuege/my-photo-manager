@@ -1,34 +1,30 @@
 package my.photomanager.web;
 
+import lombok.AccessLevel;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
+import my.photomanager.core.photo.Photo;
+import my.photomanager.core.photo.PhotoService;
+import my.photomanager.core.photo.PhotoServiceException;
+import my.photomanager.core.tag.Tag;
+import my.photomanager.core.tag.TagService;
+import my.photomanager.web.filter.ActiveFilter;
+import my.photomanager.web.filter.FilterService;
+import my.photomanager.web.response.PhotoResponse;
+import my.photomanager.web.response.TagResponse;
+import net.coobird.thumbnailator.Thumbnails;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Base64;
 import java.util.List;
-import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-
-import lombok.AccessLevel;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j2;
-import my.photomanager.core.cameraModel.CameraModelStatistic;
-import my.photomanager.core.photo.Photo;
-import my.photomanager.core.photo.PhotoService;
-import my.photomanager.core.photo.PhotoServiceException;
-import my.photomanager.web.filter.ActiveFilter;
-import my.photomanager.web.filter.FilterService;
-import my.photomanager.web.response.CameraModelResponse;
-import my.photomanager.web.response.PhotoResponse;
-import net.coobird.thumbnailator.Thumbnails;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
@@ -38,6 +34,7 @@ public class PhotoController {
 
     private final PhotoService photoService;
     private final FilterService filterService;
+    private final TagService tagService;
 
 
     @ExceptionHandler(PhotoServiceException.class)
@@ -48,11 +45,10 @@ public class PhotoController {
 
     @GetMapping("/")
     protected ResponseEntity<List<PhotoResponse>> getPhotos() {
-        Function<Photo, PhotoResponse> map2PhotoResponse = (photo) -> new PhotoResponse(photo.getId(), photo.getCameraModel().getName());
+        Function<Tag, TagResponse> map2TagResponse = (tag) -> new TagResponse(tag.id(), tag.name());
+        Function<Photo, PhotoResponse> map2PhotoResponse = (photo) -> new PhotoResponse(photo.getId(), tagService.getPhotoTags(photo).stream().map(map2TagResponse).collect(Collectors.toList()));
 
         var emptyActiveFilter = new ActiveFilter(List.of(), List.of(), List.of(), List.of());
-
-
         return ResponseEntity.ok(filterService.filterPhotos(emptyActiveFilter).stream().map(map2PhotoResponse).collect(Collectors.toList()));
     }
 
