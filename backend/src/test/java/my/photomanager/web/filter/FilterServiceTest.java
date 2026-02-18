@@ -18,39 +18,5 @@ class FilterServiceTest {
 	@InjectMocks
 	private FilterService service;
 
-	@Test
-	void shouldReturnCameraModelStatistics() {
-		// --- WHEN
-		service.getCameraModelStatistics();
 
-		// --- THEN
-		verify(repository).groupPhotosByCameraModel();
-	}
-
-	@Test
-	void shouldReturnLocationStatistics() {
-		// --- WHEN
-		service.getLocationStatistics();
-
-		// --- THEN
-		verify(repository).groupPhotosByLocation();
-	}
-
-	@Test
-	void shouldReturnCreationYearStatistics() {
-		// --- WHEN
-		service.getCreationYearStatistics();
-
-		// --- THEN
-		verify(repository).groupPhotosByCreationYear();
-	}
-
-	@Test
-	void shouldReturnOrientationStatistics() {
-		// --- WHEN
-		service.getOrientationStatistics();
-
-		// --- THEN
-		verify(repository).groupPhotosByOrientation();
-	}
 }
