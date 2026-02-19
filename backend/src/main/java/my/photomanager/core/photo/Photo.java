@@ -48,11 +48,9 @@ public class Photo {
 	private Orientation orientation;
 
 	@ManyToOne(fetch = FetchType.EAGER)
-	@NonNull
 	private CameraModel cameraModel;
 
 	@ManyToOne(fetch = FetchType.EAGER)
-	@NonNull
 	private Location location;
 
 	@Column(name = "creationDate", columnDefinition = "DATE")

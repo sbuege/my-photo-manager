@@ -4,6 +4,7 @@ import java.util.List;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import my.photomanager.core.album.AlbumServiceException;
 import my.photomanager.utils.metaDataParser.Metadata;
 import org.springframework.stereotype.Service;
 
@@ -34,14 +35,20 @@ public class CameraModelService {
 		return createAndSaveCameraModel(metaData.cameraModel());
 	}
 
+
 	/**
-	 * Creates a new {@code CameraModel} entity with the specified name and attempts to save it to the repository.
-	 * If a camera model with the same name already exists, the existing one is retrieved instead.
+	 * Creates a new {@code CameraModel} with the specified name and saves it to the repository.
+	 * If a camera model with the same name already exists, it retrieves the existing model instead.
 	 *
-	 * @param name the name of the camera model to be created and saved; must not be null
-	 * @return the saved or retrieved {@code CameraModel} object
+	 * @param name the name of the camera model to be created; must not be null or blank
+	 * @return the saved or already existing {@code CameraModel} object
+	 * @throws CameraModelServiceException if the provided name is blank
 	 */
 	public CameraModel createAndSaveCameraModel(@NonNull String name) {
+		if (name.isBlank()) {
+			throw new CameraModelServiceException("camera model name cannot be blank");
+		}
+
 		var cameraModel = new CameraModel(name);
 		log.debug("created new  camera model: {}", cameraModel);
 

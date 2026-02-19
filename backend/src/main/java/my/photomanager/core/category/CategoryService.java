@@ -4,6 +4,7 @@ import java.util.List;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import my.photomanager.core.album.AlbumServiceException;
 import org.springframework.stereotype.Service;
 
 @RequiredArgsConstructor
@@ -30,6 +31,10 @@ public class CategoryService {
 	 * @return the created or retrieved category
 	 */
 	public Category createAndSaveCategory(@NonNull String name) {
+		if (name.isBlank()) {
+			throw new CategoryServiceException("category name cannot be blank");
+		}
+
 		var category = new Category(name);
 		log.debug("created new category {}", category);
 
@@ -45,6 +50,10 @@ public class CategoryService {
 	 * @return the updated and saved category
 	 */
 	public Category editCategory(long id, @NonNull String name) {
+		if (name.isBlank()) {
+			throw new CategoryServiceException("category name cannot be blank");
+		}
+
 		var category = repository.findById(id)
 				.orElseThrow(() -> new CategoryServiceException("no category found with id " + id));
 		log.debug("found category {} to edit", category);

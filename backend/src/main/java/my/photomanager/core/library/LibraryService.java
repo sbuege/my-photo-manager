@@ -10,6 +10,7 @@ import java.util.function.Predicate;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import my.photomanager.core.category.CategoryServiceException;
 import my.photomanager.core.photo.PhotoService;
 import my.photomanager.utils.gpsResolver.GpsResolverException;
 import my.photomanager.utils.metaDataParser.MetadataParserException;
@@ -87,6 +88,10 @@ public class LibraryService {
 	 * @return the saved or retrieved {@link Library} instance
 	 */
 	public Library createAndSaveLibrary(@NonNull String name, @NonNull String path) {
+		if (name.isBlank()) {
+			throw new LibraryServiceException("libary name cannot be blank");
+		}
+
 		var library = new Library(name, path);
 		log.debug("created new library {}", library);
 
