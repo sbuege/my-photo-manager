@@ -1,5 +1,6 @@
 package my.photomanager.core.cameraModel;
 
+import my.photomanager.core.album.Album;
 import my.photomanager.utils.metaDataParser.Metadata;
 import org.apache.logging.log4j.util.Strings;
 import org.junit.jupiter.api.Nested;
@@ -15,6 +16,7 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 import static my.photomanager.TestDataBuilder.*;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
@@ -53,6 +55,7 @@ class CameraModelServiceTest {
         void shouldCreateAndSaveCameraModel() {
             // --- GIVEN ---
             when(repository.existsByName(anyString())).thenReturn(false);
+            when(repository.saveAndFlush(any(CameraModel.class))).thenReturn(buildCameraModel());
 
             // --- WHEN ---
             service.createAndSaveCameraModel(TestCameraModelName);
@@ -62,11 +65,10 @@ class CameraModelServiceTest {
         }
 
         @ParameterizedTest
-        @MethodSource("my.photomanager.TestDataBuilder#invalidNamesProvider")
-        void shouldThrowExceptionWhenCameraModelNameIsInvalid(String cameraModelName) {
+        @MethodSource("my.photomanager.TestDataBuilder#emptyNameProvider")
+        void shouldReturnEmptyCameraModelWhenNameIsEmpty(String cameraModelName) {
             // --- WHEN ---
-           var exception =  assertThrows(CameraModelServiceException.class, () -> service.createAndSaveCameraModel(cameraModelName));
-           assertEquals("camera model name cannot be blank", exception.getMessage());
+            assertThat(service.createAndSaveCameraModel(cameraModelName)).isEmpty();
 
             // --- THEN ---
             verify(repository, never()).saveAndFlush(any(CameraModel.class));
@@ -77,6 +79,7 @@ class CameraModelServiceTest {
             // --- GIVEN ---
             var metaData = new Metadata(0, 0, TestCameraModelName, null, 0.0d, 0.0d);
             when(repository.existsByName(anyString())).thenReturn(false);
+            when(repository.saveAndFlush(any(CameraModel.class))).thenReturn(buildCameraModel());
 
             // --- WHEN ---
             service.createAndSaveCameraModel(metaData);
@@ -87,10 +90,9 @@ class CameraModelServiceTest {
 
         @ParameterizedTest
         @MethodSource("invalidNameMetaDataProvider")
-        void shouldThrowExceptionWhenCameraModelNameFromMetaDataIsInvalid(Metadata metaData) {
+        void shouldReturnEmptyCameraModelWhenNameIsEmpty(Metadata metaData) {
             // --- WHEN ---
-           var exception =  assertThrows(CameraModelServiceException.class, () -> service.createAndSaveCameraModel(metaData));
-           assertEquals("camera model name cannot be blank", exception.getMessage());
+            assertThat(service.createAndSaveCameraModel(metaData)).isEmpty();
 
             // --- THEN ---
             verify(repository, never()).saveAndFlush(any(CameraModel.class));
@@ -108,16 +110,6 @@ class CameraModelServiceTest {
             // --- THEN ---
             verify(repository, never()).saveAndFlush(any(CameraModel.class));
         }
-
-        @Test
-        void shouldThrowExceptionWhenCameraModelNameIsEmpty() {
-            // --- WHEN ---
-            var exception = assertThrows(CameraModelServiceException.class, () -> service.createAndSaveCameraModel(Strings.EMPTY));
-            assertEquals("camera model name cannot be blank", exception.getMessage());
-
-            // --- THEN ---
-            verify(repository, never()).saveAndFlush(any(CameraModel.class));
-        }
     }
 
     @Nested
@@ -130,6 +122,7 @@ class CameraModelServiceTest {
             // --- GIVEN ---
             when(repository.findById(TestCameraModelId)).thenReturn(Optional.of(buildCameraModel()));
             when(repository.existsByName(newCameraModelName)).thenReturn(false);
+            when(repository.saveAndFlush(any(CameraModel.class))).thenReturn(buildCameraModel(newCameraModelName));
 
             // --- WHEN ---
             service.editCameraModel(TestAlbumId, newCameraModelName);
@@ -159,6 +152,16 @@ class CameraModelServiceTest {
 
             // --- WHEN / THEN ---
             assertThrows(CameraModelServiceException.class, () -> service.editCameraModel(TestCameraModelId, newCameraModelName));
+            verify(repository, never()).saveAndFlush(any(CameraModel.class));
+        }
+
+        @ParameterizedTest
+        @MethodSource("my.photomanager.TestDataBuilder#emptyNameProvider")
+        void shouldReturnEmptyCameraModelWhenNameIsEmpty(String cameraModelName) {
+            // --- WHEN ---
+            assertThat(service.editCameraModel(TestCameraModelId, cameraModelName)).isEmpty();
+
+            // --- THEN ---
             verify(repository, never()).saveAndFlush(any(CameraModel.class));
         }
     }

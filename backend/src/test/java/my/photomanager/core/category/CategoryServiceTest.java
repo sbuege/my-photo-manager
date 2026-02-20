@@ -1,8 +1,7 @@
 package my.photomanager.core.category;
 
-import static my.photomanager.TestDataBuilder.TestCategoryId;
-import static my.photomanager.TestDataBuilder.TestCategoryName;
-import static my.photomanager.TestDataBuilder.buildCategory;
+import static my.photomanager.TestDataBuilder.*;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -11,9 +10,13 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.Optional;
+
+import my.photomanager.core.cameraModel.CameraModel;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -43,12 +46,23 @@ class CategoryServiceTest {
 		void shouldCreateAndSaveCategory() {
 			// --- GIVEN ---
 			when(repository.existsByName(anyString())).thenReturn(false);
+			when(repository.saveAndFlush(any(Category.class))).thenReturn(buildCategory());
 
 			// --- WHEN ---
 			service.createAndSaveCategory(TestCategoryName);
 
 			// --- THEN ---
 			verify(repository).saveAndFlush(any(Category.class));
+		}
+
+		@ParameterizedTest
+		@MethodSource("my.photomanager.TestDataBuilder#emptyNameProvider")
+		void shouldReturnEmptyCameraModelWhenNameIsEmpty(String categoryName) {
+			// --- WHEN ---
+			assertThat(service.createAndSaveCategory(categoryName)).isEmpty();
+
+			// --- THEN ---
+			verify(repository, never()).saveAndFlush(any(Category.class));
 		}
 
 		@Test
@@ -75,6 +89,7 @@ class CategoryServiceTest {
 			// --- GIVEN ---
 			when(repository.findById(TestCategoryId)).thenReturn(Optional.of(buildCategory()));
 			when(repository.existsByName(anyString())).thenReturn(false);
+			when(repository.saveAndFlush(any(Category.class))).thenReturn(buildCategory(newCategoryName));
 
 			// --- WHEN ---
 			service.editCategory(TestCategoryId, newCategoryName);
@@ -104,6 +119,16 @@ class CategoryServiceTest {
 
 			// --- WHEN / THEN ---
 			assertThrows(CategoryServiceException.class, () -> service.editCategory(TestCategoryId, newCategoryName));
+			verify(repository, never()).saveAndFlush(any(Category.class));
+		}
+
+		@ParameterizedTest
+		@MethodSource("my.photomanager.TestDataBuilder#emptyNameProvider")
+		void shouldReturnEmptyCategoryWhenNameIsEmpty(String categoryName) {
+			// --- WHEN ---
+			assertThat(service.editCategory(TestCameraModelId, categoryName)).isEmpty();
+
+			// --- THEN ---
 			verify(repository, never()).saveAndFlush(any(Category.class));
 		}
 	}

@@ -20,7 +20,7 @@ import org.apache.logging.log4j.util.Strings;
 
 public class TestDataBuilder {
 
-	public static Stream<String> invalidNamesProvider() {
+	public static Stream<String> emptyNameProvider() {
 		return Stream.of(Strings.EMPTY, " ");
 	}
 
@@ -116,7 +116,12 @@ public class TestDataBuilder {
 
 	public static Photo buildPhoto(String hashValue, String fileName, int height, int width, Orientation orientation, CameraModel cameraModel,
 			Location location, LocalDate creationDate) {
-		return new Photo(hashValue, fileName, height, width, orientation, cameraModel, location, creationDate);
+		return new Photo(hashValue, fileName, height, width).toBuilder()
+				.withOrientation(orientation)
+				.withCameraModel(cameraModel)
+				.withLocation(location)
+				.withCreationDate(creationDate)
+				.build();
 	}
 
 	public static Path createTestPhotoFile() throws IOException {

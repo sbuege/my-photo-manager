@@ -86,9 +86,9 @@ class PhotoServiceTest {
 						.thenReturn(TestDataBuilder.buildMetadata());
 
 				when(repository.existsByHashValue(anyString())).thenReturn(false);
-				when(locationService.createAndSaveLocation(any(Metadata.class))).thenReturn(buildLocation());
-				when(cameraModelService.createAndSaveCameraModel(any(Metadata.class))).thenReturn(buildCameraModel());
-				when(orientationService.createAndSaveOrientation(any(Metadata.class))).thenReturn(buildOrientation());
+				when(locationService.createAndSaveLocation(any(Metadata.class))).thenReturn(Optional.of(buildLocation()));
+				when(cameraModelService.createAndSaveCameraModel(any(Metadata.class))).thenReturn(Optional.of(buildCameraModel()));
+				when(orientationService.createAndSaveOrientation(any(Metadata.class))).thenReturn(Optional.of(buildOrientation()));
 
 				// --- WHEN ---
 				service.createAndSavePhoto(createTestPhotoFile());

@@ -1,8 +1,8 @@
 package my.photomanager.core.orientation;
 
-import static my.photomanager.TestDataBuilder.TestPhotoHeight;
-import static my.photomanager.TestDataBuilder.TestPhotoWidth;
-import static my.photomanager.TestDataBuilder.buildOrientation;
+import static my.photomanager.TestDataBuilder.*;
+import static my.photomanager.TestDataBuilder.TestLocationCity;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -57,6 +57,7 @@ class OrientationServiceTest {
 		void shouldCreateAndSaveOrientationFromMetaData(Metadata metadata) {
 			// --- GIVEN ---
 			when(repository.existsByName(anyString())).thenReturn(false);
+			when(repository.saveAndFlush(any(Orientation.class))).thenReturn(buildOrientation());
 
 			// --- WHEN ---
 			service.createAndSaveOrientation(metadata);
@@ -92,9 +93,9 @@ class OrientationServiceTest {
 
 		@ParameterizedTest
 		@MethodSource("invalidMetaDataProvider")
-		void shouldThrowExceptionWhenMetaDataAreInvalid(Metadata metadata) {
+		void shouldReturnEmptyOrientationWhenMetaDataAreInvalid(Metadata metadata) {
 			// --- WHEN / THEN ---
-			assertThrows(OrientationServiceException.class, () -> service.createAndSaveOrientation(metadata));
+			assertThat(service.createAndSaveOrientation(metadata)).isEmpty();
 			verify(repository, never()).saveAndFlush(any(Orientation.class));
 		}
 	}

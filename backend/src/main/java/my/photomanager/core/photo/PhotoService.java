@@ -38,17 +38,17 @@ public class PhotoService {
 				.orElseThrow(() -> new PhotoServiceException("no photo found with id " + id));
 	}
 
+
 	/**
-	 * Creates and saves a photo entity using the provided file path. If a photo with the same
-	 * hash value already exists, it retrieves the existing photo. Otherwise, it parses metadata
-	 * from the photo file, creates associated entities (location, camera model, orientation),
-	 * and stores the new photo.
+	 * Creates a new {@link Photo} from the specified file path, extracts metadata, and saves
+	 * the photo entity into the repository. If a photo with the same hash value already exists
+	 * in the repository, the existing photo entity is returned.
 	 *
-	 * @param photoPath the file system path of the photo to be processed and saved. Must be non-null.
-	 * @return the saved or existing {@link Photo} entity.
-	 * @throws IOException             if an I/O error occurs while reading the photo file.
-	 * @throws MetadataParserException if there is an error while parsing the photo metadata.
-	 * @throws GpsResolverException    if there is an error resolving the photo's GPS metadata.
+	 * @param photoPath the absolute file path to the photo to be processed
+	 * @return the saved {@link Photo} entity, or the existing {@link Photo} if it already exists
+	 * @throws IOException if an I/O error occurs during file processing
+	 * @throws MetadataParserException if an error occurs during metadata extraction from the photo
+	 * @throws GpsResolverException if an error occurs while resolving GPS-related location metadata
 	 */
 	public Photo createAndSavePhoto(@NonNull Path photoPath)
 			throws IOException, MetadataParserException, GpsResolverException {
@@ -64,14 +64,27 @@ public class PhotoService {
 		} else {
 			var metaData = MetadataParser.parseMetadata(photoPath);
 
-			var location = locationService.createAndSaveLocation(metaData);
-			var cameraModel = cameraModelService.createAndSaveCameraModel(metaData);
-			var orientation = orientationService.createAndSaveOrientation(metaData);
-
 			var photo = new Photo(hashValue, photoPath.toAbsolutePath()
-					.toString(), metaData.photoHeight(), metaData.photoWidth(), orientation,
-					cameraModel, location, metaData.creationDate());
-			log.debug("created new photo {}", photo);
+					.toString(), metaData.photoHeight(), metaData.photoWidth());
+
+			if (metaData.creationDate() != null){
+				photo = photo.toBuilder().withCreationDate(metaData.creationDate()).build();
+			}
+
+			var location = locationService.createAndSaveLocation(metaData);
+			if (location.isPresent()){
+				photo = photo.toBuilder().withLocation(location.get()).build();
+			}
+
+			var cameraModel = cameraModelService.createAndSaveCameraModel(metaData);
+			if (cameraModel.isPresent()){
+				photo = photo.toBuilder().withCameraModel(cameraModel.get()).build();
+			}
+
+			var orientation = orientationService.createAndSaveOrientation(metaData);
+			if (orientation.isPresent()){
+				photo = photo.toBuilder().withOrientation(orientation.get()).build();
+			}
 
 			savedPhoto = repository.saveAndFlush(photo);
 			log.info("saved photo {} successfully", savedPhoto);

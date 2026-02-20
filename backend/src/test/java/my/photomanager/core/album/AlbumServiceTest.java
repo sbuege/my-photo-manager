@@ -3,6 +3,7 @@ package my.photomanager.core.album;
 import static my.photomanager.TestDataBuilder.TestAlbumId;
 import static my.photomanager.TestDataBuilder.TestAlbumName;
 import static my.photomanager.TestDataBuilder.buildAlbum;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
@@ -49,6 +50,7 @@ class AlbumServiceTest {
 		void shouldCreateAndSaveAlbum() {
 			// --- GIVEN ---
 			when(repository.existsByName(anyString())).thenReturn(false);
+			when(repository.saveAndFlush(any(Album.class))).thenReturn(buildAlbum());
 
 			// --- WHEN ---
 			service.createAndSaveAlbum(TestAlbumName);
@@ -58,11 +60,10 @@ class AlbumServiceTest {
 		}
 
 		@ParameterizedTest
-		@MethodSource("my.photomanager.TestDataBuilder#invalidNamesProvider")
-		void shouldThrowExceptionWhenAlbumNameIsInvalid(String albumName) {
+		@MethodSource("my.photomanager.TestDataBuilder#emptyNameProvider")
+		void shouldReturnEmptyAlbumWhenNameIsEmpty(String albumName) {
 			// --- WHEN ---
-			var exception = assertThrows(AlbumServiceException.class, () -> service.createAndSaveAlbum(albumName));
-			assertEquals("album name cannot be blank", exception.getMessage());
+			assertThat(service.createAndSaveAlbum(albumName)).isEmpty();
 
 			// --- THEN ---
 			verify(repository, never()).saveAndFlush(any(Album.class));
@@ -127,11 +128,10 @@ class AlbumServiceTest {
 		}
 
 		@ParameterizedTest
-		@MethodSource("my.photomanager.TestDataBuilder#invalidNamesProvider")
-		void shouldThrowExceptionWhenAlbumNameIsInvalid(String albumName) {
+		@MethodSource("my.photomanager.TestDataBuilder#emptyNameProvider")
+		void shouldReturnEmptyAlbumWhenNameIsEmpty(String albumName) {
 			// --- WHEN ---
-			var exception = assertThrows(AlbumServiceException.class, () -> service.editAlbum(TestAlbumId, albumName));
-			assertEquals("album name cannot be blank", exception.getMessage());
+			assertThat(service.editAlbum(TestAlbumId, albumName)).isEmpty();
 
 			// --- THEN ---
 			verify(repository, never()).saveAndFlush(any(Album.class));

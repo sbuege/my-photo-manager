@@ -1,70 +1,57 @@
 package my.photomanager.core.photo;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.ManyToOne;
-import java.time.LocalDate;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.ToString;
+import jakarta.persistence.*;
+import lombok.*;
 import my.photomanager.core.cameraModel.CameraModel;
 import my.photomanager.core.location.Location;
 import my.photomanager.core.orientation.Orientation;
 
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+import java.time.LocalDate;
 
+@Builder(toBuilder = true, setterPrefix = "with", access = AccessLevel.PUBLIC)
+@NoArgsConstructor(access = AccessLevel.PUBLIC)
+@AllArgsConstructor(access = AccessLevel.PUBLIC)
 @Entity
 @ToString
 @Getter
 public class Photo {
 
-	@Id
-	@GeneratedValue
-	private long id;
+    @Id
+    @GeneratedValue
+    private long id;
 
-	@Column(updatable = false, unique = true)
-	@NonNull
-	private String hashValue;
+    @Column(updatable = false, unique = true)
+    @NonNull
+    private String hashValue;
 
-	@Column(updatable = false)
-	@NonNull
-	private String fileName;
+    @Column(updatable = false)
+    @NonNull
+    private String fileName;
 
-	@Column(updatable = false)
-	@NonNull
-	private Integer height;
+    @Column(updatable = false)
+    @NonNull
+    private Integer height;
 
-	@Column(updatable = false)
-	@NonNull
-	private Integer width;
+    @Column(updatable = false)
+    @NonNull
+    private Integer width;
 
-	@ManyToOne(fetch = FetchType.EAGER)
-	@NonNull
-	private Orientation orientation;
+    @ManyToOne(fetch = FetchType.EAGER)
+    private Orientation orientation;
 
-	@ManyToOne(fetch = FetchType.EAGER)
-	private CameraModel cameraModel;
+    @ManyToOne(fetch = FetchType.EAGER)
+    private CameraModel cameraModel;
 
-	@ManyToOne(fetch = FetchType.EAGER)
-	private Location location;
+    @ManyToOne(fetch = FetchType.EAGER)
+    private Location location;
 
-	@Column(name = "creationDate", columnDefinition = "DATE")
-	private LocalDate creationDate;
+    @Column(name = "creationDate", columnDefinition = "DATE")
+    private LocalDate creationDate;
 
-	public Photo(@NonNull String hashValue, @NonNull String fileName, @NonNull Integer height, @NonNull Integer width, @NonNull Orientation orientation,
-			@NonNull CameraModel cameraModel, @NonNull Location location, LocalDate creationDate) {
-		this.hashValue = hashValue;
-		this.fileName = fileName;
-		this.height = height;
-		this.width = width;
-		this.orientation = orientation;
-		this.cameraModel = cameraModel;
-		this.location = location;
-		this.creationDate = creationDate;
-	}
+    public Photo(@NonNull String hashValue, @NonNull String fileName, int photoHeight, int photoWidth) {
+        this.hashValue = hashValue;
+        this.fileName = fileName;
+        this.height = photoHeight;
+        this.width = photoWidth;
+    }
 }
