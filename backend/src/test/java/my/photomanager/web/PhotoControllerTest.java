@@ -10,6 +10,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import my.photomanager.TestDataBuilder;
 import my.photomanager.core.photo.PhotoService;
 import my.photomanager.core.photo.PhotoServiceException;
+import my.photomanager.core.tag.TagService;
 import my.photomanager.web.filter.FilterService;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -26,6 +27,9 @@ class PhotoControllerTest {
 
 	@MockitoBean
 	private FilterService filterService;
+
+	@MockitoBean
+	private TagService tagService;
 
 	@Autowired
 	private MockMvc mockMvc;
