@@ -12,13 +12,15 @@ import TestFilterSection from "@/components/mainWrapper/TestFilterSection/TestFi
     <div class="flex flex-1 max-w-7xl mx-auto w-full p-6 gap-6">
 
       <aside class="w-1/4 bg-white p-4 rounded-xl shadow">
-        <TagSection label="Orientation Tags" url="/tag/orientationTags" />
+        <TagSection label="Format" url="/tag/orientationTags" />
+
+        <TagSection label="Creation Year Tags" url="/tag/creationYearTags" />
 
         <TagSection label="Camera Tags" url="/tag/cameraTags" />
 
         <TagSection label="Location Tags" url="/tag/locationTags" />
 
-        <TagSection label="Creation Year Tags" url="/tag/creationYearTags" />
+
 
       </aside>
 

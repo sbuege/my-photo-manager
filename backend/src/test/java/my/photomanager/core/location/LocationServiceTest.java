@@ -1,21 +1,5 @@
 package my.photomanager.core.location;
 
-import static my.photomanager.TestDataBuilder.TestAlbumId;
-import static my.photomanager.TestDataBuilder.TestLocationCity;
-import static my.photomanager.TestDataBuilder.TestLocationCountry;
-import static my.photomanager.TestDataBuilder.TestLocationId;
-import static my.photomanager.TestDataBuilder.TestLocationLatitude;
-import static my.photomanager.TestDataBuilder.TestLocationLongitude;
-import static my.photomanager.TestDataBuilder.buildLocation;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
-import java.util.Optional;
-import java.util.stream.Stream;
 import my.photomanager.utils.gpsResolver.GpsResolverException;
 import my.photomanager.utils.metaDataParser.Metadata;
 import org.apache.logging.log4j.util.Strings;
@@ -28,141 +12,166 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Optional;
+
+import static my.photomanager.TestDataBuilder.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.*;
+
 @ExtendWith(MockitoExtension.class)
 class LocationServiceTest {
 
-	@Mock
-	private LocationRepository repository;
+    @Mock
+    private LocationRepository repository;
 
-	@InjectMocks
-	private LocationService service;
+    @InjectMocks
+    private LocationService service;
 
-	@Test
-	void shouldReturnAllLocations() {
-		// --- WHEN
-		service.getAllLocations();
+    @Test
+    void shouldReturnAllLocations() {
+        // --- WHEN
+        service.getAllLocations();
 
-		// --- THEN
-		verify(repository).findAll();
-	}
+        // --- THEN
+        verify(repository).findAll();
+    }
 
-	@Nested
-	class CreateLocationTest {
+    @Nested
+    class CreateLocationTest {
 
-		@Test
-		void shouldCreateAndSaveLocation() {
-			// --- GIVEN ---
-			when(repository.existsByCountryAndCity(anyString(), anyString())).thenReturn(false);
+        @Test
+        void shouldCreateAndSaveLocation() {
+            // --- GIVEN ---
+            when(repository.existsByCountryAndCity(anyString(), anyString())).thenReturn(false);
+            when(repository.saveAndFlush(any(Location.class))).thenReturn(buildLocation());
 
-			// --- WHEN ---
-			service.createAndSaveLocation(TestLocationCountry, TestLocationCity);
+            // --- WHEN ---
+            service.createAndSaveLocation(TestLocationCountry, TestLocationCity);
 
-			// --- THEN ---
-			verify(repository).saveAndFlush(any(Location.class));
-		}
+            // --- THEN ---
+            verify(repository).saveAndFlush(any(Location.class));
+        }
 
-		public static Stream<Metadata> metaDataProvider() {
-			return Stream.of(
-					new Metadata(0, 0, Strings.EMPTY, null, TestLocationLongitude, TestLocationLatitude),
-					new Metadata(0, 0, Strings.EMPTY, null, 0.0d, 0.0d)
-			);
-		}
+        @ParameterizedTest
+        @MethodSource("my.photomanager.TestDataBuilder#emptyNameProvider")
+        void shouldReturnEmptyLocationWhenCountryNameIsEmpty(String countryName) {
+            // --- WHEN ---
+            assertThat(service.createAndSaveLocation(countryName, TestLocationCity)).isEmpty();
 
-		@ParameterizedTest
-		@MethodSource("metaDataProvider")
-		void shouldCreateAndSaveLocationFromMetaData(Metadata metaData) throws GpsResolverException {
-			// --- GIVEN ---
-			when(repository.existsByCountryAndCity(anyString(), anyString())).thenReturn(false);
+            // --- THEN ---
+            verify(repository, never()).saveAndFlush(any(Location.class));
+        }
 
-			// --- WHEN ---
-			service.createAndSaveLocation(metaData);
+        @Test
+        void shouldCreateAndSaveLocationFromMetaData() throws GpsResolverException {
+            // --- GIVEN ---
+            var metaData = new Metadata(0, 0, Strings.EMPTY, null, TestLocationLongitude, TestLocationLatitude);
+            when(repository.existsByCountryAndCity(anyString(), anyString())).thenReturn(false);
+            when(repository.saveAndFlush(any(Location.class))).thenReturn(buildLocation());
 
-			// --- THEN ---
-			verify(repository).saveAndFlush(any(Location.class));
-		}
+            // --- WHEN ---
+            service.createAndSaveLocation(metaData);
 
-		@Test
-		void shouldReturnExistingLocation() {
-			// --- GIVEN ---
-			when(repository.existsByCountryAndCity(anyString(), anyString())).thenReturn(true);
-			when(repository.findByCountryAndCity(anyString(), anyString())).thenReturn(Optional.of(buildLocation()));
+            // --- THEN ---
+            verify(repository).saveAndFlush(any(Location.class));
+        }
 
-			// --- WHEN ---
-			service.createAndSaveLocation(TestLocationCountry, TestLocationCity);
+        @Test
+        void shouldReturnExistingLocation() {
+            // --- GIVEN ---
+            when(repository.existsByCountryAndCity(anyString(), anyString())).thenReturn(true);
+            when(repository.findByCountryAndCity(anyString(), anyString())).thenReturn(Optional.of(buildLocation()));
 
-			// --- THEN ---
-			verify(repository, never()).saveAndFlush(any(Location.class));
-		}
-	}
+            // --- WHEN ---
+            service.createAndSaveLocation(TestLocationCountry, TestLocationCity);
 
-	@Nested
-	class EditLocationTest {
+            // --- THEN ---
+            verify(repository, never()).saveAndFlush(any(Location.class));
+        }
+    }
 
-		private final String newLocationCountryName = "newLocationCountryName";
-		private final String newLocationCityName = "newLocationCityName";
+    @Nested
+    class EditLocationTest {
 
-		@Test
-		void shouldEditAndSaveLocation() {
-			// --- GIVEN ---
-			when(repository.findById(TestLocationId)).thenReturn(Optional.of(buildLocation()));
-			when(repository.existsByCountryAndCity(anyString(), anyString())).thenReturn(false);
+        private final String newLocationCountryName = "newLocationCountryName";
+        private final String newLocationCityName = "newLocationCityName";
 
-			// --- WHEN ---
-			service.editLocation(TestLocationId, newLocationCountryName, newLocationCityName);
+        @Test
+        void shouldEditAndSaveLocation() {
+            // --- GIVEN ---
+            when(repository.findById(TestLocationId)).thenReturn(Optional.of(buildLocation()));
+            when(repository.existsByCountryAndCity(anyString(), anyString())).thenReturn(false);
+            when(repository.saveAndFlush(any(Location.class))).thenReturn(buildLocation(newLocationCountryName, newLocationCityName));
 
-			// --- THEN ---
-			verify(repository).saveAndFlush(any(Location.class));
-		}
+            // --- WHEN ---
+            service.editLocation(TestLocationId, newLocationCountryName, newLocationCityName);
 
-		@Test
-		void shouldReturnExistingLocation() {
-			// --- GIVEN ---
-			when(repository.findById(TestLocationId)).thenReturn(Optional.of(buildLocation()));
-			when(repository.existsByCountryAndCity(newLocationCountryName, newLocationCityName)).thenReturn(true);
-			when(repository.findByCountryAndCity(newLocationCountryName, newLocationCityName)).thenReturn(
-					Optional.of(buildLocation(newLocationCountryName, newLocationCityName)));
+            // --- THEN ---
+            verify(repository).saveAndFlush(any(Location.class));
+        }
 
-			// --- WHEN ---
-			service.editLocation(TestLocationId, newLocationCountryName, newLocationCityName);
+        @Test
+        void shouldReturnExistingLocation() {
+            // --- GIVEN ---
+            when(repository.findById(TestLocationId)).thenReturn(Optional.of(buildLocation()));
+            when(repository.existsByCountryAndCity(newLocationCountryName, newLocationCityName)).thenReturn(true);
+            when(repository.findByCountryAndCity(newLocationCountryName, newLocationCityName)).thenReturn(
+                    Optional.of(buildLocation(newLocationCountryName, newLocationCityName)));
 
-			// --- THEN ---
-			verify(repository, never()).saveAndFlush(any(Location.class));
-		}
+            // --- WHEN ---
+            service.editLocation(TestLocationId, newLocationCountryName, newLocationCityName);
 
-		@Test
-		void shouldThrowExceptionWhenLocationDoesNotExist() {
-			// --- GIVEN ---
-			when(repository.findById(TestLocationId)).thenReturn(Optional.empty());
+            // --- THEN ---
+            verify(repository, never()).saveAndFlush(any(Location.class));
+        }
 
-			// --- WHEN / THEN ---
-			assertThrows(LocationServiceException.class, () -> service.editLocation(TestLocationId, newLocationCountryName, newLocationCityName));
-			verify(repository, never()).saveAndFlush(any(Location.class));
-		}
-	}
+        @Test
+        void shouldThrowExceptionWhenLocationDoesNotExist() {
+            // --- GIVEN ---
+            when(repository.findById(TestLocationId)).thenReturn(Optional.empty());
 
-	@Nested
-	class DeleteLocationTest {
+            // --- WHEN / THEN ---
+            assertThrows(LocationServiceException.class, () -> service.editLocation(TestLocationId, newLocationCountryName, newLocationCityName));
+            verify(repository, never()).saveAndFlush(any(Location.class));
+        }
 
-		@Test
-		void shouldDeleteLocation() {
-			// --- GIVEN ---
-			when(repository.findById(TestLocationId)).thenReturn(Optional.of(buildLocation()));
+        @ParameterizedTest
+        @MethodSource("my.photomanager.TestDataBuilder#emptyNameProvider")
+        void shouldReturnEmptyLocationWhenCountryNameIsEmpty(String countryName) {
+            // --- WHEN ---
+            assertThat(service.editLocation(TestCameraModelId, countryName, TestLocationCity)).isEmpty();
 
-			// --- WHEN ---
-			service.deleteLocation(TestLocationId);
+            // --- THEN ---
+            verify(repository, never()).saveAndFlush(any(Location.class));
+        }
+    }
 
-			// --- THEN ---
-			verify(repository).deleteById(TestAlbumId);
-		}
+    @Nested
+    class DeleteLocationTest {
 
-		@Test
-		void shouldThrowExceptionWhenLocationsDoesNotExist() {
-			// --- GIVEN ---
-			when(repository.findById(TestLocationId)).thenReturn(Optional.empty());
+        @Test
+        void shouldDeleteLocation() {
+            // --- GIVEN ---
+            when(repository.findById(TestLocationId)).thenReturn(Optional.of(buildLocation()));
 
-			// --- WHEN / THEN ---
-			assertThrows(LocationServiceException.class, () -> service.deleteLocation(TestLocationId));
-			verify(repository, never()).deleteById(TestLocationId);
-		}
-	}
+            // --- WHEN ---
+            service.deleteLocation(TestLocationId);
+
+            // --- THEN ---
+            verify(repository).deleteById(TestAlbumId);
+        }
+
+        @Test
+        void shouldThrowExceptionWhenLocationsDoesNotExist() {
+            // --- GIVEN ---
+            when(repository.findById(TestLocationId)).thenReturn(Optional.empty());
+
+            // --- WHEN / THEN ---
+            assertThrows(LocationServiceException.class, () -> service.deleteLocation(TestLocationId));
+            verify(repository, never()).deleteById(TestLocationId);
+        }
+    }
 }

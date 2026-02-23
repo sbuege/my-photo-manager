@@ -1,90 +1,106 @@
 package my.photomanager.core.album;
 
-import java.util.List;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Optional;
 
 @RequiredArgsConstructor
 @Service
 @Log4j2
 public class AlbumService {
 
-	private final AlbumRepository repository;
+    private final AlbumRepository repository;
 
-	/**
-	 * Retrieves a list of all albums stored in the repository.
-	 *
-	 * @return a list of {@code Album} objects representing all albums in the repository, or an empty list if no albums are present.
-	 */
-	public List<Album> getAllAlbums() {
-		return repository.findAll();
-	}
+    /**
+     * Retrieves a list of all albums stored in the repository.
+     *
+     * @return a list of {@code Album} objects representing all albums in the repository, or an empty list if no albums are present.
+     */
+    public List<Album> getAllAlbums() {
+        return repository.findAll();
+    }
 
-	/**
-	 * Creates a new album with the specified name, logs its creation,
-	 * and saves it to the repository if it does not already exist.
-	 * If an album with the same name already exists, it is retrieved from the repository.
-	 *
-	 * @param name the name of the album to be created and saved, must not be null
-	 * @return the created and saved album, or the existing album if one already exists with the given name
-	 */
-	public Album createAndSaveAlbum(@NonNull String name) {
-		var album = new Album(name);
-		log.debug("created new album {}", album);
 
-		return saveOrGetAlbum(album);
-	}
+    /**
+     * Creates a new album with the specified name and saves it in the repository if it does not already exist.
+     * If an album with the given name already exists, retrieves the existing album instead.
+     * If the provided name is blank, logs a warning and returns an empty {@code Optional}.
+     *
+     * @param name the name of the album to be created, must not be null or blank
+     * @return an {@code Optional} containing the created or existing album, or an empty {@code Optional} if the name is blank
+     */
+    public Optional<Album> createAndSaveAlbum(@NonNull String name) {
+        if (name.isBlank()) {
+            log.warn("album name cannot be blank");
+            return Optional.empty();
+        }
 
-	/**
-	 * Updates the name of the album with the specified ID. If the album is not found,
-	 * an {@code AlbumServiceException} is thrown. The method retrieves the existing
-	 * album, updates its name, and either saves the updated album or retrieves an
-	 * existing one if it already exists with the new name.
-	 *
-	 * @param id   the unique identifier of the album to be edited
-	 * @param name the new name to assign to the album, must not be null
-	 * @return the updated and saved {@code Album} object
-	 */
-	public Album editAlbum(long id, @NonNull String name) {
-		var album = repository.findById(id)
-				.orElseThrow(() -> new AlbumServiceException("no album found with id " + id));
-		log.debug("found album {} to edit", album);
+        log.debug("creating new album with name {}", name);
+        var album = new Album(name);
+        log.debug("created new album {}", album);
 
-		album.setName(name);
-		log.info("updated album {} successfully", album);
+        return Optional.of(saveOrGetAlbum(album));
+    }
 
-		return saveOrGetAlbum(album);
-	}
 
-	/**
-	 * Deletes an album with the specified ID from the repository.
-	 * If the album does not exist, an {@code AlbumserviceException} is thrown.
-	 *
-	 * @param id the unique identifier of the album to be deleted
-	 */
-	public void deleteAlbum(long id) {
-		var album = repository.findById(id)
-				.orElseThrow(() -> new AlbumServiceException("no album found with id " + id));
-		log.debug("found album {} to delete", album);
+    /**
+     * Updates the name of an existing album identified by its unique identifier.
+     * If the album does not exist, an {@code AlbumServiceException} is thrown.
+     * A blank name is logged as a warning and returns an empty {@code Optional}.
+     *
+     * @param id the unique identifier of the album to be edited
+     * @param name the new name to update the album with, must not be null or blank
+     * @return an {@code Optional} containing the updated album, or an empty {@code Optional} if the provided name is blank
+     */
+    public Optional<Album> editAlbum(long id, @NonNull String name) {
+        if (name.isBlank()) {
+            log.warn("album name cannot be blank");
+            return Optional.empty();
+        }
 
-		repository.deleteById(id);
-		log.info("deleted album {} successfully", album);
-	}
+        var album = repository.findById(id)
+                .orElseThrow(() -> new AlbumServiceException("no album found with id " + id));
+        log.debug("found album {} to edit", album);
 
-	private Album saveOrGetAlbum(@NonNull Album album) {
-		Album savedAlbum;
+        log.debug("updating album name to {}", name);
+        album.setName(name);
+        log.info("updated album {} successfully", album);
 
-		if (repository.existsByName(album.getName())) {
-			savedAlbum = repository.findByName(album.getName())
-					.orElseThrow(() -> new AlbumServiceException("no album found with name " + album.getName()));
-			log.debug("album {} already exists", savedAlbum);
-		} else {
-			savedAlbum = repository.saveAndFlush(album);
-			log.info("saved album {} successfully", savedAlbum);
-		}
+        return Optional.ofNullable(saveOrGetAlbum(album));
+    }
 
-		return savedAlbum;
-	}
+    /**
+     * Deletes an album with the specified ID from the repository.
+     * If the album does not exist, an {@code AlbumserviceException} is thrown.
+     *
+     * @param id the unique identifier of the album to be deleted
+     */
+    public void deleteAlbum(long id) {
+        var album = repository.findById(id)
+                .orElseThrow(() -> new AlbumServiceException("no album found with id " + id));
+        log.debug("found album {} to delete", album);
+
+        log.debug("deleting album {}", album);
+        repository.deleteById(id);
+        log.info("deleted album {} successfully", album);
+    }
+
+    private Album saveOrGetAlbum(@NonNull Album album) {
+        Album savedAlbum;
+
+        if (repository.existsByName(album.getName())) {
+            savedAlbum = repository.findByName(album.getName())
+                    .orElseThrow(() -> new AlbumServiceException("no album found with name " + album.getName()));
+            log.debug("album {} already exists", savedAlbum);
+        } else {
+            savedAlbum = repository.saveAndFlush(album);
+            log.info("saved album {} successfully", savedAlbum);
+        }
+
+        return savedAlbum;
+    }
 }

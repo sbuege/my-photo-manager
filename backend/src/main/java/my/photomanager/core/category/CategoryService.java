@@ -1,9 +1,12 @@
 package my.photomanager.core.category;
 
 import java.util.List;
+import java.util.Optional;
+
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import my.photomanager.core.album.AlbumServiceException;
 import org.springframework.stereotype.Service;
 
 @RequiredArgsConstructor
@@ -23,36 +26,51 @@ public class CategoryService {
 	}
 
 	/**
-	 * Creates a new category with the specified name and saves it to the repository.
-	 * If a category with the same name already exists, it retrieves the existing one.
+	 * Creates a new category with the given name, saves it to the repository if it does not already exist,
+	 * and returns the saved or existing category wrapped in an {@code Optional}.
+	 * If the provided name is blank, a warning is logged, and an empty {@code Optional} is returned.
 	 *
-	 * @param name the name of the category to create
-	 * @return the created or retrieved category
+	 * @param name the name of the category to be created and saved; must not be blank or null
+	 * @return an {@code Optional} containing the saved or existing {@code Category}, or an empty {@code Optional} if the name is blank
 	 */
-	public Category createAndSaveCategory(@NonNull String name) {
+	public Optional<Category> createAndSaveCategory(@NonNull String name) {
+		if (name.isBlank()) {
+			log.warn("category name cannot be blank");
+			return Optional.empty();
+		}
+
+		log.debug("creating new category with name {}", name);
 		var category = new Category(name);
 		log.debug("created new category {}", category);
 
-		return saveOrGetCategory(category);
+		return Optional.of(saveOrGetCategory(category));
 	}
 
+
 	/**
-	 * Updates the name of an existing category identified by its ID and saves the changes.
-	 * If no category is found with the specified ID, a {@link CategoryServiceException} is thrown.
+	 * Edits an existing category by updating its name.
+	 * Retrieves the category by its ID, updates its name, and saves the changes.
+	 * If the provided name is blank, a warning is logged, and an empty {@code Optional} is returned.
+	 * If no category is found with the given ID, a {@link CategoryServiceException} is thrown.
 	 *
-	 * @param id the ID of the category to be updated
-	 * @param name the new name for the category, must not be null
-	 * @return the updated and saved category
+	 * @param id the ID of the category to be edited
+	 * @param name the new name of the category; must not be blank or null
+	 * @return an {@code Optional} containing the updated {@code Category}, or an empty {@code Optional} if the name is blank
 	 */
-	public Category editCategory(long id, @NonNull String name) {
+	public Optional<Category> editCategory(long id, @NonNull String name) {
+		if (name.isBlank()) {
+			log.warn("category name cannot be blank");
+			return Optional.empty();		}
+
 		var category = repository.findById(id)
 				.orElseThrow(() -> new CategoryServiceException("no category found with id " + id));
 		log.debug("found category {} to edit", category);
 
+		log.debug("updating category {} with name {}", category, name);
 		category.setName(name);
 		log.info("updated category {} successfully", category);
 
-		return saveOrGetCategory(category);
+		return Optional.of(saveOrGetCategory(category));
 	}
 
 	/**
@@ -67,6 +85,7 @@ public class CategoryService {
 				.orElseThrow(() -> new CategoryServiceException("no category found with id " + id));
 		log.debug("found category {} to delete", category);
 
+		log.debug("deleting category {}", category);
 		repository.deleteById(id);
 		log.info("deleted category {} successfully", category);
 	}

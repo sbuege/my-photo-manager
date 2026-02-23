@@ -51,6 +51,7 @@ public interface PhotoRepository extends JpaRepository<Photo, Long>, JpaSpecific
                              CONCAT('', YEAR(p.creationDate))
                  )
                  FROM Photo p
+                 WHERE p.creationDate IS NOT NULL
             """)
     Collection<Tag> getCreationYearTags();
 

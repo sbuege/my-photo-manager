@@ -91,16 +91,19 @@ public class TagService {
         List<Tag> tags = Lists.newArrayList();
 
         var cameraModel = photo.getCameraModel();
-
-        var cameraModelTag = new Tag(cameraModel.getId(), TagType.ORIENTATION_TAG, cameraModel.getName());
-        tags.add(cameraModelTag);
+        if (cameraModel != null) {
+            var cameraModelTag = new Tag(cameraModel.getId(), TagType.ORIENTATION_TAG, cameraModel.getName());
+            tags.add(cameraModelTag);
+        }
 
 
         var location = photo.getLocation();
-        var locationCountryTag = new Tag(location.getId(), TagType.LOCATION_TAG, location.getCountry());
-        var locationCityTag = new Tag(location.getId(), TagType.LOCATION_TAG, location.getCity());
-        tags.add(locationCountryTag);
-        tags.add(locationCityTag);
+        if (location != null) {
+            var locationCountryTag = new Tag(location.getId(), TagType.LOCATION_TAG, location.getCountry());
+            var locationCityTag = new Tag(location.getId(), TagType.LOCATION_TAG, location.getCity());
+            tags.add(locationCountryTag);
+            tags.add(locationCityTag);
+        }
 
         var creationDate = photo.getCreationDate();
         if (creationDate != null) {
@@ -109,11 +112,10 @@ public class TagService {
         }
 
         var orientation = photo.getOrientation();
-        var orientationTag = new Tag(orientation.getId(), TagType.ORIENTATION_TAG, orientation.getName());
-        tags.add(orientationTag);
-
+        if (orientation != null) {
+            var orientationTag = new Tag(orientation.getId(), TagType.ORIENTATION_TAG, orientation.getName());
+            tags.add(orientationTag);
+        }
         return tags;
     }
-
-
 }

@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDate;
+import java.util.stream.Stream;
+
 import my.photomanager.core.album.Album;
 import my.photomanager.core.cameraModel.CameraModel;
 import my.photomanager.core.category.Category;
@@ -14,8 +16,13 @@ import my.photomanager.core.orientation.Orientation;
 import my.photomanager.core.orientation.OrientationName;
 import my.photomanager.core.photo.Photo;
 import my.photomanager.utils.metaDataParser.Metadata;
+import org.apache.logging.log4j.util.Strings;
 
 public class TestDataBuilder {
+
+	public static Stream<String> emptyNameProvider() {
+		return Stream.of(Strings.EMPTY, " ");
+	}
 
 	// Album Test Data
 	public static final long TestAlbumId = 1L;
@@ -109,7 +116,12 @@ public class TestDataBuilder {
 
 	public static Photo buildPhoto(String hashValue, String fileName, int height, int width, Orientation orientation, CameraModel cameraModel,
 			Location location, LocalDate creationDate) {
-		return new Photo(hashValue, fileName, height, width, orientation, cameraModel, location, creationDate);
+		return new Photo(hashValue, fileName, height, width).toBuilder()
+				.withOrientation(orientation)
+				.withCameraModel(cameraModel)
+				.withLocation(location)
+				.withCreationDate(creationDate)
+				.build();
 	}
 
 	public static Path createTestPhotoFile() throws IOException {

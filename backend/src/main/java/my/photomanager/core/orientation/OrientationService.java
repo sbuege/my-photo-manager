@@ -1,75 +1,83 @@
 package my.photomanager.core.orientation;
 
-import java.util.List;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import my.photomanager.utils.metaDataParser.Metadata;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.Optional;
+
 @RequiredArgsConstructor
 @Service
 @Log4j2
 public class OrientationService {
 
-	private final OrientationRepository repository;
+    private final OrientationRepository repository;
 
-	/**
-	 * Retrieves a list of all available orientations from the repository.
-	 *
-	 * @return a list of all {@code Orientation} entities stored in the repository.
-	 */
-	public List<Orientation> getAllOrientations() {
-		return repository.findAll();
-	}
+    /**
+     * Retrieves a list of all available orientations from the repository.
+     *
+     * @return a list of all {@code Orientation} entities stored in the repository.
+     */
+    public List<Orientation> getAllOrientations() {
+        return repository.findAll();
+    }
 
-	/**
-	 * Creates a new {@code Orientation} instance based on the provided metadata and saves it to
-	 * the repository if it does not already exist. Determines the orientation based on the photo's
-	 * width and height (e.g., landscape, portrait, or square).
-	 *
-	 * @param metaData the metadata containing details about the photo such as width and height;
-	 *                 must not be null.
-	 * @return the saved {@code Orientation} instance from the repository.
-	 * @throws OrientationServiceException if the photo's width or height is zero or below.
-	 */
-	public Orientation createAndSaveOrientation(@NonNull Metadata metaData) {
-		var photoWidth = metaData.photoWidth();
-		if (photoWidth <= 0) {
-			throw new OrientationServiceException("photo width cannot be zero");
-		}
 
-		var photoHeight = metaData.photoHeight();
-		if (photoHeight <= 0) {
-			throw new OrientationServiceException("photo height cannot be zero");
-		}
+    /**
+     * Creates and saves an {@code Orientation} entity based on the dimensions provided in the given metadata.
+     * The method determines the orientation of a photo (e.g., SQUARE, PORTRAIT, or LANDSCAPE)
+     * based on its width and height. If the width or height is invalid (less than or equal to zero),
+     * the method logs a warning and returns an empty {@code Optional}.
+     * If an orientation matching the calculated name already exists, it retrieves and returns it;
+     * otherwise, a new orientation is created, saved, and returned.
+     *
+     * @param metaData the metadata object containing photo dimensions and other properties; cannot be null.
+     *                 The dimensions are evaluated to determine the photo's orientation.
+     * @return an {@code Optional} containing the saved or retrieved {@code Orientation} object,
+     * or an empty {@code Optional} if the metadata contains invalid dimensions.
+     */
+    public Optional<Orientation> createAndSaveOrientation(@NonNull Metadata metaData) {
+        var photoWidth = metaData.photoWidth();
+        if (photoWidth <= 0) {
+            log.warn("photo width cannot be zero");
+            return Optional.empty();
+        }
 
-		var photoOrientationName = OrientationName.SQUARE;
-		if (photoHeight > photoWidth) {
-			photoOrientationName = OrientationName.PORTRAIT;
-		}
-		if (photoWidth > photoHeight) {
-			photoOrientationName = OrientationName.LANDSCAPE;
-		}
+        var photoHeight = metaData.photoHeight();
+        if (photoHeight <= 0) {
+            log.warn("photo height cannot be zero");
+            return Optional.empty();
+        }
 
-		var orientation = new Orientation(photoOrientationName.getName());
-		log.debug("created new orientation {}", orientation);
+        var photoOrientationName = OrientationName.SQUARE;
+        if (photoHeight > photoWidth) {
+            photoOrientationName = OrientationName.PORTRAIT;
+        }
+        if (photoWidth > photoHeight) {
+            photoOrientationName = OrientationName.LANDSCAPE;
+        }
 
-		return saveOrGetOrientation(orientation);
-	}
+        var orientation = new Orientation(photoOrientationName.getName());
+        log.debug("created new orientation {}", orientation);
 
-	private Orientation saveOrGetOrientation(@NonNull Orientation orientation) {
-		Orientation savedOrientation;
+        return Optional.of(saveOrGetOrientation(orientation));
+    }
 
-		if (repository.existsByName(orientation.getName())) {
-			savedOrientation = repository.findByName(orientation.getName())
-					.orElseThrow(() -> new OrientationServiceException("no orientation found with name " + orientation.getName()));
-			log.debug("orientation {} already exists", savedOrientation);
-		} else {
-			savedOrientation = repository.saveAndFlush(orientation);
-			log.info("saved orientation {} successfully", savedOrientation);
-		}
+    private Orientation saveOrGetOrientation(@NonNull Orientation orientation) {
+        Orientation savedOrientation;
 
-		return savedOrientation;
-	}
+        if (repository.existsByName(orientation.getName())) {
+            savedOrientation = repository.findByName(orientation.getName())
+                    .orElseThrow(() -> new OrientationServiceException("no orientation found with name " + orientation.getName()));
+            log.debug("orientation {} already exists", savedOrientation);
+        } else {
+            savedOrientation = repository.saveAndFlush(orientation);
+            log.info("saved orientation {} successfully", savedOrientation);
+        }
+
+        return savedOrientation;
+    }
 }
