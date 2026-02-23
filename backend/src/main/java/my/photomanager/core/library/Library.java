@@ -1,17 +1,10 @@
 package my.photomanager.core.library;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
+import lombok.*;
+
 import java.time.Instant;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import java.util.UUID;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @RequiredArgsConstructor(access = AccessLevel.PUBLIC)
@@ -20,22 +13,32 @@ import lombok.ToString;
 @Getter
 public class Library {
 
-	@Id
-	@GeneratedValue
-	private long id;
+    @Id
+    @GeneratedValue
+    private long id;
 
-	@Column(nullable = false)
-	@NonNull
-	@Setter
-	private String name;
+    @Column(name = "external_id", nullable = false, unique = true, updatable = false, length = 36)
+    private String externalId;
 
-	@Column(updatable = false, unique = true)
-	@NonNull
-	private String path;
+    @Column(name = "name", nullable = false, unique = true)
+    @NonNull
+    @Setter
+    private String name;
 
-	@Setter
-	private Instant lastIndexAt;
+    @Column(name = "path", nullable = false, unique = true, updatable = false)
+    @NonNull
+    private String path;
 
-	@Setter
-	private int numberOfPhotos;
+    @Setter
+    private Instant lastIndexAt;
+
+    @Setter
+    private int numberOfPhotos;
+
+    @PrePersist
+    void prePersist() {
+        if (externalId == null || externalId.isBlank()) {
+            externalId = UUID.randomUUID().toString();
+        }
+    }
 }

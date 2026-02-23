@@ -45,19 +45,19 @@ class PhotoControllerTest {
 
 		@Test
 		void shouldReturnThumbnail() throws Exception {
-			when(photoService.findById(TestDataBuilder.TestPhotoId)).thenReturn(TestDataBuilder.buildPhoto001());
+			when(photoService.findByExternalId(TestDataBuilder.TestPhotoExternalId)).thenReturn(TestDataBuilder.buildPhoto001());
 
-			mockMvc.perform(get("/photos/thumbnail/" + TestDataBuilder.TestPhotoId))
+			mockMvc.perform(get("/photos/thumbnail/" + TestDataBuilder.TestPhotoExternalId))
 					.andExpect(status().isOk());
 		}
 
 		@Test
 		void shouldReturnBadRequestWhenPhotoIDDoesNotExist() throws Exception {
-			long nonExistingId = TestDataBuilder.TestPhotoId;
+			String nonExistingId = TestDataBuilder.TestPhotoExternalId;
 
 			doThrow(new PhotoServiceException("Photo not found"))
 					.when(photoService)
-					.findById(nonExistingId);
+					.findByExternalId(nonExistingId);
 
 			mockMvc.perform(get("/photos/thumbnail/" + nonExistingId))
 					.andExpect(status().isBadRequest());

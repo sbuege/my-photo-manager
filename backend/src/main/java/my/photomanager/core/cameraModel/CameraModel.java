@@ -1,16 +1,9 @@
 package my.photomanager.core.cameraModel;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import jakarta.persistence.*;
+import lombok.*;
+
+import java.util.UUID;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @RequiredArgsConstructor(access = AccessLevel.PUBLIC)
@@ -19,12 +12,22 @@ import lombok.ToString;
 @Getter
 public class CameraModel {
 
-	@Id
-	@GeneratedValue
-	private long id;
+    @Id
+    @GeneratedValue
+    private long id;
 
-	@Column(updatable = false, unique = true)
-	@NonNull
-	@Setter
-	private String name;
+    @Column(name = "external_id", nullable = false, unique = true, updatable = false, length = 36)
+    private String externalId;
+
+    @Column(name = "name", nullable = false, unique = true)
+    @NonNull
+    @Setter
+    private String name;
+
+    @PrePersist
+    void prePersist() {
+        if (externalId == null || externalId.isBlank()) {
+            externalId = UUID.randomUUID().toString();
+        }
+    }
 }

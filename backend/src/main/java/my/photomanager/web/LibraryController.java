@@ -1,9 +1,6 @@
 package my.photomanager.web;
 
 import jakarta.validation.constraints.NotBlank;
-
-import java.io.IOException;
-import java.util.List;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -12,15 +9,10 @@ import my.photomanager.core.library.LibraryService;
 import my.photomanager.core.library.LibraryServiceException;
 import my.photomanager.web.response.LibraryResponse;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.io.IOException;
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
@@ -28,59 +20,59 @@ import org.springframework.web.bind.annotation.RestController;
 @Log4j2
 public class LibraryController {
 
-	private final LibraryService libraryService;
+    private final LibraryService libraryService;
 
-	@ExceptionHandler(LibraryServiceException.class)
-	public ResponseEntity<String> handleLibraryServiceException(LibraryServiceException e) {
-		return ResponseEntity.badRequest().body(e.getMessage());
-	}
+    @ExceptionHandler(LibraryServiceException.class)
+    public ResponseEntity<String> handleLibraryServiceException(LibraryServiceException e) {
+        return ResponseEntity.badRequest().body(e.getMessage());
+    }
 
-	@GetMapping("/")
-	protected ResponseEntity<List<LibraryResponse>> getLibraries() {
-		List<LibraryResponse> libraryResponseList = libraryService.getAllLibraries()
-				.stream()
-				.map(this::map2LibraryResponse)
-				.toList();
+    @GetMapping("/")
+    protected ResponseEntity<List<LibraryResponse>> getLibraries() {
+        List<LibraryResponse> libraryResponseList = libraryService.getAllLibraries()
+                .stream()
+                .map(this::map2LibraryResponse)
+                .toList();
 
-		return ResponseEntity.ok(libraryResponseList);
-	}
+        return ResponseEntity.ok(libraryResponseList);
+    }
 
-	@PostMapping("/add")
-	protected ResponseEntity<Void> addLibrary(@RequestParam @NotBlank String name, @RequestParam @NotBlank String path) {
-		libraryService.createAndSaveLibrary(name, path);
+    @PostMapping("/add")
+    protected ResponseEntity<Void> addLibrary(@RequestParam @NotBlank String name, @RequestParam @NotBlank String path) {
+        libraryService.createAndSaveLibrary(name, path);
 
-		return ResponseEntity.ok()
-				.build();
-	}
+        return ResponseEntity.ok()
+                .build();
+    }
 
-	@PostMapping("/index/{ID}")
-	protected ResponseEntity<Void> indexLibrary(@PathVariable long ID) throws IOException {
-		libraryService.indexLibrary(ID);
+    @PostMapping("/index/{ID}")
+    protected ResponseEntity<Void> indexLibrary(@PathVariable long ID) throws IOException {
+        libraryService.indexLibrary(ID);
 
-		return ResponseEntity.ok()
-				.build();
-	}
+        return ResponseEntity.ok()
+                .build();
+    }
 
-	@PutMapping("/edit/{ID}")
-	protected ResponseEntity<Void> editLibrary(@PathVariable long ID, @RequestParam @NotBlank String name) {
-		libraryService.editLibrary(ID, name);
+    @PutMapping("/edit/{ID}")
+    protected ResponseEntity<Void> editLibrary(@PathVariable long ID, @RequestParam @NotBlank String name) {
+        libraryService.editLibrary(ID, name);
 
-		return ResponseEntity.ok()
-				.build();
-	}
+        return ResponseEntity.ok()
+                .build();
+    }
 
-	@DeleteMapping("/delete/{ID}")
-	protected ResponseEntity<Void> deleteLibrary(@PathVariable long ID) {
-		libraryService.deleteLibrary(ID);
+    @DeleteMapping("/delete/{ID}")
+    protected ResponseEntity<Void> deleteLibrary(@PathVariable long ID) {
+        libraryService.deleteLibrary(ID);
 
-		return ResponseEntity.ok()
-				.build();
-	}
+        return ResponseEntity.ok()
+                .build();
+    }
 
-	private LibraryResponse map2LibraryResponse(Library library) {
-		return new LibraryResponse(library.getId(), library.getName(), library.getLastIndexAt()
-				.toString(), library.getNumberOfPhotos());
-	}
+    private LibraryResponse map2LibraryResponse(Library library) {
+        return new LibraryResponse(library.getExternalId(), library.getName(), library.getLastIndexAt()
+                .toString(), library.getNumberOfPhotos());
+    }
 
 
 }

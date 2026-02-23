@@ -38,7 +38,7 @@ onUnmounted(() => {
   <div class="columns-2 md:columns-3 lg:columns-4 xl:columns-5">
     <PhotoItem
         v-for="photo in photos"
-        :id="photo.id"
+        :externalId="photo.externalId"
         :tags="photo.tags"
     />
   </div>
