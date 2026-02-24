@@ -1,4 +1,4 @@
 package my.photomanager.web.response;
 
-public record TagResponse (long id, String name){
+public record TagResponse (String id, String name){
 }

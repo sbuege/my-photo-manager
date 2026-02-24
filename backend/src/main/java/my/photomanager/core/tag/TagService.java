@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import my.photomanager.core.photo.Photo;
 import my.photomanager.core.photo.PhotoRepository;
+import org.apache.logging.log4j.util.Strings;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -92,30 +93,30 @@ public class TagService {
 
         var cameraModel = photo.getCameraModel();
         if (cameraModel != null) {
-            var cameraModelTag = new Tag(cameraModel.getId(), TagType.ORIENTATION_TAG, cameraModel.getName());
+            var cameraModelTag = new Tag(cameraModel.getId(), cameraModel.getExternalId(), TagType.ORIENTATION_TAG, cameraModel.getName());
             tags.add(cameraModelTag);
         }
 
-
         var location = photo.getLocation();
         if (location != null) {
-            var locationCountryTag = new Tag(location.getId(), TagType.LOCATION_TAG, location.getCountry());
-            var locationCityTag = new Tag(location.getId(), TagType.LOCATION_TAG, location.getCity());
+            var locationCountryTag = new Tag(location.getId(), location.getExternalId(), TagType.LOCATION_TAG, location.getCountry());
+            var locationCityTag = new Tag(location.getId(), locationCountryTag.externalId(), TagType.LOCATION_TAG, location.getCity());
             tags.add(locationCountryTag);
             tags.add(locationCityTag);
         }
 
         var creationDate = photo.getCreationDate();
         if (creationDate != null) {
-            var createYearTag = new Tag(0, TagType.CREATION_YEAR_TAG, creationDate.getYear() + "");
+            var createYearTag = new Tag(0, Strings.EMPTY, TagType.CREATION_YEAR_TAG, creationDate.getYear() + "");
             tags.add(createYearTag);
         }
 
         var orientation = photo.getOrientation();
         if (orientation != null) {
-            var orientationTag = new Tag(orientation.getId(), TagType.ORIENTATION_TAG, orientation.getName());
+            var orientationTag = new Tag(orientation.getId(), orientation.getExternalId(), TagType.ORIENTATION_TAG, orientation.getName());
             tags.add(orientationTag);
         }
+
         return tags;
     }
 }

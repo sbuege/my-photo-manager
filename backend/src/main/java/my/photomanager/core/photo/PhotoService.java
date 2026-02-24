@@ -38,6 +38,20 @@ public class PhotoService {
 				.orElseThrow(() -> new PhotoServiceException("no photo found with id " + id));
 	}
 
+	/**
+	 * Retrieves a {@link Photo} entity by its external identifier. If no photo is found
+	 * with the given external ID, an exception is thrown.
+	 *
+	 * @param externalId the unique external identifier of the photo to be retrieved
+	 * @return the {@link Photo} entity associated with the specified external ID
+	 * @throws PhotoServiceException if no photo is found with the given external ID
+	 */
+	public Photo findByExternalId(String externalId) {
+		return repository.findByExternalId(externalId)
+				.orElseThrow(() -> new PhotoServiceException("no photo found with external id " + externalId));
+
+	}
+
 
 	/**
 	 * Creates a new {@link Photo} from the specified file path, extracts metadata, and saves

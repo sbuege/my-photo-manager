@@ -45,22 +45,22 @@ public class PhotoController {
 
     @GetMapping("/")
     protected ResponseEntity<List<PhotoResponse>> getPhotos() {
-        Function<Tag, TagResponse> map2TagResponse = (tag) -> new TagResponse(tag.id(), tag.name());
-        Function<Photo, PhotoResponse> map2PhotoResponse = (photo) -> new PhotoResponse(photo.getId(), tagService.getPhotoTags(photo).stream().map(map2TagResponse).collect(Collectors.toList()));
+        Function<Tag, TagResponse> map2TagResponse = (tag) -> new TagResponse(tag.externalId(), tag.name());
+        Function<Photo, PhotoResponse> map2PhotoResponse = (photo) -> new PhotoResponse(photo.getExternalId(), tagService.getPhotoTags(photo).stream().map(map2TagResponse).collect(Collectors.toList()));
 
         var emptyActiveFilter = new ActiveFilter(List.of(), List.of(), List.of(), List.of());
         return ResponseEntity.ok(filterService.filterPhotos(emptyActiveFilter).stream().map(map2PhotoResponse).collect(Collectors.toList()));
     }
 
-    @GetMapping("/thumbnail/{ID}")
-    protected ResponseEntity<byte[]> getPhotoThumbnail(@PathVariable long ID) throws IOException {
+    @GetMapping("/thumbnail/{externalId}")
+    protected ResponseEntity<byte[]> getPhotoThumbnail(@PathVariable String externalId) throws IOException {
         return ResponseEntity.ok()
                 .contentType(MediaType.IMAGE_JPEG)
-                .body(getThumbnail(ID));
+                .body(getThumbnail(externalId));
     }
 
-    private byte[] getThumbnail(@NonNull Long ID) throws IOException {
-        var photo = photoService.findById(ID);
+    private byte[] getThumbnail(@NonNull String externalId) throws IOException {
+        var photo = photoService.findByExternalId(externalId);
         ByteArrayOutputStream out = new ByteArrayOutputStream();
 
         Thumbnails.of(Path.of(photo.getFileName())

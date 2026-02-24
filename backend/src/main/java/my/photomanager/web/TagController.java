@@ -54,7 +54,7 @@ public class TagController {
     }
 
     private TagResponse map2TagResponse(Tag tag) {
-        return new TagResponse(tag.id(),
+        return new TagResponse(tag.externalId(),
                 tag.name());
     }
 }

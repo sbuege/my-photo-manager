@@ -7,6 +7,7 @@ import my.photomanager.core.location.Location;
 import my.photomanager.core.orientation.Orientation;
 
 import java.time.LocalDate;
+import java.util.UUID;
 
 @Builder(toBuilder = true, setterPrefix = "with", access = AccessLevel.PUBLIC)
 @NoArgsConstructor(access = AccessLevel.PUBLIC)
@@ -20,19 +21,22 @@ public class Photo {
     @GeneratedValue
     private long id;
 
-    @Column(updatable = false, unique = true)
+    @Column(name = "external_id", nullable = false, unique = true, updatable = false, length = 36)
+    private String externalId;
+
+    @Column(name= "hash_value", nullable = false, unique = true, updatable = false)
     @NonNull
     private String hashValue;
 
-    @Column(updatable = false)
+    @Column(name= "file_name",nullable = false, unique = true, updatable = false)
     @NonNull
     private String fileName;
 
-    @Column(updatable = false)
+    @Column( name= "height", nullable = false, updatable = false)
     @NonNull
     private Integer height;
 
-    @Column(updatable = false)
+    @Column(name= "width", nullable = false, updatable = false)
     @NonNull
     private Integer width;
 
@@ -45,8 +49,15 @@ public class Photo {
     @ManyToOne(fetch = FetchType.EAGER)
     private Location location;
 
-    @Column(name = "creationDate", columnDefinition = "DATE")
+    @Column(name = "creation_date", columnDefinition = "DATE")
     private LocalDate creationDate;
+
+    @PrePersist
+    void prePersist() {
+        if (externalId == null || externalId.isBlank()) {
+            externalId = UUID.randomUUID().toString();
+        }
+    }
 
     public Photo(@NonNull String hashValue, @NonNull String fileName, int photoHeight, int photoWidth) {
         this.hashValue = hashValue;

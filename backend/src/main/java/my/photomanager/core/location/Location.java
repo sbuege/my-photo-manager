@@ -1,11 +1,6 @@
 package my.photomanager.core.location;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-import jakarta.persistence.UniqueConstraint;
+import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,6 +8,8 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+
+import java.util.UUID;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @RequiredArgsConstructor(access = AccessLevel.PUBLIC)
@@ -26,13 +23,23 @@ public class Location {
 	@GeneratedValue
 	private long id;
 
-	@Column(updatable = false)
+	@Column(name = "external_id", nullable = false, unique = true, updatable = false, length = 36)
+	private String externalId;
+
+	@Column(name = "country", nullable = false)
 	@NonNull
 	@Setter
 	private String country;
 
-	@Column(updatable = false)
+	@Column(name = "city", nullable = false)
 	@NonNull
 	@Setter
 	private String city;
+
+	@PrePersist
+	void prePersist() {
+		if (externalId == null || externalId.isBlank()) {
+			externalId = UUID.randomUUID().toString();
+		}
+	}
 }
