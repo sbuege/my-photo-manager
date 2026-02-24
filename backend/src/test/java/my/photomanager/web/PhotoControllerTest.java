@@ -11,7 +11,7 @@ import my.photomanager.TestDataBuilder;
 import my.photomanager.core.photo.PhotoService;
 import my.photomanager.core.photo.PhotoServiceException;
 import my.photomanager.core.tag.TagService;
-import my.photomanager.web.filter.FilterService;
+import my.photomanager.core.filter.FilterService;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
