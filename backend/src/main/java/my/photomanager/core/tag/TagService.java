@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import my.photomanager.core.photo.Photo;
 import my.photomanager.core.photo.PhotoRepository;
+import org.apache.logging.log4j.util.Strings;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -96,7 +97,6 @@ public class TagService {
             tags.add(cameraModelTag);
         }
 
-
         var location = photo.getLocation();
         if (location != null) {
             var locationCountryTag = new Tag(location.getId(), location.getExternalId(), TagType.LOCATION_TAG, location.getCountry());
@@ -107,7 +107,7 @@ public class TagService {
 
         var creationDate = photo.getCreationDate();
         if (creationDate != null) {
-            var createYearTag = new Tag(0, cameraModel.getExternalId(), TagType.CREATION_YEAR_TAG, creationDate.getYear() + "");
+            var createYearTag = new Tag(0, Strings.EMPTY, TagType.CREATION_YEAR_TAG, creationDate.getYear() + "");
             tags.add(createYearTag);
         }
 
@@ -116,6 +116,7 @@ public class TagService {
             var orientationTag = new Tag(orientation.getId(), orientation.getExternalId(), TagType.ORIENTATION_TAG, orientation.getName());
             tags.add(orientationTag);
         }
+
         return tags;
     }
 }
