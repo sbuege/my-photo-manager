@@ -1,8 +1,10 @@
 package my.photomanager;
 
-import my.photomanager.core.library.LibraryService;
-import my.photomanager.core.tag.TagService;
 import my.photomanager.core.filter.FilterService;
+import my.photomanager.core.library.LibraryService;
+import my.photomanager.core.tag.Tag;
+import my.photomanager.core.tag.TagPrefix;
+import my.photomanager.core.tag.TagService;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -14,7 +16,7 @@ import java.io.IOException;
 import java.time.Instant;
 import java.util.List;
 
-import static my.photomanager.TestDataBuilder.TestFilePath;
+import static my.photomanager.TestDataBuilder.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.TestInstance.Lifecycle.PER_CLASS;
 
@@ -54,7 +56,7 @@ public class PhotoManagerIntegrationTest {
 
             // --- THEN
             assertThat(cameraTags).isNotEmpty();
-            //TODO check content
+            assertThat(cameraTags).allMatch(tag -> tag.externalId().startsWith(TagPrefix.CAMERA_PREFIX));
         }
 
         @Test
@@ -64,7 +66,7 @@ public class PhotoManagerIntegrationTest {
 
             // --- THEN
             assertThat(locationTags).isNotEmpty();
-            //TODO check content
+            assertThat(locationTags).allMatch(tag -> tag.externalId().startsWith(TagPrefix.LOCATION_PREFIX));
         }
 
         @Test
@@ -74,7 +76,7 @@ public class PhotoManagerIntegrationTest {
 
             // --- THEN
             assertThat(orientationTags).isNotEmpty();
-            //TODO check content
+            assertThat(orientationTags).allMatch(tag -> tag.externalId().startsWith(TagPrefix.ORIENTATION_PREFIX));
         }
 
         @Test
@@ -84,7 +86,7 @@ public class PhotoManagerIntegrationTest {
 
             // --- THEN
             assertThat(creationYearTags).isNotEmpty();
-            //TODO check content
+            assertThat(creationYearTags).allMatch(tag -> tag.externalId().startsWith(TagPrefix.YEAR_PREFIX));
         }
     }
 
@@ -93,37 +95,109 @@ public class PhotoManagerIntegrationTest {
     class FilterServiceTest {
 
         @Test
-        void shouldFilterPhotsByCameraTag(){
+        void shouldFilterPhotsByCameraTag() {
             // --- GIVEN ---
             var cameraTags = tagService.getCameraTags();
             assertThat(cameraTags).isNotEmpty();
-            var cameraExternalTag = cameraTags.get(0).externalId();
+            var cameraExternalTag = cameraTags.getFirst().externalId();
 
             // --- WHEN ---
             var photos = filterService.filterPhotosByExternalTagIds(List.of(cameraExternalTag));
 
             // --- THEN ---
             assertThat(photos).isNotEmpty();
-            photos.forEach(photo -> assertThat(photo.getCameraModel().getExternalId()).contains(cameraExternalTag));
+            assertThat(photos).allMatch(photo -> photo.getCameraModel().getExternalId().contains(cameraExternalTag));
         }
 
         @Test
-        void shouldFilterPhotsByLocationTag(){
+        void shouldFilterPhotsByLocationTag() {
             // --- GIVEN ---
             var locationTags = tagService.getLocationTags();
             assertThat(locationTags).isNotEmpty();
-            var locationExternalTag = locationTags.get(0).externalId();
+            var locationExternalTag = locationTags.getFirst().externalId();
 
             // --- WHEN ---
             var photos = filterService.filterPhotosByExternalTagIds(List.of(locationExternalTag));
 
             // --- THEN ---
             assertThat(photos).isNotEmpty();
-            photos.forEach(photo -> assertThat(photo.getLocation().getExternalId()).contains(locationExternalTag));
+            assertThat(photos).allMatch(photo -> photo.getLocation().getExternalId().contains(locationExternalTag));
+        }
+
+        @Test
+        void shouldFilterPhotsByCreationYearTag() {
+            // --- GIVEN ---
+            var creationYearTags = tagService.getCreationYearTags();
+            assertThat(creationYearTags).isNotEmpty();
+            var creationYearExternalTag = creationYearTags.getFirst().externalId();
+            var creationYear = Integer.parseInt(creationYearTags.getFirst().name());
+
+            // --- WHEN ---
+            var photos = filterService.filterPhotosByExternalTagIds(List.of(creationYearExternalTag));
+
+            // --- THEN ---
+            assertThat(photos).isNotEmpty();
+            assertThat(photos).allMatch(photo -> photo.getCreationDate().getYear() == creationYear);
+        }
+
+        @Test
+        void shouldFilterPhotsByOrientationTag() {
+            // --- GIVEN ---
+            var orientationTags = tagService.getOrientationTags();
+            assertThat(orientationTags).isNotEmpty();
+            var orientationExternalTag = orientationTags.getFirst().externalId();
+
+            // --- WHEN ---
+            var photos = filterService.filterPhotosByExternalTagIds(List.of(orientationExternalTag));
+
+            // --- THEN ---
+            assertThat(photos).isNotEmpty();
+            assertThat(photos).allMatch(photo -> photo.getOrientation().getExternalId().contains(orientationExternalTag));
+        }
+
+        @Test
+        void shouldFilterPhotosByCameraModelAndLocationTag() {
+            var cameraTags = tagService.getCameraTags();
+            var cameraExternalTag = cameraTags.stream().filter(tag -> tag.name().equals(TestPhoto001CameraModel)).map(Tag::externalId).findFirst().orElseThrow();
+
+            var locationTags = tagService.getLocationTags();
+            var locationExternalTag = locationTags.stream().filter(tag -> tag.name().equals(TestPhoto001LocationCity)).map(Tag::externalId).findFirst().orElseThrow();
+
+            var photos = filterService.filterPhotosByExternalTagIds(List.of(cameraExternalTag, locationExternalTag));
+
+            assertThat(photos).isNotEmpty();
+            assertThat(photos).allMatch(photo -> photo.getCameraModel().getExternalId().contains(cameraExternalTag)
+                    && photo.getLocation().getExternalId().contains(locationExternalTag));
+        }
+
+        @Test
+        void shouldFilterPhotosByCameraModelAndCreationYearTag() {
+            var cameraTags = tagService.getCameraTags();
+            var cameraExternalTag = cameraTags.stream().filter(tag -> tag.name().equals(TestPhoto004CameraModel)).map(Tag::externalId).findFirst().orElseThrow();
+
+            var creationYearTags = tagService.getCreationYearTags();
+            var creationYearExternalTag = creationYearTags.stream().filter(tag -> tag.name().contains(TestPhoto004CreationDate.getYear() + "")).findFirst().orElseThrow();
+            var creationYear = Integer.parseInt(creationYearExternalTag.name());
+
+            var photos = filterService.filterPhotosByExternalTagIds(List.of(cameraExternalTag, creationYearExternalTag.externalId()));
+            assertThat(photos).isNotEmpty();
+            assertThat(photos).allMatch(photo -> photo.getCameraModel().getExternalId().contains(cameraExternalTag)
+                    && photo.getCreationDate().getYear() == creationYear);
+        }
+
+        @Test
+        void shouldFilterPhotosByLocationAndOrientationTag() {
+            var locationTags = tagService.getLocationTags();
+            var locationExternalTag = locationTags.stream().filter(tag -> tag.name().equals(TestPhoto001LocationCity)).map(Tag::externalId).findFirst().orElseThrow();
+
+            var orientationTags = tagService.getOrientationTags();
+            var orientationExternalTag = orientationTags.stream().map(Tag::externalId).findFirst().orElseThrow();
+            // TODO add test photos with Portrait orientation
+
+            var photos = filterService.filterPhotosByExternalTagIds(List.of(locationExternalTag, orientationExternalTag));
+            assertThat(photos).isNotEmpty();
+            assertThat(photos).allMatch(photo -> photo.getLocation().getExternalId().contains(locationExternalTag)
+                    && photo.getOrientation().getExternalId().contains(orientationExternalTag));
         }
     }
-
-
-
-
 }

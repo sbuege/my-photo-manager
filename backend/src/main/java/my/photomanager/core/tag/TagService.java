@@ -58,7 +58,7 @@ public class TagService {
      * of photos.
      */
     public List<Tag> getCreationYearTags() {
-        return repository.getCreationYearTags()
+        return repository.getCreationYearTags(TagPrefix.YEAR_PREFIX)
                 .stream()
                 .toList();
     }
@@ -93,27 +93,27 @@ public class TagService {
 
         var cameraModel = photo.getCameraModel();
         if (cameraModel != null) {
-            var cameraModelTag = new Tag(cameraModel.getId(), cameraModel.getExternalId(), TagType.ORIENTATION_TAG, cameraModel.getName());
+            var cameraModelTag = new Tag(cameraModel.getId(), cameraModel.getExternalId(), cameraModel.getName());
             tags.add(cameraModelTag);
         }
 
         var location = photo.getLocation();
         if (location != null) {
-            var locationCountryTag = new Tag(location.getId(), location.getExternalId(), TagType.LOCATION_TAG, location.getCountry());
-            var locationCityTag = new Tag(location.getId(), locationCountryTag.externalId(), TagType.LOCATION_TAG, location.getCity());
+            var locationCountryTag = new Tag(location.getId(), location.getExternalId(), location.getCountry());
+            var locationCityTag = new Tag(location.getId(), locationCountryTag.externalId(), location.getCity());
             tags.add(locationCountryTag);
             tags.add(locationCityTag);
         }
 
         var creationDate = photo.getCreationDate();
         if (creationDate != null) {
-            var createYearTag = new Tag(0, Strings.EMPTY, TagType.CREATION_YEAR_TAG, creationDate.getYear() + "");
+            var createYearTag = new Tag(0, Strings.EMPTY, creationDate.getYear() + "");
             tags.add(createYearTag);
         }
 
         var orientation = photo.getOrientation();
         if (orientation != null) {
-            var orientationTag = new Tag(orientation.getId(), orientation.getExternalId(), TagType.ORIENTATION_TAG, orientation.getName());
+            var orientationTag = new Tag(orientation.getId(), orientation.getExternalId(), orientation.getName());
             tags.add(orientationTag);
         }
 
