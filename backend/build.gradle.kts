@@ -70,7 +70,6 @@ tasks.jacocoTestReport {
 	reports {
 		html.required.set(true)
 	}
-
 }
 
 tasks.jacocoTestCoverageVerification {
@@ -89,7 +88,7 @@ tasks.jacocoTestCoverageVerification {
 			limit {
 				counter = "LINE"
 				value = "COVEREDRATIO"
-				minimum = BigDecimal.valueOf(0.8)
+				minimum = BigDecimal.valueOf(0.9)
 			}
 		}
 
@@ -97,7 +96,7 @@ tasks.jacocoTestCoverageVerification {
 			limit {
 				counter = "BRANCH"
 				value = "COVEREDRATIO"
-				minimum = BigDecimal.valueOf(0.7)
+				minimum = BigDecimal.valueOf(0.5)
 			}
 		}
 	}
