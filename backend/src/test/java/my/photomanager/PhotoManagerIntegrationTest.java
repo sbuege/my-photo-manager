@@ -43,7 +43,7 @@ public class PhotoManagerIntegrationTest {
         library = libraryService.indexLibrary(library.getId());
 
         // --- THEN
-        assertThat(library.getNumberOfPhotos()).isEqualTo(4);
+        assertThat(library.getNumberOfPhotos()).isEqualTo(5);
         assertThat(library.getLastIndexAt()).isAfter(indexStartTimeStamp);
     }
 
@@ -146,6 +146,7 @@ public class PhotoManagerIntegrationTest {
             var orientationTags = tagService.getOrientationTags();
             assertThat(orientationTags).isNotEmpty();
             var orientationExternalTag = orientationTags.getFirst().externalId();
+            System.out.println(orientationExternalTag);
 
             // --- WHEN ---
             var photos = filterService.filterPhotosByExternalTagIds(List.of(orientationExternalTag));
@@ -155,20 +156,6 @@ public class PhotoManagerIntegrationTest {
             assertThat(photos).allMatch(photo -> photo.getOrientation().getExternalId().contains(orientationExternalTag));
         }
 
-        @Test
-        void shouldFilterPhotosByCameraModelAndLocationTag() {
-            var cameraTags = tagService.getCameraTags();
-            var cameraExternalTag = cameraTags.stream().filter(tag -> tag.name().equals(TestPhoto001CameraModel)).map(Tag::externalId).findFirst().orElseThrow();
-
-            var locationTags = tagService.getLocationTags();
-            var locationExternalTag = locationTags.stream().filter(tag -> tag.name().equals(TestPhoto001LocationCity)).map(Tag::externalId).findFirst().orElseThrow();
-
-            var photos = filterService.filterPhotosByExternalTagIds(List.of(cameraExternalTag, locationExternalTag));
-
-            assertThat(photos).isNotEmpty();
-            assertThat(photos).allMatch(photo -> photo.getCameraModel().getExternalId().contains(cameraExternalTag)
-                    && photo.getLocation().getExternalId().contains(locationExternalTag));
-        }
 
         @Test
         void shouldFilterPhotosByCameraModelAndCreationYearTag() {

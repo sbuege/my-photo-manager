@@ -55,6 +55,13 @@ public class FilterService {
             spec = spec.and(filterPhotosByCreationYear(creationYears));
         }
 
+        List<String> orientationTagIds = externalTagIds.stream()
+                .filter(externalTagId -> externalTagId.startsWith(TagPrefix.ORIENTATION_PREFIX))
+                .toList();
+        if (!orientationTagIds.isEmpty()) {
+            spec = spec.and(filterByOrientation(orientationTagIds));
+        }
+
         var photos = repository.findAll(spec, Sort.by(Sort.Direction.DESC, "creationDate"));
 
         return photos.stream()
@@ -108,6 +115,18 @@ public class FilterService {
                     .toList();
 
             return criteriaBuilder.or(predicates.toArray(new Predicate[0]));
+        };
+    }
+
+    private Specification<Photo> filterByOrientation(List<String> orientationTags){
+        return (root, query, criteriaBuilder) -> {
+            if (orientationTags == null || orientationTags.isEmpty()) {
+                return null;
+            }
+
+            return root.get("orientation")
+                    .get("externalId")
+                    .in(orientationTags);
         };
     }
 }
