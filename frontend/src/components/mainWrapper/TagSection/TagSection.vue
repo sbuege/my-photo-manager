@@ -18,6 +18,8 @@ const props = defineProps({
 let intervalId = null
 const filters = ref([])
 
+const emit = defineEmits(["select-tag"])
+
 async function fetchFilter() {
   try {
     const response = await fetch(props.url)
@@ -42,6 +44,8 @@ onUnmounted(() => {
   clearInterval(intervalId)
 })
 
+
+
 </script>
 
 <template>
@@ -56,7 +60,7 @@ onUnmounted(() => {
       v-for="filter in filters"
       :id="filter.id"
       :label="filter.name"
-      :selected="false"
+      @select="tag => emit('select-tag', tag)"
   />
   </div>
 </template>

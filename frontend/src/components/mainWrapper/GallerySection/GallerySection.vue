@@ -1,8 +1,14 @@
 <script setup>
 
-import {onMounted, onUnmounted, ref} from "vue";
+import {onMounted, onUnmounted, ref, watch} from "vue";
 import PhotoItem from "@/components/mainWrapper/GallerySection/items/PhotoItem.vue";
 
+const props = defineProps({
+  activeTags: {
+    type: Array,
+    default: () => []
+  }
+})
 
 let intervalId = null
 const photos = ref([])
@@ -30,6 +36,19 @@ onMounted(() => {
 onUnmounted(() => {
   clearInterval(intervalId)
 })
+
+async function filterPhotosByExternalTagIds(externalTagIds) {
+
+  console.log("filterPhotosByExternalTagIds", externalTagIds)
+}
+
+watch(
+    () => props.activeTags.map(t => String(t.id)),
+    async (externalTagIds) => {
+      await filterPhotosByExternalTagIds(externalTagIds)
+    },
+    { immediate: true }
+)
 
 </script>
 
