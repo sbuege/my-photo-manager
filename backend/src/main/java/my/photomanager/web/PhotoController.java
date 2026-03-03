@@ -71,7 +71,7 @@ public class PhotoController {
      *         which represent the details of the filtered photos
      */
     @GetMapping("/byTags")
-    protected ResponseEntity<List<PhotoResponse>> filterByTags(List<String> externalTagIds) {
+    protected ResponseEntity<List<PhotoResponse>> filterByTags(@RequestParam List<String> externalTagIds) {
         log.info("Filtering by tags: {}", externalTagIds);
 
         return ResponseEntity.ok(
