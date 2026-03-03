@@ -13,42 +13,60 @@ const props = defineProps({
 let intervalId = null
 const photos = ref([])
 async function fetchPhotos() {
-  try {
-    const response = await fetch("/photos/")
-    if (!response.ok) {
-      throw new Error('Fehler beim Laden')
-    }
-
-    photos.value = await response.json()
-
-  } catch (e) {
-    //error.value = e?.message ?? String(e)
-  } finally {
-    //loading.value = false
+  const response = await fetch("/photos/");
+  if (!response.ok) {
+    throw new Error("Fehler beim Laden");
   }
+  photos.value = await response.json();
 }
 
-onMounted(() => {
-  fetchPhotos()
-  intervalId = setInterval(fetchPhotos, 5000)
-})
+async function fetchPhotosByTags(externalTagIds) {
+  const params = new URLSearchParams();
+  for (const id of externalTagIds) {
+    params.append("externalTagIds", String(id));
+  }
 
-onUnmounted(() => {
-  clearInterval(intervalId)
-})
+  const response = await fetch(`/photos/byTags?${params.toString()}`);
+  if (!response.ok) {
+    throw new Error("Failed to load photos");
+  }
 
-async function filterPhotosByExternalTagIds(externalTagIds) {
+  photos.value = await response.json();
+}
 
-  console.log("filterPhotosByExternalTagIds", externalTagIds)
+async function loadPhotos() {
+  const externalTagIds = (props.activeTags ?? [])
+      .map(t => t?.id)
+      .filter(id => id !== null && id !== undefined)
+      .map(id => String(id));
+
+  if (externalTagIds.length === 0) {
+    await fetchPhotos();
+    return;
+  }
+
+  // Sonst: gefiltert laden
+  await fetchPhotosByTags(externalTagIds);
 }
 
 watch(
-    () => props.activeTags.map(t => String(t.id)),
-    async (externalTagIds) => {
-      await filterPhotosByExternalTagIds(externalTagIds)
+    () => props.activeTags.map(t => t?.id),
+    async () => {
+      await loadPhotos();
     },
     { immediate: true }
-)
+);
+
+onMounted(() => {
+  intervalId = setInterval(() => {
+    loadPhotos().catch(() => {
+    });
+  }, 5000);
+});
+
+onUnmounted(() => {
+  if (intervalId) clearInterval(intervalId);
+});
 
 </script>
 

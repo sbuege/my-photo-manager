@@ -9,7 +9,7 @@ import {ref} from "vue";
 const activeTags = ref([])
 
 function addActiveTag(tag) {
-  console.log("addActiveTag", tag)
+  console.log("add active tag to main wrapper:", tag)
 
   if (!tag?.id) return
 
@@ -20,7 +20,7 @@ function addActiveTag(tag) {
 }
 
 function removeActiveTag(tag) {
-  console.log("removeActiveTag", tag)
+  console.log("add active tag from main wrapper:", tag)
 
   const id = String(tag?.id ?? "")
   activeTags.value = activeTags.value.filter(t => String(t.id) !== id)
@@ -52,13 +52,11 @@ function removeActiveTag(tag) {
         </div>
       </div>
 
-
-
       <aside class="col-span-1 bg-white p-4 rounded-xl shadow">
-        <TagSection label="Format" url="/tag/orientationTags"  @select-tag="addActiveTag"/>
-<!--        <TagSection label="Creation Year Tags" url="/tag/creationYearTags" />-->
-        <TagSection label="Camera Tags" url="/tag/cameraTags"  @select-tag="addActiveTag" />
-        <TagSection label="Location Tags" url="/tag/locationTags" @select-tag="addActiveTag" />
+        <TagSection label="Format" url="/tag/orientationTags"  @selectedTags="addActiveTag"/>
+        <TagSection label="Creation Year Tags" url="/tag/creationYearTags" @selectedTags="addActiveTag"/>
+        <TagSection label="Camera Tags" url="/tag/cameraTags"  @selectedTags="addActiveTag" />
+        <TagSection label="Location Tags" url="/tag/locationTags" @selectedTags="addActiveTag" />
       </aside>
 
       <section class="col-span-3 bg-white p-4 rounded-xl shadow">

@@ -3,6 +3,8 @@
 import {onMounted, onUnmounted, ref} from "vue";
 import TagItem from "@/components/mainWrapper/TagSection/items/TagItem.vue";
 
+const emit = defineEmits(["selectedTags"])
+
 const props = defineProps({
   url: {
     type: String,
@@ -17,8 +19,6 @@ const props = defineProps({
 
 let intervalId = null
 const filters = ref([])
-
-const emit = defineEmits(["select-tag"])
 
 async function fetchFilter() {
   try {
@@ -44,8 +44,6 @@ onUnmounted(() => {
   clearInterval(intervalId)
 })
 
-
-
 </script>
 
 <template>
@@ -60,7 +58,7 @@ onUnmounted(() => {
       v-for="filter in filters"
       :id="filter.id"
       :label="filter.name"
-      @select="tag => emit('select-tag', tag)"
+      @select="tag => emit('selectedTags', tag)"
   />
   </div>
 </template>

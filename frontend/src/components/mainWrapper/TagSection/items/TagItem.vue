@@ -1,24 +1,31 @@
 <script setup>
+
+const emit = defineEmits(["select", "remove"])
+
 const props = defineProps({
   id: {
-    type: Number,
+    type: String,
     required: true
   },
+
   label: {
     type: String,
     required: true
   },
+
   selected: { type: Boolean, default: false }
 })
 
-const emit = defineEmits(["select", "remove"])
 
 function onSelect() {
+  console.log("select tag item", props.label)
+
   emit("select", { id: props.id, name: props.label })
-  console.log("Tag Item selected:", props.label)
 }
 
 function onRemove(e) {
+  console.log("remove tag item", props.label)
+
   e.stopPropagation()
   emit("remove", { id: props.id })
 }
