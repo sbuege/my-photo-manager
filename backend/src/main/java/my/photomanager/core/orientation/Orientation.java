@@ -1,12 +1,8 @@
 package my.photomanager.core.orientation;
 
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
-import lombok.ToString;
+import lombok.*;
+import my.photomanager.core.tag.TagPrefix;
 
 import java.util.UUID;
 
@@ -17,21 +13,21 @@ import java.util.UUID;
 @Getter
 public class Orientation {
 
-	@Id
-	@GeneratedValue
-	private long id;
+    @Id
+    @GeneratedValue
+    private long id;
 
-	@Column(name = "external_id", nullable = false, unique = true, updatable = false, length = 36)
-	private String externalId;
+    @Column(name = "external_id", nullable = false, unique = true, updatable = false, length = 75)
+    private String externalId;
 
-	@Column(name = "name", nullable = false, unique = true)
-	@NonNull
-	private String name;
+    @Column(name = "name", nullable = false, unique = true)
+    @NonNull
+    private String name;
 
-	@PrePersist
-	void prePersist() {
-		if (externalId == null || externalId.isBlank()) {
-			externalId = UUID.randomUUID().toString();
-		}
-	}
+    @PrePersist
+    void prePersist() {
+        if (externalId == null || externalId.isBlank()) {
+            externalId = TagPrefix.ORIENTATION_PREFIX + TagPrefix.PREFIX_SEPARATOR + UUID.randomUUID();
+        }
+    }
 }

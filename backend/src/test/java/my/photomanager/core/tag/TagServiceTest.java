@@ -1,7 +1,6 @@
 package my.photomanager.core.tag;
 
 import my.photomanager.core.photo.PhotoRepository;
-import my.photomanager.web.filter.FilterService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -9,7 +8,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static my.photomanager.TestDataBuilder.buildPhoto;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
@@ -46,7 +45,7 @@ class TagServiceTest {
         service.getCreationYearTags();
 
         // --- THEN
-        verify(repository).getCreationYearTags();
+        verify(repository).getCreationYearTags(anyString());
     }
 
     @Test

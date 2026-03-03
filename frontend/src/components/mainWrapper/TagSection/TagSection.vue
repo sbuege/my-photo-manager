@@ -3,6 +3,8 @@
 import {onMounted, onUnmounted, ref} from "vue";
 import TagItem from "@/components/mainWrapper/TagSection/items/TagItem.vue";
 
+const emit = defineEmits(["selectedTags"])
+
 const props = defineProps({
   url: {
     type: String,
@@ -56,7 +58,7 @@ onUnmounted(() => {
       v-for="filter in filters"
       :id="filter.id"
       :label="filter.name"
-      :selected="false"
+      @select="tag => emit('selectedTags', tag)"
   />
   </div>
 </template>

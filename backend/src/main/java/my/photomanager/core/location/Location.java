@@ -1,13 +1,8 @@
 package my.photomanager.core.location;
 
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
+import my.photomanager.core.tag.TagPrefix;
 
 import java.util.UUID;
 
@@ -19,27 +14,27 @@ import java.util.UUID;
 @Getter
 public class Location {
 
-	@Id
-	@GeneratedValue
-	private long id;
+    @Id
+    @GeneratedValue
+    private long id;
 
-	@Column(name = "external_id", nullable = false, unique = true, updatable = false, length = 36)
-	private String externalId;
+    @Column(name = "external_id", nullable = false, unique = true, updatable = false, length = 75)
+    private String externalId;
 
-	@Column(name = "country", nullable = false)
-	@NonNull
-	@Setter
-	private String country;
+    @Column(name = "country", nullable = false)
+    @NonNull
+    @Setter
+    private String country;
 
-	@Column(name = "city", nullable = false)
-	@NonNull
-	@Setter
-	private String city;
+    @Column(name = "city", nullable = false)
+    @NonNull
+    @Setter
+    private String city;
 
-	@PrePersist
-	void prePersist() {
-		if (externalId == null || externalId.isBlank()) {
-			externalId = UUID.randomUUID().toString();
-		}
-	}
+    @PrePersist
+    void prePersist() {
+        if (externalId == null || externalId.isBlank()) {
+            externalId = TagPrefix.LOCATION_PREFIX + TagPrefix.PREFIX_SEPARATOR + UUID.randomUUID();
+        }
+    }
 }

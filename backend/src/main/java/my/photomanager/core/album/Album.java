@@ -22,7 +22,7 @@ public class Album {
 	@GeneratedValue
 	private long id;
 
-	@Column(name = "external_id", nullable = false, unique = true,  updatable = false, length = 36)
+	@Column(name = "external_id", nullable = false, unique = true,  updatable = false, length = 75)
 	private String externalId;
 
 	@Column(name = "name", nullable = false, unique = true)
