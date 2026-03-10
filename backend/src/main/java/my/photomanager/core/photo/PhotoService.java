@@ -1,8 +1,5 @@
 package my.photomanager.core.photo;
 
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.nio.file.Path;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -15,95 +12,171 @@ import my.photomanager.utils.metaDataParser.MetadataParserException;
 import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
 
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 @RequiredArgsConstructor
 @Service
 @Log4j2
 public class PhotoService {
 
-	private final PhotoRepository repository;
-	private final LocationService locationService;
-	private final CameraModelService cameraModelService;
-	private final OrientationService orientationService;
+    private final PhotoRepository repository;
+    private final LocationService locationService;
+    private final CameraModelService cameraModelService;
+    private final OrientationService orientationService;
 
-	/**
-	 * Retrieves a {@link Photo} entity by its unique identifier. If no photo is found with the
-	 * given ID, an exception is thrown.
-	 *
-	 * @param id the unique identifier of the photo to be retrieved
-	 * @return the {@link Photo} entity associated with the specified ID
-	 * @throws java.util.NoSuchElementException if no photo is found with the given ID
-	 */
-	public Photo findById(long id) {
-		return repository.findById(id)
-				.orElseThrow(() -> new PhotoServiceException("no photo found with id " + id));
-	}
+    /**
+     * Retrieves a {@link Photo} entity by its unique identifier. If no photo is found with the
+     * given ID, an exception is thrown.
+     *
+     * @param id the unique identifier of the photo to be retrieved
+     * @return the {@link Photo} entity associated with the specified ID
+     * @throws java.util.NoSuchElementException if no photo is found with the given ID
+     */
+    public Photo findById(long id) {
+        return repository.findById(id)
+                .orElseThrow(() -> new PhotoServiceException("no photo found with id " + id));
+    }
 
-	/**
-	 * Retrieves a {@link Photo} entity by its external identifier. If no photo is found
-	 * with the given external ID, an exception is thrown.
-	 *
-	 * @param externalId the unique external identifier of the photo to be retrieved
-	 * @return the {@link Photo} entity associated with the specified external ID
-	 * @throws PhotoServiceException if no photo is found with the given external ID
-	 */
-	public Photo findByExternalId(String externalId) {
-		return repository.findByExternalId(externalId)
-				.orElseThrow(() -> new PhotoServiceException("no photo found with external id " + externalId));
+    /**
+     * Retrieves a {@link Photo} entity by its external identifier. If no photo is found
+     * with the given external ID, an exception is thrown.
+     *
+     * @param externalId the unique external identifier of the photo to be retrieved
+     * @return the {@link Photo} entity associated with the specified external ID
+     * @throws PhotoServiceException if no photo is found with the given external ID
+     */
+    public Photo findByExternalId(String externalId) {
+        return repository.findByExternalId(externalId)
+                .orElseThrow(() -> new PhotoServiceException("no photo found with external id " + externalId));
 
-	}
+    }
 
 
-	/**
-	 * Creates a new {@link Photo} from the specified file path, extracts metadata, and saves
-	 * the photo entity into the repository. If a photo with the same hash value already exists
-	 * in the repository, the existing photo entity is returned.
-	 *
-	 * @param photoPath the absolute file path to the photo to be processed
-	 * @return the saved {@link Photo} entity, or the existing {@link Photo} if it already exists
-	 * @throws IOException if an I/O error occurs during file processing
-	 * @throws MetadataParserException if an error occurs during metadata extraction from the photo
-	 * @throws GpsResolverException if an error occurs while resolving GPS-related location metadata
-	 */
-	public Photo createAndSavePhoto(@NonNull Path photoPath)
-			throws IOException, MetadataParserException, GpsResolverException {
-		log.info("processing photo {}", photoPath);
+    /**
+     * Creates and saves photo entries based on provided photo paths. Processes each photo to generate metadata,
+     * checks for duplicates, and saves the photo along with associated metadata such as location, camera model,
+     * and orientation into the repository.
+     *
+     * @param photoPaths the list of paths to the photos to be processed and saved
+     */
+    public void createAndSavePhotos(List<Path> photoPaths) {
 
-		Photo savedPhoto;
-		var hashValue = DigestUtils.md5DigestAsHex(new FileInputStream(photoPath.toFile()));
+        List<Photo> createdPhotos = new ArrayList<>();
+        Set<String> processedHashes = new HashSet<>();
 
-		if (repository.existsByHashValue(hashValue)) {
-			savedPhoto = repository.findByHashValue(hashValue)
-					.orElseThrow(() -> new PhotoServiceException("no photo found with hash value " + hashValue));
-			log.debug("photo {} already exists", savedPhoto);
-		} else {
-			var metaData = MetadataParser.parseMetadata(photoPath);
+        photoPaths.stream().distinct().forEach(photoPath -> {
 
-			var photo = new Photo(hashValue, photoPath.toAbsolutePath()
-					.toString(), metaData.photoHeight(), metaData.photoWidth());
+            log.info("processing photo {}", photoPath);
 
-			if (metaData.creationDate() != null){
-				photo = photo.toBuilder().withCreationDate(metaData.creationDate()).build();
-			}
+            try {
+                var hashValue = DigestUtils.md5DigestAsHex(new FileInputStream(photoPath.toFile()));
 
-			var location = locationService.createAndSaveLocation(metaData);
-			if (location.isPresent()){
-				photo = photo.toBuilder().withLocation(location.get()).build();
-			}
+                if (repository.existsByHashValue(hashValue)) {
+                    log.debug("photo {} already exists", photoPath);
+                } else {
+                    if (!processedHashes.add(hashValue)) {
+                        var metaData = MetadataParser.parseMetadata(photoPath);
 
-			var cameraModel = cameraModelService.createAndSaveCameraModel(metaData);
-			if (cameraModel.isPresent()){
-				photo = photo.toBuilder().withCameraModel(cameraModel.get()).build();
-			}
+                        var photo = new Photo(hashValue, photoPath.toAbsolutePath()
+                                .toString(), metaData.photoHeight(), metaData.photoWidth());
 
-			var orientation = orientationService.createAndSaveOrientation(metaData);
-			if (orientation.isPresent()){
-				photo = photo.toBuilder().withOrientation(orientation.get()).build();
-			}
+                        if (metaData.creationDate() != null) {
+                            photo = photo.toBuilder().withCreationDate(metaData.creationDate()).build();
+                        }
 
-			savedPhoto = repository.saveAndFlush(photo);
-			log.info("saved photo {} successfully", savedPhoto);
-		}
+                        var location = locationService.createAndSaveLocation(metaData);
+                        if (location.isPresent()) {
+                            photo = photo.toBuilder().withLocation(location.get()).build();
+                        }
 
-		return savedPhoto;
-	}
+                        var cameraModel = cameraModelService.createAndSaveCameraModel(metaData);
+                        if (cameraModel.isPresent()) {
+                            photo = photo.toBuilder().withCameraModel(cameraModel.get()).build();
+                        }
+
+                        var orientation = orientationService.createAndSaveOrientation(metaData);
+                        if (orientation.isPresent()) {
+                            photo = photo.toBuilder().withOrientation(orientation.get()).build();
+                        }
+
+                        createdPhotos.add(photo);
+                        log.debug("created photo {}", photo);
+
+                    }
+
+
+                }
+
+            } catch (IOException | MetadataParserException | GpsResolverException e) {
+                throw new RuntimeException(e);
+            }
+
+
+        });
+
+        repository.saveAllAndFlush(createdPhotos);
+        log.info("saved photos successfully");
+    }
+
+
+    /**
+     * Creates a new {@link Photo} from the specified file path, extracts metadata, and saves
+     * the photo entity into the repository. If a photo with the same hash value already exists
+     * in the repository, the existing photo entity is returned.
+     *
+     * @param photoPath the absolute file path to the photo to be processed
+     * @return the saved {@link Photo} entity, or the existing {@link Photo} if it already exists
+     * @throws IOException             if an I/O error occurs during file processing
+     * @throws MetadataParserException if an error occurs during metadata extraction from the photo
+     * @throws GpsResolverException    if an error occurs while resolving GPS-related location metadata
+     */
+    @Deprecated
+    public Photo createAndSavePhoto(@NonNull Path photoPath)
+            throws IOException, MetadataParserException, GpsResolverException {
+        log.info("processing photo {}", photoPath);
+
+        Photo savedPhoto;
+        var hashValue = DigestUtils.md5DigestAsHex(new FileInputStream(photoPath.toFile()));
+
+        if (repository.existsByHashValue(hashValue)) {
+            savedPhoto = repository.findByHashValue(hashValue)
+                    .orElseThrow(() -> new PhotoServiceException("no photo found with hash value " + hashValue));
+            log.debug("photo {} already exists", savedPhoto);
+        } else {
+            var metaData = MetadataParser.parseMetadata(photoPath);
+
+            var photo = new Photo(hashValue, photoPath.toAbsolutePath()
+                    .toString(), metaData.photoHeight(), metaData.photoWidth());
+
+            if (metaData.creationDate() != null) {
+                photo = photo.toBuilder().withCreationDate(metaData.creationDate()).build();
+            }
+
+            var location = locationService.createAndSaveLocation(metaData);
+            if (location.isPresent()) {
+                photo = photo.toBuilder().withLocation(location.get()).build();
+            }
+
+            var cameraModel = cameraModelService.createAndSaveCameraModel(metaData);
+            if (cameraModel.isPresent()) {
+                photo = photo.toBuilder().withCameraModel(cameraModel.get()).build();
+            }
+
+            var orientation = orientationService.createAndSaveOrientation(metaData);
+            if (orientation.isPresent()) {
+                photo = photo.toBuilder().withOrientation(orientation.get()).build();
+            }
+
+            savedPhoto = repository.saveAndFlush(photo);
+            log.info("saved photo {} successfully", savedPhoto);
+        }
+
+        return savedPhoto;
+    }
 }

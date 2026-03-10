@@ -16,7 +16,9 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.UUID;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 public class TestDataBuilder {
@@ -169,6 +171,16 @@ public class TestDataBuilder {
 
     public static Path createTestPhotoFile() throws IOException {
         return Files.createTempFile("test-photo-", ".jpg");
+    }
+
+    public static List<Path> createTest10000Photos() throws IOException {
+        return IntStream.rangeClosed(1,10000).mapToObj(i -> {
+            try {
+                return Files.createTempFile("test-photo-" + i, "jpg");
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }).toList();
     }
 
     // Metadata

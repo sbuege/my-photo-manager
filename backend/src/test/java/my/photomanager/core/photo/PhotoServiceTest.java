@@ -1,14 +1,8 @@
 package my.photomanager.core.photo;
 
-import static my.photomanager.TestDataBuilder.buildCameraModel;
-import static my.photomanager.TestDataBuilder.buildLocation;
-import static my.photomanager.TestDataBuilder.buildOrientation;
-import static my.photomanager.TestDataBuilder.buildPhoto;
-import static my.photomanager.TestDataBuilder.createTestPhotoFile;
+import static my.photomanager.TestDataBuilder.*;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -78,6 +72,36 @@ class PhotoServiceTest {
 	@Nested
 	class CreatePhotoTest {
 
+		void shouldCreateAndSavePhotoOldWay() throws MetadataParserException, IOException, GpsResolverException {
+			try (var metaDataParser = mockStatic(MetadataParser.class)) {
+				// --- GIVEN ---
+				metaDataParser.when(() -> MetadataParser.parseMetadata(any(Path.class)))
+						.thenReturn(TestDataBuilder.buildMetadata());
+
+				when(repository.existsByHashValue(anyString())).thenReturn(false);
+				when(locationService.createAndSaveLocation(any(Metadata.class))).thenReturn(Optional.of(buildLocation()));
+				when(cameraModelService.createAndSaveCameraModel(any(Metadata.class))).thenReturn(Optional.of(buildCameraModel()));
+				when(orientationService.createAndSaveOrientation(any(Metadata.class))).thenReturn(Optional.of(buildOrientation()));
+
+				// --- WHEN ---
+				createTest10000Photos().stream().map(path -> {
+                    try {
+                        return service.createAndSavePhoto(path);
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    } catch (MetadataParserException e) {
+                        throw new RuntimeException(e);
+                    } catch (GpsResolverException e) {
+                        throw new RuntimeException(e);
+                    }
+                });
+
+
+				// --- THEN ---
+				verify(repository).saveAndFlush(any(Photo.class));
+			}
+		}
+
 		@Test
 		void shouldCreateAndSavePhoto() throws MetadataParserException, IOException, GpsResolverException {
 			try (var metaDataParser = mockStatic(MetadataParser.class)) {
@@ -91,10 +115,10 @@ class PhotoServiceTest {
 				when(orientationService.createAndSaveOrientation(any(Metadata.class))).thenReturn(Optional.of(buildOrientation()));
 
 				// --- WHEN ---
-				service.createAndSavePhoto(createTestPhotoFile());
+				service.createAndSavePhotos(createTest10000Photos());
 
 				// --- THEN ---
-				verify(repository).saveAndFlush(any(Photo.class));
+				verify(repository).saveAllAndFlush(anyList());
 			}
 		}
 
